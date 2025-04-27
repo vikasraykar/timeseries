@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Reinforcement learning
+  #
+
+slides
+
+
+Reinforcement Learning (RL) is a natural computational paradigm for agents learning from interaction to achieve a goal. Deep learning (DL) provides a powerful general-purpose representation learning framework. A combination of these two has recently emerged as a strong contender for artificial general intelligence. This tutorial will provide a gentle exposition of RL concepts and DL based RL with a focus on policy gradients.
+
+
+
+
+  \(\)
+
+
+
+  The agent-environment interaction
+  #
+
+The reinforcement learning (RL) framework is an abstraction of the problem of goal directed learning from interaction.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/rl/basic/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Reinforcement learning">
+  <meta property="og:description" content="Reinforcement learning # slides Reinforcement Learning (RL) is a natural computational paradigm for agents learning from interaction to achieve a goal. Deep learning (DL) provides a powerful general-purpose representation learning framework. A combination of these two has recently emerged as a strong contender for artificial general intelligence. This tutorial will provide a gentle exposition of RL concepts and DL based RL with a focus on policy gradients.
+\(\) The agent-environment interaction # The reinforcement learning (RL) framework is an abstraction of the problem of goal directed learning from interaction.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Reinforcement learning | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/rl/basic/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.8ac2447de8e2792e5c88cd2c8b82d7eba5624bf52a6214e91a0e8847fcb44edd.js" integrity="sha256-isJEfejieS5ciM0si4LX66ViS/UqYhTpGg6IR/y0Tt0=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers101</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basic/" class="active">Reinforcement learning</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Reinforcement learning</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-agent-environment-interaction">The agent-environment interaction</a></li>
+    <li><a href="#policy">Policy</a></li>
+    <li><a href="#markov-decision-processes">Markov Decision Processes</a></li>
+    <li><a href="#goals-and-rewards">Goals and rewards</a></li>
+    <li><a href="#value-functions">Value Functions</a></li>
+    <li><a href="#optimal-value-functions">Optimal Value Functions</a></li>
+    <li><a href="#policy-gradient-methods">Policy gradient methods</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="reinforcement-learning">
+  Reinforcement learning
+  <a class="anchor" href="#reinforcement-learning">#</a>
+</h1>
+<a  href="https://www.dropbox.com/s/4pdr6y60t0r9mm2/2017_07_29_anthill_deep_reinforcement_learning_tutorial.pdf?dl=0"   target="_blank" rel="noopener"  class="book-btn">slides</a>
+
+<blockquote>
+<p>Reinforcement Learning (RL) is a natural computational paradigm for agents learning from interaction to achieve a goal. Deep learning (DL) provides a powerful general-purpose representation learning framework. A combination of these two has recently emerged as a strong contender for artificial general intelligence. This tutorial will provide a gentle exposition of RL concepts and DL based RL with a focus on policy gradients.</p></blockquote>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\)
+</span>
+
+<h2 id="the-agent-environment-interaction">
+  The agent-environment interaction
+  <a class="anchor" href="#the-agent-environment-interaction">#</a>
+</h2>
+<p>The reinforcement learning (RL) framework is an abstraction of the problem of <strong>goal directed learning from interaction</strong>.</p>
+<ul>
+<li>The learner and the decision maker is called the <strong>agent</strong>.</li>
+<li>The thing it interacts with (everything outside the agent) is called the <strong>environment</strong>.</li>
+</ul>
+<p>The agent and the environment interact continually. In the RL framework any problem of learning goal-directed behavior is abstracted to three signals passing back and forth between the agent and the environment.</p>
+<ol>
+<li>one signal to represent the choices made by the agent (the <strong>actions</strong>)</li>
+<li>one signal to represent the basis on which the choices are made (the <strong>states</strong>)</li>
+<li>one signal to define the agents goal  (<strong>rewards</strong>)</li>
+</ol>
+<p>In general, actions can be any decisions we want to learn how to make, and the states can be anything we can know that might be useful in making them. More formally at each time step <span>
+  \(t\)
+</span>
+</p>
+<ul>
+<li>The agent receives a representation of the environments <strong>state</strong>, <span>
+  \(S_t \in \mathcal{S}\)
+</span>
+, where <span>
+  \(\mathcal{S}\)
+</span>
+ is the set of possible states.</li>
+<li>On the basis of <span>
+  \(S_t\)
+</span>
+ the agent selects an <strong>action</strong> <span>
+  \(A_t \in \mathcal{A}(S_t)\)
+</span>
+, where <span>
+  \(\mathcal{A}(S_t)\)
+</span>
+ the set of actions available in state <span>
+  \(S_t\)
+</span>
+.</li>
+<li><em>One time step later</em>, as a result of the action <span>
+  \(A_t\)
+</span>
+ the agent receives a scalar <strong>reward</strong>,  <span>
+  \(R_{t+1} \in \mathcal{R} \subset \mathbb{R}\)
+</span>
+.</li>
+<li>The agent then observes a new state <span>
+  \(S_{t+1}\)
+</span>
+.</li>
+</ul>
+<img src="/img/rl.jpg"  width="600"/>
+<h2 id="policy">
+  Policy
+  <a class="anchor" href="#policy">#</a>
+</h2>
+<p>At each time step, the agent essentially has to implement a mapping (called the agents <strong>policy</strong>) from states to actions.</p>
+<p>The agents (stochastic) policy  is denoted by <span>
+  \(\pi_t\)
+</span>
+, where</p>
+<span>
+  \[
+\pi_t(a|s) = \mathbb{P}[A_t=a|S_t=s].
+\]
+</span>
+
+<h2 id="markov-decision-processes">
+  Markov Decision Processes
+  <a class="anchor" href="#markov-decision-processes">#</a>
+</h2>
+<p>In the most general case the environment response may depend on everything that has happened earlier.
+<span>
+  \[
+Pr\left\{S_{t+1}=s^{'},R_{t+1}=r|S_0,A_0,R_1,...,S_{t-1},A_{t-1},R_t,S_t,A_t,\right\}.
+\]
+</span>
+</p>
+<p>If the state signal has Markov property then the response depends only on the state and action representations at <span>
+  \(t\)
+</span>
+
+<span>
+  \[
+Pr\left\{S_{t+1}=s^{'},R_{t+1}=r|S_t,A_t,\right\}.
+\]
+</span>
+</p>
+<p>A RL task that satisfies the <strong>Markov property</strong> is called a Markov Decision Process (MDP).</p>
+<h2 id="goals-and-rewards">
+  Goals and rewards
+  <a class="anchor" href="#goals-and-rewards">#</a>
+</h2>
+<p>The agents goal is to maximize the total amount of cumulative reward it receives <strong>over the long run</strong> (and <strong>not</strong> the immediate reward). If we want the agent to achieve some goal, we must specify the rewards to in in such a way that in maximizing them the agent will also achieve our goals.</p>
+<blockquote>
+<p><strong>Episodic tasks</strong> have a natural notion of the final time step. The agent-environment interaction naturally breaks into sub sequences, which are called <strong>episodes</strong>, such as plays of a game, trips through a maze, etc. Each episode ends in a special state called the <em>terminal state</em>, followed by a reset to the standard starting state.</p></blockquote>
+<blockquote>
+<p>For  <strong>continuing tasks</strong> the agent-environment interaction goes on continually without limit.</p></blockquote>
+<p>Let <span>
+  \(R\_{t+1},R\_{t+2},R\_{t+3},...\)
+</span>
+ be the sequence of rewards received after time step <span>
+  \(t\)
+</span>
+.</p>
+<p>The <strong>return</strong> <span>
+  \(G_t\)
+</span>
+ is a defined as some specific function (for example, the sum) of the reward sequence. For episodic tasks
+<span>
+  \[
+G_t = R_{t+1}+R_{t+2}+R_{t+3}+...+R_{T},
+\]
+</span>
+
+where <span>
+  \(T\)
+</span>
+ is the final time step.</p>
+<p>For continuing tasks we need an additional concept of <strong>discounting</strong>. The <strong>discounted return</strong> is given by
+<span>
+  \[
+G_t = R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+... = \sum_{k=0}^{\infty}\gamma^k R_{t+k+1} = R_{t+1}+\gamma G_{t+1},
+\]
+</span>
+
+where <span>
+  \(0 \leq \gamma \leq 1\)
+</span>
+ is a parameter called the <strong>discount rate</strong>.</p>
+<p>The discount rate determines the present value of future rewards. A reward received <span>
+  \(k\)
+</span>
+ time steps in the future is worth only <span>
+  \(\gamma^{k-1}\)
+</span>
+ times what it would have been worth if it were received immediately.</p>
+<p>The discount rate determines the present value of future rewards.</p>
+<p>As <span>
+  \(\gamma\)
+</span>
+ approaches 1 the agent becomes more farsighted.</p>
+<p>As <span>
+  \(\gamma\)
+</span>
+ approaches 0 the agent becomes more myopic.</p>
+<p><strong>The agents goal is to choose the actions to maximize the expected discounted return</strong>.</p>
+<h2 id="value-functions">
+  Value Functions
+  <a class="anchor" href="#value-functions">#</a>
+</h2>
+<p>A value function is a prediction of future reward. Recall that, the agents (stochastic) policy  is denoted by <span>
+  \(\pi\)
+</span>
+, where
+<span>
+  \[
+\pi(a|s) = \mathbb{P}[A_t=a|S_t=s].
+\]
+</span>
+</p>
+<p>The <strong>value of state</strong> <span>
+  \(s\)
+</span>
+ under a policy <span>
+  \(\pi\)
+</span>
+ is the expected return when starting in <span>
+  \(s\)
+</span>
+  and following the policy <span>
+  \(\pi\)
+</span>
+ thereafter.
+<span>
+  \[
+v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s] = \mathbb{E}_{\pi}[\sum_{k=0}^{\infty}\gamma^k R_{t+k+1}|S_t=s].
+\]
+</span>
+
+<span>
+  \(v_{\pi}\)
+</span>
+ is called the <strong>state-value function</strong> for policy <span>
+  \(\pi\)
+</span>
+.</p>
+<p><em>How much reward will I get from state <span>
+  \(s\)
+</span>
+ under policy <span>
+  \(\pi\)
+</span>
+?</em></p>
+<p>The <strong>value of action</strong> <span>
+  \(a\)
+</span>
+ in state <span>
+  \(s\)
+</span>
+ under a policy <span>
+  \(\pi\)
+</span>
+ is the expected return starting in <span>
+  \(s\)
+</span>
+, taking the action <span>
+  \(a\)
+</span>
+, and thereafter following policy <span>
+  \(\pi\)
+</span>
+.</p>
+<span>
+  \[
+q_{\pi}(s,a) = \mathbb{E}_{\pi}[G_t|S_t=s,A_t=a]
+=\mathbb{E}_{\pi}[\sum_{k=0}^{\infty}\gamma^k R_{t+k+1}|S_t=s,A_t=a].
+\]
+</span>
+
+<p><span>
+  \(q_{\pi}\)
+</span>
+ is called the <strong>action-value function</strong> or the <strong>Q-value function</strong> for policy <span>
+  \(\pi\)
+</span>
+.</p>
+<p><em>How much reward will I get from action <span>
+  \(a\)
+</span>
+ in state <span>
+  \(s\)
+</span>
+ under policy <span>
+  \(\pi\)
+</span>
+?</em></p>
+<p>Value functions decompose into a <strong>Bellman equation</strong> which specifies the relation between the value of <span>
+  \(s\)
+</span>
+ and the value of its possible successor states.</p>
+<span>
+  \[
+v_{\pi}(s) =  \mathbb{E}[r+\gamma v_{\pi}(s^{'})]
+\]
+</span>
+
+<h2 id="optimal-value-functions">
+  Optimal Value Functions
+  <a class="anchor" href="#optimal-value-functions">#</a>
+</h2>
+<p><em>The agents goal is to find a policy to maximize the expected discounted return</em>.</p>
+<p><strong>Why are we talking about value functions ?</strong></p>
+<p>Value functions define a partial ordering over polices.</p>
+<span>
+  \[
+\pi \geq \pi{'} \text{  if and only if  } v_{\pi}(s) \geq v_{\pi}(s^{'}) \text{  for all } s \in \mathcal{S}
+\]
+</span>
+
+<p>The optimal policy is the one which has the maximum state-value function.</p>
+<p><strong>optimal state-value function</strong></p>
+<span>
+  \[
+v_{*}(s) = \max_{\pi} v_{\pi}(s) \text{ for all } s \in \mathcal{S}
+\]
+</span>
+
+<p>Bellman&rsquo;s optimality equation</p>
+<span>
+  \[
+v_{*}(s) = \max_{a \in \mathcal{A}(s)} \sum_{s^{'},r} p(s^{'},r|s,a)[r+\gamma v_{*}(s^{'}) ]
+\]
+</span>
+
+<p><strong>optimal action-value function</strong></p>
+<span>
+  \[
+q_{*}(s,a) = \max_{\pi} q_{\pi}(s,a) \text{ for all } s \in \mathcal{S} \text{ and } a \in \mathcal{A}
+\]
+</span>
+
+<p>Bellman&rsquo;s optimality equation</p>
+<span>
+  \[
+q_{*}(s,a) = \sum_{s^{'},r} p(s^{'},r|s,a)[r+\gamma \max_{a^{'}} q_{*}(s^{'},a^{'}) ]
+\]
+</span>
+
+<p>The value of the start state must equal the discounted value of the expected next state plus the reward expected along the way.</p>
+<h2 id="policy-gradient-methods">
+  Policy gradient methods
+  <a class="anchor" href="#policy-gradient-methods">#</a>
+</h2>
+<p>The goal is to learn a <strong>parametrized policy</strong> that can select actions without consulting a value function. Note that a value function will still be used to <strong>learn</strong> the policy parameter, but is not required for action selection.</p>
+<p>Let <span>
+  \(\theta \in \mathbb{R}^{d}\)
+</span>
+ represent the policy&rsquo;s parameter vector. The parameterized policy is written as</p>
+<span>
+  \[
+\pi(a|s,\theta) = \text{Pr}[A_t=a|S_t=s,\theta_t=\theta]
+\]
+</span>
+
+<p>This is the probability that action <span>
+  \(a\)
+</span>
+ is taken at time <span>
+  \(t\)
+</span>
+ given that the agent is in state <span>
+  \(s\)
+</span>
+ at time <span>
+  \(t\)
+</span>
+ with parameter <span>
+  \(\theta\)
+</span>
+.</p>
+<p>We will estimate the policy parameter  <span>
+  \(\theta\)
+</span>
+ to maximize a performance measure <span>
+  \(J(\theta)\)
+</span>
+.</p>
+<span>
+  \[
+\widehat{\theta} = \arg \max_{\theta} J(\theta)
+\]
+</span>
+
+<p>As usual we will use stochastic gradient <em>ascent</em></p>
+<p><span>
+  \[
+\theta_{t+1} = \theta_(t) + \alpha \widehat{\nabla J(\theta_t)},
+\]
+</span>
+
+where <span>
+  \(\widehat{\nabla J(\theta_t)}\)
+</span>
+ is a stochastic estimate of the gradient whose expectation approximates the true gradient.</p>
+<p>For the episodic case the performance is defined as the value of the start state under the parameterized policy.</p>
+<span>
+  \[
+J(\theta) = v_{\pi_{\theta}}(s_0)
+\]
+</span>
+
+<p>Recall,  the <strong>value of a state</strong> <span>
+  \(s\)
+</span>
+ under a policy <span>
+  \(\pi\)
+</span>
+ is the expected return when starting in <span>
+  \(s\)
+</span>
+  and following the policy <span>
+  \(\pi\)
+</span>
+ thereafter.</p>
+<span>
+  \[
+v_{\pi_\theta}(s_0) = \mathbb{E}_{\pi_\theta}[G_t|S_t=s_0]
+= \mathbb{E}_{\pi_\theta}[\sum_{k=0}^{\infty}\gamma^k R_{t+k+1}|S_t=s_0]
+\]
+</span>
+
+<blockquote>
+<p><strong>Log-Derivative trick</strong>
+If <span>
+  \(x \sim p\_{\theta}(.)\)
+</span>
+ then
+<span>
+  \[
+\nabla_\theta \mathbb{E}[f(x)] = \nabla_\theta  \int p_{\theta}(x) f(x) dx = \int \frac{p_{\theta}(x)}{p_{\theta}(x)} \nabla_\theta  p_{\theta}(x) f(x) dx
+\]
+</span>
+
+<span>
+  \[
+\nabla_\theta \mathbb{E}[f(x)] = \int p_{\theta}(x) \nabla_\theta \log p_{\theta}(x) f(x) dx = \mathbb{E}[f(x)\nabla_\theta \log  p_{\theta}(x)]
+\]
+</span>
+</p></blockquote>
+<p>We also need the compute the gradient of the log probability of an episode</p>
+<p><strong>Gradient of the log probability of an episode</strong></p>
+<p>Let <span>
+  \(\tau\)
+</span>
+ be an episode of length <span>
+  \(T\)
+</span>
+ defined as
+<span>
+  \[
+\tau=(s_0,a_0,r_1,s_1,a_1,r_2,....,a_{T-1},r_T,s_T).
+\]
+</span>
+
+Then
+<span>
+  \[
+\nabla_{\theta} \log p_{\theta}(\tau) = \nabla_{\theta} \log \left(\mu(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t)\text{Pr}(s_{t+1}|s_t,a_t) \right)
+\]
+</span>
+
+<span>
+  \[
+\nabla_{\theta} \log p_{\theta}(\tau) = \nabla_{\theta} \left[\log \mu(s_0) + \sum_{t=0}^{T-1} ( \log \pi_{\theta}(a_t|s_t)+ \log \text{Pr}(s_{t+1}|s_t,a_t) ) \right]
+\]
+</span>
+
+<span>
+  \[
+\nabla_{\theta} \log p_{\theta}(\tau) = \nabla_{\theta}  \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t)
+\]
+</span>
+</p>
+<blockquote>
+<p>Observe that when taking gradients, the state dynamics disappear!</p></blockquote>
+<p>Using the above two tricks</p>
+<span>
+  \[
+\nabla_{\theta} v_{\pi_\theta}(s_0) = \mathbb{E}_{\tau \sim \pi_\theta}\left[ G_{\tau}\nabla_{\theta}   \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t)\right]
+\]
+</span>
+
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<ul>
+<li><a href="http://karpathy.github.io/2016/05/31/rl/">http://karpathy.github.io/2016/05/31/rl/</a></li>
+<li><a href="https://www.davidsilver.uk/teaching/">https://www.davidsilver.uk/teaching/</a></li>
+<li><a href="http://incompleteideas.net/sutton/book/the-book-2nd.html">http://incompleteideas.net/sutton/book/the-book-2nd.html</a></li>
+<li><a href="http://rll.berkeley.edu/deeprlcourse/">http://rll.berkeley.edu/deeprlcourse/</a></li>
+<li><a href="https://gym.openai.com/">https://gym.openai.com/</a></li>
+<li><a href="https://deepmind.com/blog/deep-reinforcement-learning/">https://deepmind.com/blog/deep-reinforcement-learning/</a></li>
+<li><a href="http://www.scholarpedia.org/article/Policy_gradient_methods#Assumptions_and_Notation">http://www.scholarpedia.org/article/Policy_gradient_methods#Assumptions_and_Notation</a></li>
+<li><a href="https://danieltakeshi.github.io/2017/03/28/going-deeper-into-reinforcement-learning-fundamentals-of-policy-gradients/">https://danieltakeshi.github.io/2017/03/28/going-deeper-into-reinforcement-learning-fundamentals-of-policy-gradients/</a></li>
+<li><a href="http://www.1-4-5.net/~dmm/ml/log_derivative_trick.pdf">http://www.1-4-5.net/~dmm/ml/log_derivative_trick.pdf</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-agent-environment-interaction">The agent-environment interaction</a></li>
+    <li><a href="#policy">Policy</a></li>
+    <li><a href="#markov-decision-processes">Markov Decision Processes</a></li>
+    <li><a href="#goals-and-rewards">Goals and rewards</a></li>
+    <li><a href="#value-functions">Value Functions</a></li>
+    <li><a href="#optimal-value-functions">Optimal Value Functions</a></li>
+    <li><a href="#policy-gradient-methods">Policy gradient methods</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Gradient Descent
+  #
+
+
+Steepest descent.
+Let 
+  \(\mathbf{w}\)
+
+ be a vector of all the parameters for a model.
+Let 
+  \(L(\mathbf{w})\)
+
+ be the loss function (or error function).
+We need to choose the model parameters that optimizes (minimizes) the loss function.
+
+  \[
+\hat{\mathbf{w}} = \argmin_{\mathbf{w}} L(\mathbf{w})
+\]
+
+
+Let 
+  \(\nabla L(\mathbf{w})\)
+
+ be the gradient vector, where each element is the partial derivative of the loss fucntion wrt each parameter.
+The gradient vector points in the direction of the greatest rate of increase of the loss function.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/training/gradient_descent/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Gradient Descent">
+  <meta property="og:description" content="Gradient Descent # Steepest descent.
+Let \(\mathbf{w}\) be a vector of all the parameters for a model.
+Let \(L(\mathbf{w})\) be the loss function (or error function).
+We need to choose the model parameters that optimizes (minimizes) the loss function.
+\[ \hat{\mathbf{w}} = \argmin_{\mathbf{w}} L(\mathbf{w}) \] Let \(\nabla L(\mathbf{w})\) be the gradient vector, where each element is the partial derivative of the loss fucntion wrt each parameter.
+The gradient vector points in the direction of the greatest rate of increase of the loss function.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Gradient Descent | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/training/gradient_descent/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4cacd3980491d67e5f49ba6b4b58cd3873010a3c6c912cfe4c009ef436e9e73a.js" integrity="sha256-TKzTmASR1n5fSbprS1jNOHMBCjxskSz&#43;TACe9Dbp5zo=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/supervised/" class="">Supervised learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/supervised/linear_regression/" class="">Linear Regression</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="active">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/activation_functions/" class="">Activation functions</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/alignment/" class="">Alignment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basics/" class="">Basics</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Gradient Descent</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#gradient-descent">Gradient Descent</a>
+      <ul>
+        <li><a href="#batch-gradient-descent">Batch Gradient Descent</a></li>
+        <li><a href="#stochastic-gradient-descent">Stochastic Gradient Descent</a></li>
+        <li><a href="#mini-batch-stochastic-gradient-descent">Mini-batch Stochastic Gradient Descent</a></li>
+      </ul>
+    </li>
+    <li><a href="#adding-momentum">Adding momentum</a></li>
+    <li><a href="#adaptive-learning-rates">Adaptive Learning Rates</a>
+      <ul>
+        <li><a href="#adagrad">Adagrad</a></li>
+        <li><a href="#rmsprop">RMSProp</a></li>
+        <li><a href="#adam">Adam</a></li>
+        <li><a href="#adamw">AdamW</a></li>
+      </ul>
+    </li>
+    <li><a href="#learning-rate-schedule">Learning rate schedule</a></li>
+    <li><a href="#learning-curve">Learning Curve</a></li>
+    <li><a href="#parameter-initialization">Parameter initialization</a></li>
+    <li><a href="#collateral">Collateral</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="gradient-descent">
+  Gradient Descent
+  <a class="anchor" href="#gradient-descent">#</a>
+</h2>
+<blockquote>
+<p>Steepest descent.</p></blockquote>
+<p>Let <span>
+  \(\mathbf{w}\)
+</span>
+ be a vector of all the parameters for a model.</p>
+<p>Let <span>
+  \(L(\mathbf{w})\)
+</span>
+ be the loss function (or error function).</p>
+<p>We need to choose the model parameters that optimizes (minimizes) the loss function.</p>
+<span>
+  \[
+\hat{\mathbf{w}} = \argmin_{\mathbf{w}} L(\mathbf{w})
+\]
+</span>
+
+<p>Let <span>
+  \(\nabla L(\mathbf{w})\)
+</span>
+ be the <strong>gradient vector</strong>, where each element is the partial derivative of the loss fucntion wrt each parameter.</p>
+<p>The gradient vector points in the direction of the greatest rate of increase of the loss function.</p>
+<p>So to mimimize the loss function we take small steps in the direction of <span>
+  \(-\nabla L(\mathbf{w})\)
+</span>
+.</p>
+<p>At the mimimum <span>
+  \(\nabla L(\mathbf{w})=0\)
+</span>
+.</p>
+<p><span>
+  \(\nabla L(\mathbf{w})=0\)
+</span>
+.</p>
+<details ><summary>Stationary points</summary>
+  <div class="markdown-inner">
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\nabla L(\mathbf{w})=0\)
+</span>
+ are knows as stationary points, which can be either a minima, maxima or a saddle point. The necessary and sufficient condition for a local minima is
+<ol>
+<li>The gradient of the loss function should be zero.</li>
+<li>The Hessian matrix should be positive definite.</li>
+</ol>
+  </div>
+</details>
+<blockquote class="book-hint info">
+<p>For now we will assume the gradient is given. For deep neural networks the gradient can be computed efficiently via <a href="/docs/training/backpropagation/"><strong>backpropagation</strong></a> (which we will revisit later).</p>
+</blockquote>
+<h3 id="batch-gradient-descent">
+  Batch Gradient Descent
+  <a class="anchor" href="#batch-gradient-descent">#</a>
+</h3>
+<p>We take a small step in the direction of the <strong>negative gradient</strong>.</p>
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1} - \eta \nabla L(\mathbf{w}^{t-1})
+\]
+</span>
+
+<p>The parameter <span>
+  \(\eta > 0\)
+</span>
+ is called the <strong>learning rate</strong> and determines the step size at each iteration.</p>
+<p>This update is repeated multiple times (till covergence).</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span>
+</span></span></code></pre></div><p>Each step requires that the <strong>entire training data</strong> be processed to compute the gradient <span>
+  \(\nabla L(\mathbf{w}^{t-1})\)
+</span>
+. For large datasets this is not comptationally efficient.</p>
+<h3 id="stochastic-gradient-descent">
+  Stochastic Gradient Descent
+  <a class="anchor" href="#stochastic-gradient-descent">#</a>
+</h3>
+<p>In general most loss functions can be written as sum over each training instance.
+<span>
+  \[
+L(\mathbf{w}) = \sum_{i=1}^{N} L_i(\mathbf{w})
+\]
+</span>
+</p>
+<p>In Stochastic Gradient Descent (SGD) we update the parameters <strong>one data point at a time</strong>.
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1} - \eta \nabla L_i(\mathbf{w}^{t-1})
+\]
+</span>
+</p>
+<blockquote>
+<p>A complete passthrough of the whole dataset is called an <strong>epoch</strong>. Training is done for multiple epochs depending on the size of the dataset.</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">i</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_data</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">data</span><span style="color:#111">[</span><span style="color:#111">i</span><span style="color:#111">],</span> <span style="color:#111">w</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span>
+</span></span></code></pre></div><ul>
+<li>SGD is much faster and more computationally efficient, but it has noise in the estimation of the gradient.</li>
+<li>Since it updates the weight frequently, it can lead to big oscillations and that makes the training process highly unstable.</li>
+</ul>
+<blockquote class="book-hint warning">
+<p>Bottou, L. (2010). <a href="https://leon.bottou.org/publications/pdf/compstat-2010.pdf">Large-Scale Machine Learning with Stochastic Gradient Descent</a>. In: Lechevallier, Y., Saporta, G. (eds) Proceedings of COMPSTAT'2010. Physica-Verlag HD.</p>
+</blockquote>
+<h3 id="mini-batch-stochastic-gradient-descent">
+  Mini-batch Stochastic Gradient Descent
+  <a class="anchor" href="#mini-batch-stochastic-gradient-descent">#</a>
+</h3>
+<p>Using a single example results in a very noisy estimate of the gradient. So we use a small random subset of data called <strong>mini-batch</strong> of size B (<strong>batch size</strong>) to compute the gradient.</p>
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1} - \eta \nabla L_{batch}(\mathbf{w}^{t-1})
+\]
+</span>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">mini_batch</span> <span style="color:#f92672">in</span> <span style="color:#111">get_batches</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">mini_batch</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/generated/torch.optim.SGD.html#torch.optim.SGD"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">SGD</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1e-3</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint info">
+<p>Mini-batch SGD is the most commonly used method and is sometimes refered to as just SGD.</p>
+<ul>
+<li>Typical choices of the batch size are B=32,64,128,256,..</li>
+<li>In practice we do a random shuffle of the data per epoch.</li>
+</ul>
+<p>In practice, mini-batch SGD is the most frequently used variation because it is both computationally cheap and results in more robust convergence.</p>
+</blockquote>
+<h2 id="adding-momentum">
+  Adding momentum
+  <a class="anchor" href="#adding-momentum">#</a>
+</h2>
+<p>One of the basic improvements over SGD comes from adding a <strong>momentum</strong> term.</p>
+<p>At every time step, we update <strong>velocity</strong> by decaying the previous velocity by a factor of <span>
+  \(0 \leq \mu \leq 1\)
+</span>
+ (called the <strong>momentum</strong> parameter) and adding the current gradient update.
+<span>
+  \[
+\mathbf{v}^{t-1} \leftarrow \mu \mathbf{v}^{t-2} - \eta \nabla L(\mathbf{w}^{t-1})
+\]
+</span>
+
+Then, we update our weights in the direction of the velocity vector.
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1} + \mathbf{v}^{t-1}
+\]
+</span>
+</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">mini_batch</span> <span style="color:#f92672">in</span> <span style="color:#111">get_batches</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">mini_batch</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span> <span style="color:#75715e"># gradient</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">v</span> <span style="color:#f92672">=</span> <span style="color:#111">momentum</span> <span style="color:#f92672">*</span> <span style="color:#111">v</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span> <span style="color:#75715e"># velocity</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">+</span> <span style="color:#111">v</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/generated/torch.optim.SGD.html#torch.optim.SGD"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">SGD</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span><span style="color:#111">,</span> <span style="color:#111">momentum</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.9</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint info">
+<p>We now have two hyper-parameters learnign rate and momentum. Typically we set the momentum parameter to 0.9.</p>
+</blockquote>
+<details ><summary>Effective learning rate</summary>
+  <div class="markdown-inner">
+<span>
+  \(\)
+</span>
+ One interpretation of momentum to increase the effective learning rate from <span>
+  \(\eta\)
+</span>
+ to <span>
+  \(\frac{\eta}{(1-\mu)}\)
+</span>
+. If we make the approximation that the gradient is unchanging then
+<span>
+  \[
+ -\eta \nabla L \{1+\mu+\mu^2+...\} = - \frac{\eta}{1-\mu} \nabla L
+\]
+</span>
+By contrast, in a region of high curvature in which gradient descent is oscillatory, successive contributions from the momentum term will tend to cancel and effective learning rate will be close to <span>
+  \(\eta\)
+</span>
+.
+  </div>
+</details>
+<ul>
+<li>We can now escape local minima or saddle points because we keep moving downwards even though the gradient of the mini-batch might be zero.</li>
+<li>Momentum can also help us reduce the oscillation of the gradients because the velocity vectors can smooth out these highly changing landscapes.</li>
+<li>It reduces the noise of the gradients and follows a more direct walk down the landscape.</li>
+</ul>
+<blockquote class="book-hint warning">
+<p>Ilya Sutskever, James Martens, George Dahl, and Geoffrey Hinton. 2013. <a href="https://dl.acm.org/doi/10.5555/3042817.3043064">On the importance of initialization and momentum in deep learning.</a> In Proceedings of the 30th International Conference on International Conference on Machine Learning - Volume 28 (ICML'13). JMLR.org, III–1139–III–1147.</p>
+</blockquote>
+<h2 id="adaptive-learning-rates">
+  Adaptive Learning Rates
+  <a class="anchor" href="#adaptive-learning-rates">#</a>
+</h2>
+<p>Different learning rate for each parameter.</p>
+<h3 id="adagrad">
+  Adagrad
+  <a class="anchor" href="#adagrad">#</a>
+</h3>
+<blockquote>
+<p>Adaptive gradient.</p></blockquote>
+<p>AdaGrad reduces each learning rate parameter over time by using the accumulated sum of squares of all the derivates calculated for that parameter.
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1}  - \frac{\eta}{\sqrt{\mathbf{r}^{t}}+\delta} \odot \nabla L(\mathbf{w}^{t-1})
+\]
+</span>
+
+where <span>
+  \(\mathbf{r}^t\)
+</span>
+ is the running sum of the squares of the gradients and <span>
+  \(\delta\)
+</span>
+ is a small constant to ensure numerical stability.
+<span>
+  \[
+\mathbf{r}^t = \mathbf{r}^{t-1} + \left(\nabla L(\mathbf{w}^{t})\right)^2
+\]
+</span>
+</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">mini_batch</span> <span style="color:#f92672">in</span> <span style="color:#111">get_batches</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">mini_batch</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span> <span style="color:#75715e"># gradient</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">r</span> <span style="color:#f92672">+=</span> <span style="color:#111">dw</span><span style="color:#f92672">*</span><span style="color:#111">dw</span> <span style="color:#75715e"># Accumulated squared gradients</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span> <span style="color:#f92672">/</span> <span style="color:#111">(</span><span style="color:#111">r</span><span style="color:#f92672">.</span><span style="color:#111">sqrt</span><span style="color:#111">()</span> <span style="color:#f92672">+</span> <span style="color:#111">delta</span><span style="color:#111">)</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/generated/torch.optim.Adagrad.html#torch.optim.Adagrad"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">Adagrad</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span><span style="color:#111">,</span> <span style="color:#111">eps</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1e-10</span><span style="color:#111">)</span>
+</span></span></code></pre></div><p>We can see that when the gradient is changing very fast, the learning rate will be smaller. When the gradient is changing slowly, the learning rate will be bigger.</p>
+<p>A drawback of Adagrad is that as time goes by, the learning rate becomes smaller and smaller due to the monotonic increment of the running squared sum.</p>
+<blockquote class="book-hint warning">
+<p>John Duchi, Elad Hazan, and Yoram Singer. 2011. <a href="https://dl.acm.org/doi/pdf/10.5555/1953048.2021068">Adaptive Subgradient Methods for Online Learning and Stochastic Optimization</a>. J. Mach. Learn. Res. 12, null (2/1/2011), 2121–2159.</p>
+</blockquote>
+<h3 id="rmsprop">
+  RMSProp
+  <a class="anchor" href="#rmsprop">#</a>
+</h3>
+<blockquote>
+<p>Root Mean Square Propagation, Leaky AdaGrad</p></blockquote>
+<p>Since AdaGrad accumulates the squared gradients from the beginning, the associatied weight updates can become very small as training progresses.</p>
+<p>RMSProp essentially replaces it with an <strong>exponentialy weighted average</strong>.
+<span>
+  \[
+\mathbf{r}^t = \alpha \mathbf{r}^{t-1} + (1-\alpha) \left(\nabla L(\mathbf{w}^{t})\right)^2
+\]
+</span>
+
+where <span>
+  \(0 < \alpha < 1\)
+</span>
+.
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1}  - \frac{\eta}{\sqrt{\mathbf{r}^{t}}+\delta} \odot \nabla L(\mathbf{w}^{t-1})
+\]
+</span>
+</p>
+<blockquote class="book-hint info">
+<span>
+  \(\)
+</span>
+Typically we set the <span>
+  \(\alpha=0.9\)
+</span>
+.
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">mini_batch</span> <span style="color:#f92672">in</span> <span style="color:#111">get_batches</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">mini_batch</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span> <span style="color:#75715e"># gradient</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">r</span> <span style="color:#f92672">+=</span> <span style="color:#111">alpha</span> <span style="color:#f92672">*</span> <span style="color:#111">r</span> <span style="color:#f92672">+</span> <span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#111">alpha</span><span style="color:#111">)</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span><span style="color:#f92672">*</span><span style="color:#111">dw</span> <span style="color:#75715e"># Accumulated squared gradients</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span> <span style="color:#f92672">/</span> <span style="color:#111">(</span><span style="color:#111">r</span><span style="color:#f92672">.</span><span style="color:#111">sqrt</span><span style="color:#111">()</span> <span style="color:#f92672">+</span> <span style="color:#111">delta</span><span style="color:#111">)</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/generated/torch.optim.RMSprop.html#torch.optim.RMSprop"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">RMSProp</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span><span style="color:#111">,</span> <span style="color:#111">alpha</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.99</span><span style="color:#111">,</span> <span style="color:#111">eps</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1e-8</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint warning">
+<p>Hinton, 2012. Neural Networks for Machine Learning. <a href="https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf">Lecture 6a</a>.</p>
+</blockquote>
+<h3 id="adam">
+  Adam
+  <a class="anchor" href="#adam">#</a>
+</h3>
+<blockquote>
+<p>Adaptive moments.</p></blockquote>
+<p>If we combine RMSProp with momentum we ontain the most popular Adam optimization method.</p>
+<p>Adam maintains an exponentially weighted average of the first and the second moments.
+<span>
+  \[
+\mathbf{s}^t = \beta_1 \mathbf{s}^{t-1} + (1-\beta_1) \left(\nabla L(\mathbf{w}^{t})\right)
+\]
+</span>
+
+<span>
+  \[
+\mathbf{r}^t = \beta_2 \mathbf{r}^{t-1} + (1-\beta_2) \left(\nabla L(\mathbf{w}^{t})\right)^2
+\]
+</span>
+
+We correct for the bias introduced by initializing <span>
+  \(\mathbf{s}^0\)
+</span>
+ and <span>
+  \(\mathbf{r}^0\)
+</span>
+ to zero.
+<span>
+  \[
+\hat{\mathbf{s}}^t = \frac{\mathbf{s}^t}{1-\beta_1^t}
+\]
+</span>
+
+<span>
+  \[
+\hat{\mathbf{r}}^t = \frac{\mathbf{r}^t}{1-\beta_2^t}
+\]
+</span>
+
+The updates are given as follows.
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1}  - \frac{\eta}{\sqrt{\hat{\mathbf{r}}^{t}}+\delta} \odot \hat{\mathbf{s}}^t
+\]
+</span>
+</p>
+<blockquote class="book-hint info">
+<span>
+  \(\)
+</span>
+Typically we set the <span>
+  \(\beta_1=0.9\)
+</span>
+ and <span>
+  \(\beta_2=0.99\)
+</span>
+.
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">for</span> <span style="color:#111">epoch</span> <span style="color:#f92672">in</span> <span style="color:#111">range</span><span style="color:#111">(</span><span style="color:#111">n_epochs</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">for</span> <span style="color:#111">mini_batch</span> <span style="color:#f92672">in</span> <span style="color:#111">get_batches</span><span style="color:#111">(</span><span style="color:#111">data</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">dw</span> <span style="color:#f92672">=</span> <span style="color:#111">gradient</span><span style="color:#111">(</span><span style="color:#111">loss</span><span style="color:#111">,</span> <span style="color:#111">mini_batch</span><span style="color:#111">,</span> <span style="color:#111">w</span><span style="color:#111">)</span> <span style="color:#75715e"># gradient</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">s</span> <span style="color:#f92672">+=</span> <span style="color:#111">beta1</span> <span style="color:#f92672">*</span> <span style="color:#111">s</span> <span style="color:#f92672">+</span> <span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#111">beta1</span><span style="color:#111">)</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span> <span style="color:#75715e"># Accumulated gradients</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">r</span> <span style="color:#f92672">+=</span> <span style="color:#111">beta2</span> <span style="color:#f92672">*</span> <span style="color:#111">r</span> <span style="color:#f92672">+</span> <span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#111">beta2</span><span style="color:#111">)</span> <span style="color:#f92672">*</span> <span style="color:#111">dw</span><span style="color:#f92672">*</span><span style="color:#111">dw</span> <span style="color:#75715e"># Accumulated squared gradients</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">s_hat</span> <span style="color:#f92672">=</span> <span style="color:#111">s</span> <span style="color:#f92672">/</span><span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#111">beta1</span><span style="color:#f92672">**</span><span style="color:#111">t</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">r_hat</span> <span style="color:#f92672">=</span> <span style="color:#111">r</span> <span style="color:#f92672">/</span><span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#111">beta2</span><span style="color:#f92672">**</span><span style="color:#111">t</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">w</span> <span style="color:#f92672">=</span> <span style="color:#111">w</span> <span style="color:#f92672">-</span> <span style="color:#111">lr</span> <span style="color:#f92672">*</span> <span style="color:#111">s_hat</span> <span style="color:#f92672">/</span> <span style="color:#111">(</span><span style="color:#111">r_hat</span><span style="color:#f92672">.</span><span style="color:#111">sqrt</span><span style="color:#111">()</span> <span style="color:#f92672">+</span> <span style="color:#111">delta</span><span style="color:#111">)</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">Adam</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.001</span><span style="color:#111">,</span> <span style="color:#111">betas</span><span style="color:#f92672">=</span><span style="color:#111">(</span><span style="color:#ae81ff">0.9</span><span style="color:#111">,</span><span style="color:#ae81ff">0.99</span><span style="color:#111">),</span> <span style="color:#111">eps</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1e-08</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint warning">
+<p>Kingma, D.P. and Ba, J., 2014. <a href="https://arxiv.org/abs/1412.6980">Adam: A method for stochastic optimization</a>. arXiv preprint arXiv:1412.6980.</p>
+</blockquote>
+<h3 id="adamw">
+  AdamW
+  <a class="anchor" href="#adamw">#</a>
+</h3>
+<p>AdamW proposes a modification to Adam that improves regularization by adding <strong>weight decay</strong>. At each iteration we pull the parameters towards zero.</p>
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t}  - \eta \lambda \mathbf{w}^{t}
+\]
+</span>
+
+<a  href="https://pytorch.org/docs/stable/generated/torch.optim.AdamW.html#torch.optim.AdamW"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">AdamW</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.001</span><span style="color:#111">,</span> <span style="color:#111">betas</span><span style="color:#f92672">=</span><span style="color:#111">(</span><span style="color:#ae81ff">0.9</span><span style="color:#111">,</span><span style="color:#ae81ff">0.99</span><span style="color:#111">),</span> <span style="color:#111">eps</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1e-08</span><span style="color:#111">,</span> <span style="color:#111">weight_decay</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint warning">
+<p>Ilya Loshchilov, Frank Hutter, <a href="https://arxiv.org/abs/1711.05101">Decoupled Weight Decay Regularization</a>, ICLR 2019.</p>
+</blockquote>
+<blockquote class="book-hint danger">
+<p>Adam and AdamW are the most widely used optimizers.</p>
+</blockquote>
+<h2 id="learning-rate-schedule">
+  Learning rate schedule
+  <a class="anchor" href="#learning-rate-schedule">#</a>
+</h2>
+<p>A small learning rate leads to slow convergence while a large learning rate leads to instability (due to divergent oscillations).</p>
+<p>In practice we start with a large learning rate and  and then reduce itover time.</p>
+<span>
+  \[
+\mathbf{w}^t \leftarrow \mathbf{w}^{t-1} - \eta \nabla^{t-1} L(\mathbf{w}^{t-1})
+\]
+</span>
+
+<div class="book-tabs">
+<input type="radio" class="toggle" name="tabs-52" id="tabs-52-0" checked="checked" />
+<label for="tabs-52-0">Linear</label>
+<div class="book-tabs-content markdown-inner"><span>
+  \[
+\mathbf{\eta}^t = \left(1-\frac{t}{K}\right) \mathbf{\eta}^0 + \left(\frac{t}{K}\right) \mathbf{\eta}^K
+\]
+</span>
+<p>The learning rate reduces linearly over K steps, after which its value is held constant.</p>
+</div>
+<input type="radio" class="toggle" name="tabs-52" id="tabs-52-1"  />
+<label for="tabs-52-1">Power</label>
+<div class="book-tabs-content markdown-inner"><span>
+  \[
+\mathbf{\eta}^t = \mathbf{\eta}^0 \left(1+\frac{t}{s}\right)^c
+\]
+</span>
+</div>
+<input type="radio" class="toggle" name="tabs-52" id="tabs-52-2"  />
+<label for="tabs-52-2">Exponential</label>
+<div class="book-tabs-content markdown-inner"><span>
+  \[
+\mathbf{\eta}^t = \mathbf{\eta}^0 c^\frac{t}{s}\]
+</span>
+</div>
+</div>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch.optim</span> <span style="color:#f92672">import</span> <span style="color:#111">SGD</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch.optim.lr_scheduler</span> <span style="color:#f92672">import</span> <span style="color:#111">ExponentialLR</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">optimizer</span> <span style="color:#f92672">=</span> <span style="color:#111">SGD</span><span style="color:#111">(</span><span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">parameters</span><span style="color:#111">(),</span> <span style="color:#111">lr</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span><span style="color:#111">,</span> <span style="color:#111">momentum</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.9</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">scheduler</span> <span style="color:#f92672">=</span> <span style="color:#111">ExponentialLR</span><span style="color:#111">(</span><span style="color:#111">optimizer</span><span style="color:#111">,</span> <span style="color:#111">gamma</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.9</span><span style="color:#111">)</span>
+</span></span></code></pre></div><a  href="https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<h2 id="learning-curve">
+  Learning Curve
+  <a class="anchor" href="#learning-curve">#</a>
+</h2>
+<p>Track the learning curve.</p>
+<h2 id="parameter-initialization">
+  Parameter initialization
+  <a class="anchor" href="#parameter-initialization">#</a>
+</h2>
+<p>Initialization before starting the gradient descent.</p>
+<p>Avoid all parameters set to same value. (<strong>symmetry breaking</strong>)</p>
+<p>Uniform distribution in the range <span>
+  \([-\epsilon,\epsilon]\)
+</span>
+</p>
+<p>Zero-mean Gaussian <span>
+  \(\mathcal{N}(0,\epsilon^2)\)
+</span>
+</p>
+<a  href="https://pytorch.org/docs/stable/nn.init.html"   target="_blank" rel="noopener"  class="book-btn">nn.init</a>
+
+<h2 id="collateral">
+  Collateral
+  <a class="anchor" href="#collateral">#</a>
+</h2>
+<ul>
+<li><a href="https://pytorch.org/docs/stable/optim.html">https://pytorch.org/docs/stable/optim.html</a></li>
+</ul>
+<p><img src="https://cdn-images-1.medium.com/v2/resize:fit:1000/1*Nb39bHHUWGXqgisr2WcLGQ.gif" alt="image" /></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#gradient-descent">Gradient Descent</a>
+      <ul>
+        <li><a href="#batch-gradient-descent">Batch Gradient Descent</a></li>
+        <li><a href="#stochastic-gradient-descent">Stochastic Gradient Descent</a></li>
+        <li><a href="#mini-batch-stochastic-gradient-descent">Mini-batch Stochastic Gradient Descent</a></li>
+      </ul>
+    </li>
+    <li><a href="#adding-momentum">Adding momentum</a></li>
+    <li><a href="#adaptive-learning-rates">Adaptive Learning Rates</a>
+      <ul>
+        <li><a href="#adagrad">Adagrad</a></li>
+        <li><a href="#rmsprop">RMSProp</a></li>
+        <li><a href="#adam">Adam</a></li>
+        <li><a href="#adamw">AdamW</a></li>
+      </ul>
+    </li>
+    <li><a href="#learning-rate-schedule">Learning rate schedule</a></li>
+    <li><a href="#learning-curve">Learning Curve</a></li>
+    <li><a href="#parameter-initialization">Parameter initialization</a></li>
+    <li><a href="#collateral">Collateral</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

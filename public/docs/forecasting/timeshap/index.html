@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  TimeSHAP
+  #
+
+code
+
+API docs
+
+example
+
+notebook
+
+
+  
+TimeSHAP is a feature based post-hoc black box explainer to explain the forecast
+of any univariate time series forecaster using tree-based regressors to build the
+surrogate model and SHAP(SHapley Additive exPlanations) values for the explanations.
+
+
+
+For any given univariate time series we first generate a sequence of backtested
+historical forecasts using an (expanding window) splitter. Using the splitter we
+split the time series into a sequence of train an test splits. The expanding window
+splitter uses more and more training data, while keeping the test window size fixed
+to the forecast horizon.  The method is model agnostic in the sense that it needs
+access to only the fit and predict methods of the forecaster. The forecaster
+is trained on the train split and evaluated on the test split and all the test split
+predictions are concatenated to get the backtested historical forecasts for each
+step of the forecast horizon. We the construct a surrogate time series forecasting
+task by reducing it to a standard supervised regression problem. For each time point
+we generate a set of interpretable features (lag features, seasonal features,
+date time encodings etc) based on which we need to predict the backtested forecasted
+time series values. The surrogate model is fitted using tree-based regressors like
+XGBoost, CatBoost,LightGBM etc. Explanation is in now in terms of features that
+encode the time series. We mainly rely on the TreeSHAP
+(SHapley Additive exPlanations) algorithm to explain the output of
+ensemble tree models. In order to improve the sensitivity we extend the above
+approach by aggregating multiple explanations from bootstrapped versions of
+the time series.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/forecasting/timeshap/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="TimeSHAP">
+  <meta property="og:description" content="TimeSHAP # code API docs example notebook TimeSHAP is a feature based post-hoc black box explainer to explain the forecast of any univariate time series forecaster using tree-based regressors to build the surrogate model and SHAP(SHapley Additive exPlanations) values for the explanations. For any given univariate time series we first generate a sequence of backtested historical forecasts using an (expanding window) splitter. Using the splitter we split the time series into a sequence of train an test splits. The expanding window splitter uses more and more training data, while keeping the test window size fixed to the forecast horizon. The method is model agnostic in the sense that it needs access to only the fit and predict methods of the forecaster. The forecaster is trained on the train split and evaluated on the test split and all the test split predictions are concatenated to get the backtested historical forecasts for each step of the forecast horizon. We the construct a surrogate time series forecasting task by reducing it to a standard supervised regression problem. For each time point we generate a set of interpretable features (lag features, seasonal features, date time encodings etc) based on which we need to predict the backtested forecasted time series values. The surrogate model is fitted using tree-based regressors like XGBoost, CatBoost,LightGBM etc. Explanation is in now in terms of features that encode the time series. We mainly rely on the TreeSHAP (SHapley Additive exPlanations) algorithm to explain the output of ensemble tree models. In order to improve the sensitivity we extend the above approach by aggregating multiple explanations from bootstrapped versions of the time series.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>TimeSHAP | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/forecasting/timeshap/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4e8b6fd3018f73a98c035abd6cf687f8a632553bd6023134924477646d355071.js" integrity="sha256-Totv0wGPc6mMA1q9bPaH&#43;KYyVTvWAjE0kkR3ZG01UHE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="active">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/accuracy-metrics/" class="">Accuracy metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/prediction-interval/" class="">Prediction interval</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>TimeSHAP</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#time-series-forecasting">Time series forecasting</a></li>
+    <li><a href="#explainability-for-forecasting">Explainability for forecasting</a>
+      <ul>
+        <li><a href="#scope-of-explanations">Scope of explanations</a></li>
+        <li><a href="#type-of-explanations">Type of explanations</a></li>
+        <li><a href="#type-of-explainers">Type of explainers</a></li>
+      </ul>
+    </li>
+    <li><a href="#timeshap-1">TimeSHAP</a>
+      <ul>
+        <li><a href="#surrogate-model">Surrogate model</a></li>
+        <li><a href="#backtested-historical-forecasts">Backtested historical forecasts</a></li>
+        <li><a href="#regressor-reduction">Regressor reduction</a></li>
+        <li><a href="#interpretable-features">Interpretable features</a></li>
+        <li><a href="#multi-step-forecasting">Multi-step forecasting</a></li>
+        <li><a href="#tree-ensemble-regressors">Tree ensemble regressors</a></li>
+        <li><a href="#shapley-additive-explanations">SHapley Additive exPlanations</a></li>
+      </ul>
+    </li>
+    <li><a href="#global-explanations">Global explanations</a>
+      <ul>
+        <li><a href="#shap-feature-importance">SHAP feature importance</a></li>
+        <li><a href="#feature-importance">Feature importance</a></li>
+        <li><a href="#partial-dependence-plot">Partial dependence plot</a></li>
+        <li><a href="#shap-dependence-plot">SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#local-explanations">Local explanations</a>
+      <ul>
+        <li><a href="#shap-explanation">SHAP explanation</a></li>
+        <li><a href="#local-partial-dependence-plot">Local partial dependence plot</a></li>
+        <li><a href="#local-shap-dependence-plot">Local SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#semi-local-explanations">Semi-local explanations</a>
+      <ul>
+        <li><a href="#shap-feature-importance-1">SHAP feature importance</a></li>
+        <li><a href="#partial-dependence-plot-1">Partial dependence plot</a></li>
+        <li><a href="#shap-dependence-plot-1">SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#explaining-prediction-intervals">Explaining prediction intervals</a></li>
+    <li><a href="#bootstrapped-ensemble">Bootstrapped ensemble</a></li>
+    <li><a href="#examples">Examples</a>
+      <ul>
+        <li><a href="#naive">Naive</a></li>
+        <li><a href="#seasonalnaive">SeasonalNaive</a></li>
+        <li><a href="#movingaverage">MovingAverage</a></li>
+        <li><a href="#simple-exponential-smoothing">Simple Exponential Smoothing</a></li>
+        <li><a href="#prophet">Prophet</a></li>
+        <li><a href="#xgboost">XGBoost</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="timeshap">
+  TimeSHAP
+  <a class="anchor" href="#timeshap">#</a>
+</h1>
+<p><a  href="https://github.ibm.com/srom/aix360ts/tree/master/aix360ts/forecasting/explainers/_TimeSHAP"   target="_blank" rel="noopener"  class="book-btn">code</a>
+
+<a  href="https://pages.github.ibm.com/srom/aix360ts/aix360ts.forecasting.explainers.html"   target="_blank" rel="noopener"  class="book-btn">API docs</a>
+
+<a  href="https://github.ibm.com/srom/aix360ts/blob/master/examples/forecasting/explainers/TimeSHAP.py"   target="_blank" rel="noopener"  class="book-btn">example</a>
+
+<a  href="https://pages.github.ibm.com/srom/aix360ts/notebooks/TimeSHAP.html"   target="_blank" rel="noopener"  class="book-btn">notebook</a>
+</p>
+<blockquote class="book-hint info">
+  
+TimeSHAP is a feature based post-hoc black box explainer to explain the forecast
+of any univariate time series forecaster using tree-based regressors to build the
+surrogate model and SHAP(SHapley Additive exPlanations) values for the explanations.
+
+</blockquote>
+
+<p>For any given univariate time series we first generate a sequence of backtested
+historical forecasts using an (expanding window) splitter. Using the splitter we
+split the time series into a sequence of train an test splits. The expanding window
+splitter uses more and more training data, while keeping the test window size fixed
+to the forecast horizon.  The method is model agnostic in the sense that it needs
+access to only the <code>fit</code> and <code>predict</code> methods of the forecaster. The forecaster
+is trained on the train split and evaluated on the test split and all the test split
+predictions are concatenated to get the backtested historical forecasts for each
+step of the forecast horizon. We the construct a surrogate time series forecasting
+task by reducing it to a standard supervised regression problem. For each time point
+we generate a set of interpretable features (lag features, seasonal features,
+date time encodings etc) based on which we need to predict the backtested forecasted
+time series values. The surrogate model is fitted using tree-based regressors like
+XGBoost, CatBoost,LightGBM etc. Explanation is in now in terms of features that
+encode the time series. We mainly rely on the TreeSHAP
+(SHapley Additive exPlanations) algorithm to explain the output of
+ensemble tree models. In order to improve the sensitivity we extend the above
+approach by aggregating multiple explanations from bootstrapped versions of
+the time series.</p>
+<h2 id="time-series-forecasting">
+  Time series forecasting
+  <a class="anchor" href="#time-series-forecasting">#</a>
+</h2>
+<p>A univariate time series is a series with a single time-dependent variable. Let 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(f(t):\mathbb{Z}\to\mathbb{R}^1\)
+</span>
+ represent a latent <strong>univariate time series</strong> for any discrete time index <span>
+  \(t \in \mathbb{Z}\)
+</span>
+. We observe a sequence of historical <em>noisy</em> (and potentially missing) values <span>
+  \(y(t)\)
+</span>
+ for <span>
+  \(t \in [1,\dots,T]\)
+</span>
+  such that in expectation <span>
+  \(\mathbb{E}[y(t)]=f(t)\)
+</span>
+. For example, in the retail domain <span>
+  \(y(t)\)
+</span>
+ could represent the daily sales of a product and <span>
+  \(f(t)\)
+</span>
+ the true latent demand for the product.</p>
+<p>The task of <strong>time series forecasting</strong> is to estimate <span>
+  \(f(t)\)
+</span>
+ for all <span>
+  \(t >T\)
+</span>
+ based on the observed historical time series <span>
+  \(y(t)\)
+</span>
+ for <span>
+  \(t \in [1,\dots,T]\)
+</span>
+. When we talk about the <em>forecast</em>, we usually mean the average value of the forecast distribution also known as the <strong>point forecast</strong>, <span>
+  \(f(t)\)
+</span>
+, which is the <strong>mean</strong> (<span>
+  \(\mathbb{E}[y(t)]\)
+</span>
+) of the forecast distribution. The time series forecast is typically done for a fixed number or periods in the future, refered to as the <strong>forecast horizon</strong>, <span>
+  \(h\)
+</span>
+. Let <span>
+  \(\hat{f}(T+h)\)
+</span>
+ for <span>
+  \(h \in [1,\dots,H]\)
+</span>
+ be the forecasted time series for the forecast horizon <span>
+  \(h\)
+</span>
+ based on the historical observed time series <span>
+  \(y(1),...,y(T)\)
+</span>
+.
+<span>
+  \(
+\textbf{forecaster model}\:\:\hat{f}(T+h|y(1),...,y(T))\:\text{for}\:h=1,...,H
+\)
+</span>
+</p>
+<blockquote>
+<p>Using the language of supervised learning, <span>
+  \(y(1),...,y(T)\)
+</span>
+ is the training data of <span>
+  \(T\)
+</span>
+ samples based on which we learn/train a forecaster model <span>
+  \(\hat{f}\)
+</span>
+. The trained model <span>
+  \(\hat{f}\)
+</span>
+ is then used to predict/forecast on the test set of <span>
+  \(H\)
+</span>
+ time points in the future. Unlike supervised learing where the model is usually fit once in time series forecasting for many algorithms we will have to continously fit the model before forecasting as more recent data arrives.</p></blockquote>
+<p><img src="/img/timeshap_dataset.jpg" alt="dataset" /></p>
+<h2 id="explainability-for-forecasting">
+  Explainability for forecasting
+  <a class="anchor" href="#explainability-for-forecasting">#</a>
+</h2>
+<p><strong>Explainability</strong> is the degree to which a human can understand the cause of a decision (or prediction) made by a prediction model <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.Various notions of explainability (local and global explanations) and explainer algorithms has been studied in classical supervised learning paradigms like classification and regression.</p>
+<h3 id="scope-of-explanations">
+  Scope of explanations
+  <a class="anchor" href="#scope-of-explanations">#</a>
+</h3>
+<p>An explanation is the answer to either a <strong>why</strong>-question or a <strong>what if</strong>-scenario. We define the following three notions of <strong>explanations</strong> in the context of time series forecasting.</p>
+<ol>
+<li>A <strong>local explantion</strong> explains the forecast made by a forecaster at a certain point in time.
+<ul>
+<li><em>Why is the forecasted sales on July 22, 2019 much higher than the average sales?</em></li>
+<li><em>Will the forecast increase if I increase the offered discount?</em></li>
+</ul>
+</li>
+<li>A <strong>global explanation</strong>  explains the forecaster trained on the historical time series.
+<ul>
+<li><em>What are the most important attributes the forecaster relies on to make the forecast?</em></li>
+<li><em>What is the impact of diccount on the sales forecast?</em></li>
+</ul>
+</li>
+<li>A <strong>semi-local explanation</strong> explains the overall forecast made by a forecaster in a certain time interval. In general this returns <strong>one</strong> (semi-local) explanation aggregated over all the multiple time steps in the forecast horizon.
+<ul>
+<li><em>Why is the forecasted sales over the next 4 weeks much higher?</em></li>
+</ul>
+</li>
+</ol>
+<h3 id="type-of-explanations">
+  Type of explanations
+  <a class="anchor" href="#type-of-explanations">#</a>
+</h3>
+<p>In the context of time series the explanations can boradly of the following two types.</p>
+<ol>
+<li><strong>Features based</strong> Explanation is in terms of features that encode the time series (lag features, date encodings etc.) and external regressors.</li>
+<li><strong>Instance based</strong> Explanation is in terms of the importance or certain time points in the historical time series.</li>
+</ol>
+<h3 id="type-of-explainers">
+  Type of explainers
+  <a class="anchor" href="#type-of-explainers">#</a>
+</h3>
+<p>An <strong>explainer</strong> is an algorithm the generates local, semi-local and global explanations for a forecasting algorithm. We can boradly categorize explainers into the following 3 types.</p>
+<ol>
+<li><strong>Directly interpretable explainers</strong>  Some time series forecasting algorithms are inherently interpretable by desgin. For example, for an autoregressive model of order <span>
+  \(p\)
+</span>
+ (<span>
+  \(AR(p)\)
+</span>
+) the coefficients correponds to the importance associated with the past <span>
+  \(p\)
+</span>
+ values of the time series. Another example is, Prophet which uses a decomposable additive time series model with three main model components: trend, seasonality, and holidays. The explanation is directly in terms of these 3 components.</li>
+<li><strong>White-box explainers</strong> Though not directly interpretable, some forecasting algorithms can be explained if we have access to the internals of the corresponding forecasting algorithm. For example, for deep neural forecasting algorithms if we have access to the model we can compute saliency maps and activations to explain the inner working of the model. Tree based regression ensembles like XGBoost, CatBoost and LightGBM gprovide global explanations in terms of the feature importance scores.</li>
+<li><strong>Black-box explainers</strong>  Such explainers are model agnostic and generally require access to model&rsquo;s <code>predict</code> (and sometimes <code>fit</code>) functions. Given a source black box model, such explainers generally train a surrogate model that is explainable.</li>
+</ol>
+<h2 id="timeshap-1">
+  TimeSHAP
+  <a class="anchor" href="#timeshap-1">#</a>
+</h2>
+<blockquote class="book-hint info">
+  
+TimeSHAP is a feature based post-hoc black box explainer to explain the forecast
+of any univariate time series forecaster using tree-based regressors to build the
+surrogate model and SHAP(SHapley Additive exPlanations) values for the explanations.
+
+</blockquote>
+
+<h3 id="surrogate-model">
+  Surrogate model
+  <a class="anchor" href="#surrogate-model">#</a>
+</h3>
+<p>The method is model agnostic in the sense that it needs access to only the <code>fit</code> and <code>predict</code> methods of the forecaster.
+At any time <span>
+  \(t\)
+</span>
+ using all the historical data available so far (that its, <span>
+  \(y(1),...,y(t)\)
+</span>
+)
+we can train the forecaster model <span>
+  \(f\)
+</span>
+ using the <code>fit</code> method. Once the forecaster is trained we can
+then generate the corresponding <span>
+  \(H\)
+</span>
+(forecast horizon) forecasts
+<span>
+  \(
+f(t+h|t)=f(t+h|y(1),...,y(t))\:\text{for}\:h=1,...,H,
+\)
+</span>
+
+time steps ahead using the <code>predict</code> method. Our goal now is to learn a surrogate model(s) <span>
+  \(g\)
+</span>
+ to <strong>predict the forecasts from the forecaster</strong>.
+<span>
+  \(
+g(t+h|t)=g(t+h|y(1),...,y(t))\:\text{for}\:h=1,...,H,
+\)
+</span>
+
+While the original forecaster learns to predict <span>
+  \(y(t+h)\)
+</span>
+ based on <span>
+  \(y(1),...,y(t)\)
+</span>
+ the surrogate model is trained to predict the forecasts <span>
+  \(f(t+h)\)
+</span>
+ made by the forecaster. Essentially we want to mimic the forecaster using a surrogate model. We choose the surrogate model that can be easily interpreted.</p>
+<p><img src="/img/timeshap_surrogate.jpg" alt="recursive" /></p>
+<h3 id="backtested-historical-forecasts">
+  Backtested historical forecasts
+  <a class="anchor" href="#backtested-historical-forecasts">#</a>
+</h3>
+<p>In order to generate data to train the surrogate model we use backtesting. For any given univariate time series we first generate a sequence of backtested historical forecasts using an expanding window splitter. Using the splitter we
+split the time series into a sequence of train and test splits. The expanding window
+splitter uses more and more training data, while keeping the test window size fixed
+to the forecast horizon. The forecaster
+is trained on the train split and evaluated on the test split and all the test split
+predictions are concatenated to get the backtested historical forecasts for each
+step of the forecast horizon.</p>
+<p><img src="/img/timeshap_backtest.jpg" alt="backtest" /></p>
+<blockquote class="book-hint warning">
+  
+This is one of the most computationally expensive steps since for a time series of length <span>
+  \(n\)
+</span>
+ we will have to potentially invoke `fit` and `predict` roughly <span>
+  \(O(n)\)
+</span>
+ times to generate the backtested forecasts.
+- This can be effficiently parallelized since each task can be executed independently. In our implementation we use [ray](https://github.com/ray-project/ray) to parallelize this.
+-  For computationally expensive `fit` models it may be cheaper to forecast without full refitting. However we may need to pass the context/historical time series so far to do the forecast. Some forecasters have a light weight `update` method has the same signature as train but does not do refitting and only does minimal context updates to make the prediction.
+- Certain forecasting algorithms train one large model based on large number of multiple univariate time series. In such scenarios we completely avoid refitting the model and rely only on the `predict` method to generate the in-sample forecasts and build a surrogate model. While this avoids backtesting and can potentially overfit, since the model is trained or large number of time series this may be fine.
+
+</blockquote>
+
+<h3 id="regressor-reduction">
+  Regressor reduction
+  <a class="anchor" href="#regressor-reduction">#</a>
+</h3>
+<p>We now have an original time series and the corresponding backtested forecast time series
+for each step of the forecast horizon. The goal of the surrogate model is to learn to
+predict the backtested forecast time series based on on the original time series. We
+construct a surrogate time series forecasting task by reducing it to a standard
+supervised regression problem.</p>
+<p>A common machine learning approach to time series forecasting is to reduce it to a standard <strong>supervised regression</strong> problem. A standard supervised regression task takes as input a <span>
+  \(d\)
+</span>
+-dimensional feature vector <span>
+  \(\mathbf{x}\in\mathbb{R}^d\)
+</span>
+ and predicts a scalar <span>
+  \(y \in \mathbb{R}\)
+</span>
+. The regressor <span>
+  \(y = f(\mathbf{x})\)
+</span>
+ is learnt based on a labelled training dataset <span>
+  \(\left(\mathbf{x}_i,y_i\right)\)
+</span>
+, for <span>
+  \(i=1,..,n\)
+</span>
+ samples. However there is no direct concept of input features (<span>
+  \(\mathbf{x}\)
+</span>
+) and output target (<span>
+  \(y\)
+</span>
+) for a time series. Instead, we must choose the backtested time series forecast values as the variable to be predicted and use various time series feature engineering techniques (like lag features, date time encodings etc.) to construct the features from the original time series.</p>
+<h3 id="interpretable-features">
+  Interpretable features
+  <a class="anchor" href="#interpretable-features">#</a>
+</h3>
+<p>Essentially, for each time point <span>
+  \(t\)
+</span>
+ we generate a feature vector <span>
+  \(\mathbf{x}(t) \in\mathbb{R}^d\)
+</span>
+ based on the original time series values  observed so far based on which we need to predict the backtested forecast time series for each step in the forecast horizon <span>
+  \(y(t) \in\mathbb{R}\)
+</span>
+. The table below is a list of features we use. See <a href="/docs/forecasting/features/">here</a> for more details. We generally like the features to be interpretable in the sense that the end user of the explanation should be able to comprehend the meaning of these features.</p>
+<blockquote class="book-hint warning">
+  
+The feature vector <span>
+  \(\mathbf{x}(t)\)
+</span>
+ needs to be constructed only based on the time step <span>
+  \(t\)
+</span>
+ and the historical values of the time series <span>
+  \(y(1),...,y(t-1)\)
+</span>
+ and should not use the current time series value <span>
+  \(y(t)\)
+</span>
+.
+
+</blockquote>
+
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">feature name</th>
+          <th style="text-align: left">description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">sales(t-3)</td>
+          <td style="text-align: left">The value of the time series (sales) at the (t-3) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales(t-2)</td>
+          <td style="text-align: left">The value of the time series (sales) at the (t-2) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales(t-1)</td>
+          <td style="text-align: left">The value of the time series (sales) at the (t-1) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales(t-2*365)</td>
+          <td style="text-align: left">The value of the time series (sales) at the (t-2*365) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales(t-1*365)</td>
+          <td style="text-align: left">The value of the time series (sales) at the (t-1*365) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_min(t-1,t-3)</td>
+          <td style="text-align: left">The min of the past 3 values in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_mean(t-1,t-3)</td>
+          <td style="text-align: left">The mean of the past 3 values in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_max(t-1,t-3)</td>
+          <td style="text-align: left">The max of the past 3 values in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_min(0,t-1)</td>
+          <td style="text-align: left">The min of all the values so far in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_mean(0,t-1)</td>
+          <td style="text-align: left">The mean of all the values so far in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">sales_max(0,t-1)</td>
+          <td style="text-align: left">The max of all the values so far in the sales time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">year</td>
+          <td style="text-align: left">The year.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">month</td>
+          <td style="text-align: left">The month name of the year from January to December.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">day_of_year</td>
+          <td style="text-align: left">The ordinal day of the year from 1 to 365.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">day_of_month</td>
+          <td style="text-align: left">The ordinal day of the month from 1 to 31.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">week_of_year</td>
+          <td style="text-align: left">The ordinal week of the year from 1 to 52.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">week_of_month</td>
+          <td style="text-align: left">The ordinal week of the month from 1 to 4.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">day_of_week</td>
+          <td style="text-align: left">The day of the week from Monday to Sunday.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_weekend</td>
+          <td style="text-align: left">Indicates whether the date is a weekend or not.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">quarter</td>
+          <td style="text-align: left">The ordinal quarter of the date from 1 to 4.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">season</td>
+          <td style="text-align: left">The season Spring/Summer/Fall/Winter.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">fashion_season</td>
+          <td style="text-align: left">The fashion season Spring/Summer (January to June) or Fall/Winter (July to December).</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_month_start</td>
+          <td style="text-align: left">Indicates whether the date is the first day of the month.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_month_end</td>
+          <td style="text-align: left">Indicates whether the date is the last day of the month.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_quarter_start</td>
+          <td style="text-align: left">Indicates whether the date is the first day of the quarter.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_quarter_end</td>
+          <td style="text-align: left">Indicates whether the date is the last day of the quarter.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_year_start</td>
+          <td style="text-align: left">Indicates whether the date is the first day of the year.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_year_end</td>
+          <td style="text-align: left">Indicates whether the date is the last day of the year.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">is_leap_year</td>
+          <td style="text-align: left">Indicates whether the date belongs to a leap year.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">hour</td>
+          <td style="text-align: left">The hours of the day.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">minute</td>
+          <td style="text-align: left">The minutes of the hour.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">second</td>
+          <td style="text-align: left">The seconds of the minute.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">holiday-IN</td>
+          <td style="text-align: left">Indicates whether the date is a IN holiday or not.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">t</td>
+          <td style="text-align: left">Feature to model simple polynomial (of degree 1) trend in sales.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">t^2</td>
+          <td style="text-align: left">Feature to model simple polynomial (of degree 2) trend in sales.</td>
+      </tr>
+  </tbody>
+</table>
+<blockquote class="book-hint info">
+  
+**External regressors** Classical time series forecasting algorithms esentially learn a model to forecast based on the historical values of the time series. In many domains, the value of the time series depends on several external time series which we refer to as related external regressors. For example in the retail domain, the sales is potentially influence by discount, promotion, events, weather etc. Each external regressor in itself is a time series and some methods allow to explicity include external regressors to improve forecasting. If external regressors are avaiable we can also encode them as interpretable features using similar features as above.
+
+Typically some exeternal regressors can be **forwad looking**. For example, the discount that will be used iin the future is typically planned by the retailer in advance.
+
+</blockquote>
+
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">feature name</th>
+          <th style="text-align: left">description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">discount(t-3)</td>
+          <td style="text-align: left">The value of the time series (discount) at the (t-3) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">discount(t-2)</td>
+          <td style="text-align: left">The value of the time series (discount) at the (t-2) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">discount(t-1)</td>
+          <td style="text-align: left">The value of the time series (discount) at the (t-1) previous time step.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">discount(t)</td>
+          <td style="text-align: left">The value of the time series (discount) at the current time step.</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="multi-step-forecasting">
+  Multi-step forecasting
+  <a class="anchor" href="#multi-step-forecasting">#</a>
+</h3>
+<p>In the last section we described some of the commonly used methods to transform the original time series to a set of interpretable features.
+Recall that we have <span>
+  \(H\)
+</span>
+ backtested time series forecats which are to be used as targets to learn the surrogate regressor model. Here we will desxribe common strategies<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> that can be used used for multi-step forecasting to regression reduction.</p>
+<h4 id="recursive">
+  Recursive
+  <a class="anchor" href="#recursive">#</a>
+</h4>
+<p>A <strong>single regressor model</strong> is fit for one-step-ahead forecast horizon and then called recursively to predict multiple steps ahead. Let <span>
+  \(\mathcal{G}(y(1),...,y(t))\)
+</span>
+ be the one-step ahead surrogate forecaster that has been learnt based on the training data, where the forecaster predicts the one-step ahead forecast using features based on the time series values till <span>
+  \(t\)
+</span>
+, that is, <span>
+  \(y(1),...,y(t)\)
+</span>
+. The forecasts from the surrogate models are made recusively as follows,
+<span>
+  \(
+g(t+1|t) = \mathcal{G}(y(1),...,y(t)).
+\)
+</span>
+
+For <span>
+  \(h=2,3,...,H\)
+</span>
+
+<span>
+  \(
+g(t+h|t) = \mathcal{G}(y(1),...,y(t),g(t+1|t),...,g(t+h-1|t)).
+\)
+</span>
+</p>
+<p>For example,</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">horizon</th>
+          <th style="text-align: left">forecast</th>
+          <th style="text-align: left">strategy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+1|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}(y(1),...,y(t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">2</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+2|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}(y(1),...,y(t),g(t+1|t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">h</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+h|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}(y(1),...,y(t),g(t+1|t),...,g(t+h-1|t))
+\)
+</span>
+</td>
+      </tr>
+  </tbody>
+</table>
+<blockquote class="book-hint warning">
+  
+A well-known drawback of the recursive method is its sensitivity to the estimation error, since estimated values, instead of actual ones, are more and more used when we get further in the future forecasts.
+
+</blockquote>
+
+<p><img src="/img/timeshap_recursive.jpg" alt="recursive" /></p>
+<h4 id="direct">
+  Direct
+  <a class="anchor" href="#direct">#</a>
+</h4>
+<p>A <strong>separate regressor model</strong> is fit for each step ahead in the forecast horizon and then independently applied to predict multiple steps ahead.  Let <span>
+  \(\mathcal{G}_h(y(1),...,y(t))\)
+</span>
+ be the h-step ahead surrogate forecaster that has been learnt based on the training data, where the forecaster predicts the h-step ahead forecast using features based on the time series values till <span>
+  \(t\)
+</span>
+, that is, <span>
+  \(y(1),...,y(t)\)
+</span>
+. The forecasts are made directly as follows,
+<span>
+  \(
+g(t+h|t) = \mathcal{G}_h(y(1),...,y(t))\text{ for }h=1,2,...,H
+\)
+</span>
+</p>
+<p>For example,</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">horizon</th>
+          <th style="text-align: left">forecast</th>
+          <th style="text-align: left">strategy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+1|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_1(y(1),...,y(t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">2</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+2|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_2(y(1),...,y(t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">h</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+h|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_h(y(1),...,y(t))
+\)
+</span>
+</td>
+      </tr>
+  </tbody>
+</table>
+<blockquote class="book-hint warning">
+  
+Since the Direct strategy does not use any approximated values to compute the forecasts, it is not prone to any accumulation of errors. However since the models are learned independently no statistical dependencies between the predictions is considered. This strategy also demands a large computational time since the number of models to learn is equal to the size of the forecast horizon.
+
+</blockquote>
+
+<p><img src="/img/timeshap_direct.jpg" alt="direct" /></p>
+<h4 id="dirrec">
+  DirRec
+  <a class="anchor" href="#dirrec">#</a>
+</h4>
+<p>The DirRec strategy  combines the architectures and the principles underlying the Direct and the Recursive strategies. DirRec computes the forecasts with different models for every horizon (like the Direct strategy) and, at each time step, it enlarges the set of inputs by adding variables corresponding to the forecasts of the previous step (like the Recursive strategy).</p>
+<span>
+  \(
+g(t+1|t) = \mathcal{G}_1(y(1),...,y(t))
+\)
+</span>
+
+<p>For <span>
+  \(h=2,3,...,H\)
+</span>
+
+<span>
+  \(
+g(t+h|t) = \mathcal{G}_h(y(1),...,y(t),g(t+1|t),...,g(t+h-1|t))
+\)
+</span>
+</p>
+<p>For example,</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">horizon</th>
+          <th style="text-align: left">forecast</th>
+          <th style="text-align: left">strategy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+1|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_1(y(1),...,y(t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">2</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+2|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_2(y(1),...,y(t),g(t+1|t))
+\)
+</span>
+</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">h</td>
+          <td style="text-align: left"><span>
+  \(
+g(t+h|t)
+\)
+</span>
+</td>
+          <td style="text-align: left"><span>
+  \( \mathcal{G}_h(y(1),...,y(t),g(t+1|t),...,g(t+h-1|t))
+\)
+</span>
+</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="tree-ensemble-regressors">
+  Tree ensemble regressors
+  <a class="anchor" href="#tree-ensemble-regressors">#</a>
+</h3>
+<p>So far, for each time point we generate a set of interpretable features (lag features, seasonal features,
+date time encodings etc) based on which we need to predict the backtested forecasted
+time series values. The surrogate model is then fitted using tree-based regressors like
+XGBoost, CatBoost,LightGBM etc.</p>
+<h3 id="shapley-additive-explanations">
+  SHapley Additive exPlanations
+  <a class="anchor" href="#shapley-additive-explanations">#</a>
+</h3>
+<p>While in general we can use any regressor we prefer tree-based ensembles like <a href="https://github.com/dmlc/xgboost">XGBoost</a>, <a href="https://github.com/catboost/catboost">CatBoost</a> and <a href="https://github.com/microsoft/LightGBM">LightGBM</a> since they are resonably accurate and more importantly support fast explaninablity algorithms like <a href="https://github.com/slundberg/shap">TreeSHAP</a> which we reply on for the various explanations. Explanation is in now in terms of features that
+encode the time series. We mainly rely on the TreeSHAP
+(SHapley Additive exPlanations) algorithm to explain the output of
+ensemble tree models.  SHAP (SHapley Additive exPlanations) is a game theoretic approach to explain the
+output of any machine learning model. It connects optimal credit allocation with
+local explanations using the classic Shapley values from game theory and their
+related extensions. <sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
+<h2 id="global-explanations">
+  Global explanations
+  <a class="anchor" href="#global-explanations">#</a>
+</h2>
+<p>A <strong>global explanation</strong>  explains the forecaster trained on the historical time series. The explanation type can be one of following four types.</p>
+<blockquote class="book-hint info">
+  
+Note that the recurisve strategy has only one model, while the direct and the dirrec strategies have <span>
+  \(H\)
+</span>
+ models corresponding to each step of the forecasting horizon. Hence there will be a possible seprate global explanation for each model based on the forecast horizon.
+
+</blockquote>
+
+<h3 id="shap-feature-importance">
+  SHAP feature importance
+  <a class="anchor" href="#shap-feature-importance">#</a>
+</h3>
+<p>The importance score for each features based on the shap values. Specifically this is the mean absolute value of the shap values for each feature across the entire dataset. To get an overview of which features are most important for a model we can compute the SHAP values of every feature for every sample. We can then take the mean absolute value of the SHAP values for each feature to get a feature importance score for each feature.</p>
+<p><img src="/img/timeshap_global_shap_feature_importance.jpg" alt="timeshap_global_shap_feature_importance" /></p>
+<h3 id="feature-importance">
+  Feature importance
+  <a class="anchor" href="#feature-importance">#</a>
+</h3>
+<p>The relative contribution of each feature to the model. A higher value of this score when compared to another feature implies it is more important for generating a forecast. Feature importance provides a score that indicates how useful or valuable each feature was in the construction of the boosted decision trees within the model. The more an attribute is used to make key decisions with decision trees, the higher its <strong>relative importance</strong>. Feature importance is calculated for a single decision tree by the amount that each attribute split point improves the performance measure, weighted by the number of observations the node is responsible for. The feature importances are then averaged across all of the the decision trees within the model. The <strong>gain</strong> is the most relevant attribute to interpret the relative importance of each feature. The <strong>gain</strong> implies the relative contribution of the corresponding feature to the model calculated by taking each feature’s contribution for each tree in the model. A higher value of this metric when compared to another feature implies it is more important for generating a prediction.</p>
+<p><img src="/img/timeshap_global_feature_importance.jpg" alt="timeshap_global_feature_importance" /></p>
+<h3 id="partial-dependence-plot">
+  Partial dependence plot
+  <a class="anchor" href="#partial-dependence-plot">#</a>
+</h3>
+<p>The <a href="https://christophm.github.io/interpretable-ml-book/pdp.html">partial dependence plot</a> (PDP) for a feature shows the marginal effect the feature has on the forecast (from the surrogate model). The PDP shows how the average prediction in your dataset changes when a particular feature is changed. The partial dependence function at a particular feature value represents the average prediction if we force all data points to assume that feature value.</p>
+<blockquote class="book-hint info">
+  
+The calculation for the partial dependence plots has a causal interpretation. One way to think about PDP is that it is an **intervention query**. We intervene on a feature and measure the changes in the predictions. In doing so, we analyze the causal relationship between the feature and the prediction.
+
+</blockquote>
+
+<p><img src="/img/timeshap_global_pdp.jpg" alt="timeshap_global_pdp" /></p>
+<blockquote class="book-hint warning">
+  
+The assumption of independence is the biggest issue with PDP plots. It is assumed that the feature(s) for which the partial dependence is computed are not correlated with other features.
+
+</blockquote>
+
+<h3 id="shap-dependence-plot">
+  SHAP dependence plot
+  <a class="anchor" href="#shap-dependence-plot">#</a>
+</h3>
+<p>The shap dependence plot (SDP) for each feature shows the mean shap value for a particular features across the entire dataset. This shows how the model depends on the given feature, and is like a richer extenstion of the classical partial dependence plots.</p>
+<p><img src="/img/timeshap_global_sdp.jpg" alt="timeshap_global_sdp" /></p>
+<h2 id="local-explanations">
+  Local explanations
+  <a class="anchor" href="#local-explanations">#</a>
+</h2>
+<p>A <strong>local explantion</strong> explains the forecast made by a forecaster at a certain point in time.</p>
+<h3 id="shap-explanation">
+  SHAP explanation
+  <a class="anchor" href="#shap-explanation">#</a>
+</h3>
+<p><a href="https://github.com/slundberg/shap">SHAP</a> (SHapley Additive exPlanations) is a unified approach to explain the output of any machine learning model. SHAP connects game theory with local explanations. While SHAP values can explain the output of any machine learning model, high-speed exact algorithms are available for tree ensemble methods</p>
+<p>The SHAP explanation shows features contributing to push the forecasted sales from the base value (the average sales) to the forecaster model output. Features pushing the forecast higher are shown in blue and those pushing the forecast lower are in red.</p>
+<p><img src="/img/timeshap_local_shap.jpg" alt="timeshap_local_shap" /></p>
+<blockquote>
+<p>This time instance (Mon Jul  1 00:00:00 2019) has a forecasted sales (5028.76), 2579.59 units higher than the average (2449.17) mainly because of the discount(t) (40.50) and sales(t-1) (4242.54) while sales(t-2*52) (4375.00) was trying to push it lower.</p></blockquote>
+<h3 id="local-partial-dependence-plot">
+  Local partial dependence plot
+  <a class="anchor" href="#local-partial-dependence-plot">#</a>
+</h3>
+<p>The (local) PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.</p>
+<p><img src="/img/timeshap_local_pdp.jpg" alt="timeshap_local_pdp" /></p>
+<h3 id="local-shap-dependence-plot">
+  Local SHAP dependence plot
+  <a class="anchor" href="#local-shap-dependence-plot">#</a>
+</h3>
+<p>The (local) SDP for a given feature shows how the shap value varies as the feature value changes.</p>
+<p><img src="/img/timeshap_local_sdp.jpg" alt="timeshap_local_sdp" /></p>
+<h2 id="semi-local-explanations">
+  Semi-local explanations
+  <a class="anchor" href="#semi-local-explanations">#</a>
+</h2>
+<p>A <strong>semi-local explanation</strong> explains the overall forecast made by a forecaster in a certain time interval. In general this returns <strong>one</strong> (semi-local) explanation aggregated over all the multiple time steps in the forecast horizon.</p>
+<h3 id="shap-feature-importance-1">
+  SHAP feature importance
+  <a class="anchor" href="#shap-feature-importance-1">#</a>
+</h3>
+<p>The importance score for each feature which is the corresponding shap value for that feature.</p>
+<p><img src="/img/timeshap_semilocal_shap.jpg" alt="timeshap_semilocal_shap" /></p>
+<h3 id="partial-dependence-plot-1">
+  Partial dependence plot
+  <a class="anchor" href="#partial-dependence-plot-1">#</a>
+</h3>
+<p>The PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.</p>
+<p><img src="/img/timeshap_semilocal_pdp.jpg" alt="timeshap_semilocal_pdp" /></p>
+<h3 id="shap-dependence-plot-1">
+  SHAP dependence plot
+  <a class="anchor" href="#shap-dependence-plot-1">#</a>
+</h3>
+<p>The SDP for a given feature shows how the shap value varies as the feature value changes.</p>
+<p><img src="/img/timeshap_semilocal_sdp.jpg" alt="timeshap_semilocal_sdp" /></p>
+<h2 id="explaining-prediction-intervals">
+  Explaining prediction intervals
+  <a class="anchor" href="#explaining-prediction-intervals">#</a>
+</h2>
+<p>The same setup can also be used to explain the width of the prediction interval. Instead of regressing on the mean forecast from the forecaster we can regress on the width of the prediction interval.</p>
+<h2 id="bootstrapped-ensemble">
+  Bootstrapped ensemble
+  <a class="anchor" href="#bootstrapped-ensemble">#</a>
+</h2>
+<p>In order to improve the sensitivity we extend the above
+approach by aggregating multiple explanations from bootstrapped versions of
+the time series.</p>
+<h2 id="examples">
+  Examples
+  <a class="anchor" href="#examples">#</a>
+</h2>
+<h3 id="naive">
+  Naive
+  <a class="anchor" href="#naive">#</a>
+</h3>
+<p>The forecast is the value of the last observation.
+<span>
+  \(
+f(t+h|t) = y(t),\text{ for }h=1,2,...
+\)
+</span>
+</p>
+<div class="book-tabs">
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-0" checked="checked" />
+<label for="tabs-Naive-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">Naive</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">Naive</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-1"  />
+<label for="tabs-Naive-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_forecast.jpg" alt="timeshap_naive_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-2"  />
+<label for="tabs-Naive-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_global_shap.jpg" alt="timeshap_naive_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-3"  />
+<label for="tabs-Naive-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_global_pdp.jpg" alt="timeshap_naive_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-4"  />
+<label for="tabs-Naive-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_local_shap.jpg" alt="timeshap_naive_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-5"  />
+<label for="tabs-Naive-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_local_pdp.jpg" alt="timeshap_naive_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h3 id="seasonalnaive">
+  SeasonalNaive
+  <a class="anchor" href="#seasonalnaive">#</a>
+</h3>
+<p>The forecast is the value of the last observation from the same season of the year. For example, with monthly data, the forecast for all future February values is equal to the last observed February value.</p>
+<div class="book-tabs">
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-0" checked="checked" />
+<label for="tabs-SeasonalNaive-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">SeasonalNaive</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">SeasonalNaive</span><span style="color:#111">(</span><span style="color:#111">m</span><span style="color:#f92672">=</span><span style="color:#ae81ff">52</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-1"  />
+<label for="tabs-SeasonalNaive-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_forecast.jpg" alt="timeshap_seasonalnaive_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-2"  />
+<label for="tabs-SeasonalNaive-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_global_shap.jpg" alt="timeshap_seasonalnaive_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-3"  />
+<label for="tabs-SeasonalNaive-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_global_pdp.jpg" alt="timeshap_seasonalnaive_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-4"  />
+<label for="tabs-SeasonalNaive-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_local_shap.jpg" alt="timeshap_seasonalnaive_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-5"  />
+<label for="tabs-SeasonalNaive-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_local_pdp.jpg" alt="timeshap_seasonalnaive_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h3 id="movingaverage">
+  MovingAverage
+  <a class="anchor" href="#movingaverage">#</a>
+</h3>
+<p>A moving average forecast of order <span>
+  \(k\)
+</span>
+, or, <span>
+  \(MA(k)\)
+</span>
+, is the mean of the last <span>
+  \(k\)
+</span>
+ observations of the time series.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-0" checked="checked" />
+<label for="tabs-MovingAverage-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">MovingAverage</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">MovingAverage</span><span style="color:#111">(</span><span style="color:#111">k</span><span style="color:#f92672">=</span><span style="color:#ae81ff">6</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-1"  />
+<label for="tabs-MovingAverage-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_forecast.jpg" alt="timeshap_movingaverage_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-2"  />
+<label for="tabs-MovingAverage-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_global_shap.jpg" alt="timeshap_movingaverage_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-3"  />
+<label for="tabs-MovingAverage-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_global_pdp.jpg" alt="timeshap_movingaverage_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-4"  />
+<label for="tabs-MovingAverage-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_local_shap.jpg" alt="timeshap_movingaverage_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-5"  />
+<label for="tabs-MovingAverage-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_local_pdp.jpg" alt="timeshap_movingaverage_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h3 id="simple-exponential-smoothing">
+  Simple Exponential Smoothing
+  <a class="anchor" href="#simple-exponential-smoothing">#</a>
+</h3>
+<p>The forecast is the exponentially weighted average of its past values. The forecast can also be interpreted as a weighted average between the most recent observation and the previous forecast.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-0" checked="checked" />
+<label for="tabs-SES-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">SES</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">SES</span><span style="color:#111">(</span><span style="color:#111">alpha</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.5</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-1"  />
+<label for="tabs-SES-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_forecast.jpg" alt="timeshap_ses_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-2"  />
+<label for="tabs-SES-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_global_shap.jpg" alt="timeshap_ses_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-3"  />
+<label for="tabs-SES-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_global_pdp.jpg" alt="timeshap_ses_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-4"  />
+<label for="tabs-SES-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_local_shap.jpg" alt="timeshap_ses_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-5"  />
+<label for="tabs-SES-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_local_pdp.jpg" alt="timeshap_ses_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h3 id="prophet">
+  Prophet
+  <a class="anchor" href="#prophet">#</a>
+</h3>
+<p><a href="https://github.com/facebook/prophet">Prophet</a> is a procedure for forecasting time series data based on an additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-0" checked="checked" />
+<label for="tabs-Prophet-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">Prophet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-1"  />
+<label for="tabs-Prophet-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_forecast.jpg" alt="timeshap_prophet_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-2"  />
+<label for="tabs-Prophet-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_global_shap.jpg" alt="timeshap_prophet_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-3"  />
+<label for="tabs-Prophet-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_global_pdp.jpg" alt="timeshap_prophet_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-4"  />
+<label for="tabs-Prophet-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_local_shap.jpg" alt="timeshap_prophet_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-5"  />
+<label for="tabs-Prophet-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_local_pdp.jpg" alt="timeshap_prophet_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h3 id="xgboost">
+  XGBoost
+  <a class="anchor" href="#xgboost">#</a>
+</h3>
+<p>Forecasting to Regression reduction using XGBoost.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-0" checked="checked" />
+<label for="tabs-XGBoost-0">aix360ts</label>
+<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.forecasters</span> <span style="color:#f92672">import</span> <span style="color:#111">RegressorReduction</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">aix360ts.forecasting.explainers</span> <span style="color:#f92672">import</span> <span style="color:#111">TimeSHAP</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecaster</span> <span style="color:#f92672">=</span> <span style="color:#111">RegressorReduction</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">explainer</span> <span style="color:#f92672">=</span> <span style="color:#111">TimeSHAP</span><span style="color:#111">(</span><span style="color:#111">forecaster</span><span style="color:#f92672">=</span><span style="color:#111">forecaster</span><span style="color:#111">)</span>
+</span></span></code></pre></div></div>
+
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-1"  />
+<label for="tabs-XGBoost-1">forecaster</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_forecast.jpg" alt="timeshap_naive_forecast" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-2"  />
+<label for="tabs-XGBoost-2">global - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_global_shap.jpg" alt="timeshap_xgboost_global_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-3"  />
+<label for="tabs-XGBoost-3">global - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_global_pdp.jpg" alt="timeshap_xgboost_global_pdp" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-4"  />
+<label for="tabs-XGBoost-4">local - SHAP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_local_shap.jpg" alt="timeshap_xgboost_local_shap" /></p>
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-5"  />
+<label for="tabs-XGBoost-5">local - PDP</label>
+<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_local_pdp.jpg" alt="timeshap_xgboost_local_pdp" /></p>
+</div>
+
+
+
+</div>
+
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</a>, Christoph Molnar&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://arxiv.org/abs/1706.07269">Explanation in Artificial Intelligence: Insights from the Social Sciences</a>, Tim Miller&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://arxiv.org/abs/1702.08608">Towards A Rigorous Science of Interpretable Machine Learning</a>, Finale Doshi-Velez, Been Kim&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>Bontempi G., Ben Taieb S., Le Borgne YA. (2013) <a href="https://doi.org/10.1007/978-3-642-36318-4_3">Machine Learning Strategies for Time Series Forecasting</a>. In: Aufaure MA., Zimányi E. (eds) Business Intelligence. eBISS 2012. Lecture Notes in Business Information Processing, vol 138. Springer, Berlin, Heidelberg.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://github.com/slundberg/shap">https://github.com/slundberg/shap</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p>Lundberg, S.M., Erion, G., Chen, H. et al. <a href="https://doi.org/10.1038/s42256-019-0138-9">From local explanations to global understanding with explainable AI for trees</a>. Nat Mach Intell 2, 56–67 (2020).&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#time-series-forecasting">Time series forecasting</a></li>
+    <li><a href="#explainability-for-forecasting">Explainability for forecasting</a>
+      <ul>
+        <li><a href="#scope-of-explanations">Scope of explanations</a></li>
+        <li><a href="#type-of-explanations">Type of explanations</a></li>
+        <li><a href="#type-of-explainers">Type of explainers</a></li>
+      </ul>
+    </li>
+    <li><a href="#timeshap-1">TimeSHAP</a>
+      <ul>
+        <li><a href="#surrogate-model">Surrogate model</a></li>
+        <li><a href="#backtested-historical-forecasts">Backtested historical forecasts</a></li>
+        <li><a href="#regressor-reduction">Regressor reduction</a></li>
+        <li><a href="#interpretable-features">Interpretable features</a></li>
+        <li><a href="#multi-step-forecasting">Multi-step forecasting</a></li>
+        <li><a href="#tree-ensemble-regressors">Tree ensemble regressors</a></li>
+        <li><a href="#shapley-additive-explanations">SHapley Additive exPlanations</a></li>
+      </ul>
+    </li>
+    <li><a href="#global-explanations">Global explanations</a>
+      <ul>
+        <li><a href="#shap-feature-importance">SHAP feature importance</a></li>
+        <li><a href="#feature-importance">Feature importance</a></li>
+        <li><a href="#partial-dependence-plot">Partial dependence plot</a></li>
+        <li><a href="#shap-dependence-plot">SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#local-explanations">Local explanations</a>
+      <ul>
+        <li><a href="#shap-explanation">SHAP explanation</a></li>
+        <li><a href="#local-partial-dependence-plot">Local partial dependence plot</a></li>
+        <li><a href="#local-shap-dependence-plot">Local SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#semi-local-explanations">Semi-local explanations</a>
+      <ul>
+        <li><a href="#shap-feature-importance-1">SHAP feature importance</a></li>
+        <li><a href="#partial-dependence-plot-1">Partial dependence plot</a></li>
+        <li><a href="#shap-dependence-plot-1">SHAP dependence plot</a></li>
+      </ul>
+    </li>
+    <li><a href="#explaining-prediction-intervals">Explaining prediction intervals</a></li>
+    <li><a href="#bootstrapped-ensemble">Bootstrapped ensemble</a></li>
+    <li><a href="#examples">Examples</a>
+      <ul>
+        <li><a href="#naive">Naive</a></li>
+        <li><a href="#seasonalnaive">SeasonalNaive</a></li>
+        <li><a href="#movingaverage">MovingAverage</a></li>
+        <li><a href="#simple-exponential-smoothing">Simple Exponential Smoothing</a></li>
+        <li><a href="#prophet">Prophet</a></li>
+        <li><a href="#xgboost">XGBoost</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

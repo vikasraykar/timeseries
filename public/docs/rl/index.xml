@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Reinforcement Learning on Deep Learning</title>
+    <link>http://localhost:1313/docs/rl/</link>
+    <description>Recent content in Reinforcement Learning on Deep Learning</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="http://localhost:1313/docs/rl/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Basics</title>
+      <link>http://localhost:1313/docs/rl/basics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/docs/rl/basics/</guid>
+      <description>&lt;h1 id=&#34;reinforcement-learning-basics&#34;&gt;&#xA;  Reinforcement learning basics&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#reinforcement-learning-basics&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h1&gt;&#xA;&lt;a  href=&#34;https://www.dropbox.com/s/4pdr6y60t0r9mm2/2017_07_29_anthill_deep_reinforcement_learning_tutorial.pdf?dl=0&#34;   target=&#34;_blank&#34; rel=&#34;noopener&#34;  class=&#34;book-btn&#34;&gt;slides&lt;/a&gt;&#xA;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Reinforcement Learning (RL) is a natural computational paradigm for agents learning from interaction to achieve a goal. Deep learning (DL) provides a powerful general-purpose representation learning framework. A combination of these two has recently emerged as a strong contender for artificial general intelligence. This tutorial will provide a gentle exposition of RL concepts and DL based RL with a focus on policy gradients.&lt;/p&gt;&lt;/blockquote&gt;&#xA;&#xA;&lt;link rel=&#34;stylesheet&#34; href=&#34;http://localhost:1313/katex/katex.min.css&#34; /&gt;&#xA;&lt;script defer src=&#34;http://localhost:1313/katex/katex.min.js&#34;&gt;&lt;/script&gt;&#xA;&lt;script defer src=&#34;http://localhost:1313/katex/auto-render.min.js&#34; onload=&#34;renderMathInElement(document.body);&#34;&gt;&lt;/script&gt;&lt;span&gt;&#xA;  \(\)&#xA;&lt;/span&gt;&#xA;&#xA;&lt;h2 id=&#34;the-agent-environment-interaction&#34;&gt;&#xA;  The agent-environment interaction&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#the-agent-environment-interaction&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The reinforcement learning (RL) framework is an abstraction of the problem of &lt;strong&gt;goal directed learning from interaction&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

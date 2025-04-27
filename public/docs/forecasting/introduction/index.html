@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Explainability for time series forecasting
+  #
+
+Explainability is the degree to which a human can understand the cause of a decision (or prediction) made by a prediction model 1.
+
+  Types of time series
+  #
+
+
+  
+      
+          type
+          time series only
+          time series &#43; external regressors
+      
+  
+  
+      
+          univariate
+          1 ✔
+          2 ✔
+      
+      
+          multiple univariate
+          3  ✔
+          4 ✔
+      
+      
+          multiple hierarchical univariate
+          5 (phase 2)
+          6 (phase 2)
+      
+      
+          multivariate
+          7  ✘
+          8  ✘
+      
+  
+
+
+  Domain of explanations
+  #
+
+
+  
+      
+          what
+          explain
+      
+  
+  
+      
+          data
+          Explain the time series based on trend, seasonality and cyclic patterns.
+      
+      
+          forecaster
+          Explains the trained forecaster based on the historical time series.
+      
+      
+          forecast
+          Explains the forecast at a certain point in time or a certain time interval.
+      
+      
+          residual
+          Explains the residual on the historical time series to understand where the forecaster is making errors.
+      
+  
+
+
+  Scope of explanations
+  #
+
+
+  
+      
+          scope
+          description
+      
+  
+  
+      
+          global explanation
+          Explains the forecaster trained on the historical time series.
+      
+      
+          local explanation
+          Explains the forecast made by a forecaster at a certain point in time.
+      
+      
+          group explanation
+          Explains the overall forecast made by a forecaster at a certain time interval. The individual local explanations can be used on each instance and then listed or aggregated for the entire interval.
+      
+  
+
+
+  Type of explanations
+  #
+
+
+  
+      
+          type
+          description
+      
+  
+  
+      
+          features based
+          Explanation is in terms of features that encode the time series (lag features, date encodings etc.) and external regressors.
+      
+      
+          instance based
+          Explanation is in terms of the importance or certain time points in the historical time series.
+      
+  
+
+
+  Examples from supervised learning
+  #
+
+
+  
+      
+          ⚡️
+          features
+          instance
+      
+  
+  
+      
+          global
+          feature importance plots
+          
+      
+      
+          SHAP values
+          
+          
+      
+      
+          (what-if) Partial dependence plots
+          
+          
+      
+      
+          local
+          LIME
+          prototypes and criticisms
+      
+      
+          SHAP
+          influence functions
+          
+      
+      
+          counterfactual explanation
+          
+          
+      
+      
+          (what-if) counterfactual queries
+          
+          
+      
+  
+
+
+  Model-agnostic explaninablity
+  #
+
+
+We have access to only fit and predict methods of a forecaster.
+We have access to training data ?
+We have access to features ?
+
+
+  Challenges
+  #
+
+
+Non-iid nature of data.
+Robustness. If the the foreecast does not change drastically for the next time point the explanation should not change.
+Explain prediction intervals and quantile forecasts.
+Scalability.
+
+
+  Interpretable models
+  #
+
+Some time series forecasting models are inherently interprtable and we aim to wrap up the model specific interpretation whereever available.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/forecasting/introduction/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="Introduction">
+  <meta property="og:description" content="Explainability for time series forecasting # Explainability is the degree to which a human can understand the cause of a decision (or prediction) made by a prediction model 1.
+Types of time series # type time series only time series &#43; external regressors univariate 1 ✔ 2 ✔ multiple univariate 3 ✔ 4 ✔ multiple hierarchical univariate 5 (phase 2) 6 (phase 2) multivariate 7 ✘ 8 ✘ Domain of explanations # what explain data Explain the time series based on trend, seasonality and cyclic patterns. forecaster Explains the trained forecaster based on the historical time series. forecast Explains the forecast at a certain point in time or a certain time interval. residual Explains the residual on the historical time series to understand where the forecaster is making errors. Scope of explanations # scope description global explanation Explains the forecaster trained on the historical time series. local explanation Explains the forecast made by a forecaster at a certain point in time. group explanation Explains the overall forecast made by a forecaster at a certain time interval. The individual local explanations can be used on each instance and then listed or aggregated for the entire interval. Type of explanations # type description features based Explanation is in terms of features that encode the time series (lag features, date encodings etc.) and external regressors. instance based Explanation is in terms of the importance or certain time points in the historical time series. Examples from supervised learning # ⚡️ features instance global feature importance plots SHAP values (what-if) Partial dependence plots local LIME prototypes and criticisms SHAP influence functions counterfactual explanation (what-if) counterfactual queries Model-agnostic explaninablity # We have access to only fit and predict methods of a forecaster. We have access to training data ? We have access to features ? Challenges # Non-iid nature of data. Robustness. If the the foreecast does not change drastically for the next time point the explanation should not change. Explain prediction intervals and quantile forecasts. Scalability. Interpretable models # Some time series forecasting models are inherently interprtable and we aim to wrap up the model specific interpretation whereever available.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Introduction | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/forecasting/introduction/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4e8b6fd3018f73a98c035abd6cf687f8a632553bd6023134924477646d355071.js" integrity="sha256-Totv0wGPc6mMA1q9bPaH&#43;KYyVTvWAjE0kkR3ZG01UHE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="active">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/accuracy-metrics/" class="">Accuracy metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/prediction-interval/" class="">Prediction interval</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Introduction</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#types-of-time-series">Types of time series</a></li>
+    <li><a href="#domain-of-explanations">Domain of explanations</a></li>
+    <li><a href="#scope-of-explanations">Scope of explanations</a></li>
+    <li><a href="#type-of-explanations">Type of explanations</a></li>
+    <li><a href="#examples-from-supervised-learning">Examples from supervised learning</a></li>
+    <li><a href="#model-agnostic-explaninablity">Model-agnostic explaninablity</a></li>
+    <li><a href="#challenges">Challenges</a></li>
+    <li><a href="#interpretable-models">Interpretable models</a></li>
+    <li><a href="#taxonomy">Taxonomy</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="explainability-for-time-series-forecasting">
+  Explainability for time series forecasting
+  <a class="anchor" href="#explainability-for-time-series-forecasting">#</a>
+</h1>
+<p><strong>Explainability</strong> is the degree to which a human can understand the cause of a decision (or prediction) made by a prediction model <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<h2 id="types-of-time-series">
+  Types of time series
+  <a class="anchor" href="#types-of-time-series">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">type</th>
+          <th style="text-align: left">time series only</th>
+          <th style="text-align: left">time series + external regressors</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right"><strong>univariate</strong></td>
+          <td style="text-align: left">1 ✔</td>
+          <td style="text-align: left">2 ✔</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>multiple univariate</strong></td>
+          <td style="text-align: left">3  ✔</td>
+          <td style="text-align: left">4 ✔</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>multiple hierarchical univariate</strong></td>
+          <td style="text-align: left">5 (phase 2)</td>
+          <td style="text-align: left">6 (phase 2)</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>multivariate</strong></td>
+          <td style="text-align: left">7  ✘</td>
+          <td style="text-align: left">8  ✘</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="domain-of-explanations">
+  Domain of explanations
+  <a class="anchor" href="#domain-of-explanations">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">what</th>
+          <th style="text-align: left">explain</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right"><strong>data</strong></td>
+          <td style="text-align: left">Explain the time series based on <em>trend</em>, <em>seasonality</em> and <em>cyclic</em> patterns.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>forecaster</strong></td>
+          <td style="text-align: left">Explains the trained forecaster based on the historical time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>forecast</strong></td>
+          <td style="text-align: left">Explains the forecast at a certain point in time or a certain time interval.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>residual</strong></td>
+          <td style="text-align: left">Explains the residual on the historical time series to understand where the forecaster is making errors.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="scope-of-explanations">
+  Scope of explanations
+  <a class="anchor" href="#scope-of-explanations">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">scope</th>
+          <th style="text-align: left">description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right"><strong>global explanation</strong></td>
+          <td style="text-align: left">Explains the forecaster trained on the historical time series.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>local explanation</strong></td>
+          <td style="text-align: left">Explains the forecast made by a forecaster at a certain point in time.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>group explanation</strong></td>
+          <td style="text-align: left">Explains the overall forecast made by a forecaster at a certain time interval. The individual local explanations can be used on each instance and then listed or aggregated for the entire interval.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="type-of-explanations">
+  Type of explanations
+  <a class="anchor" href="#type-of-explanations">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">type</th>
+          <th style="text-align: left">description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right"><strong>features based</strong></td>
+          <td style="text-align: left">Explanation is in terms of features that encode the time series (lag features, date encodings etc.) and external regressors.</td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>instance based</strong></td>
+          <td style="text-align: left">Explanation is in terms of the importance or certain time points in the historical time series.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="examples-from-supervised-learning">
+  Examples from supervised learning
+  <a class="anchor" href="#examples-from-supervised-learning">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">⚡️</th>
+          <th style="text-align: left">features</th>
+          <th style="text-align: left">instance</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right"><strong>global</strong></td>
+          <td style="text-align: left">feature importance plots</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: right">SHAP values</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: right">(what-if) Partial dependence plots</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: right"><strong>local</strong></td>
+          <td style="text-align: left">LIME</td>
+          <td style="text-align: left">prototypes and criticisms</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">SHAP</td>
+          <td style="text-align: left">influence functions</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: right">counterfactual explanation</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: right">(what-if) counterfactual queries</td>
+          <td></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="model-agnostic-explaninablity">
+  Model-agnostic explaninablity
+  <a class="anchor" href="#model-agnostic-explaninablity">#</a>
+</h2>
+<ul>
+<li>We have access to only <code>fit</code> and <code>predict</code> methods of a forecaster.</li>
+<li>We have access to training data ?</li>
+<li>We have access to features ?</li>
+</ul>
+<h2 id="challenges">
+  Challenges
+  <a class="anchor" href="#challenges">#</a>
+</h2>
+<ul>
+<li>Non-iid nature of data.</li>
+<li>Robustness. If the the foreecast does not change drastically for the next time point the explanation should not change.</li>
+<li>Explain prediction intervals and quantile forecasts.</li>
+<li>Scalability.</li>
+</ul>
+<h2 id="interpretable-models">
+  Interpretable models
+  <a class="anchor" href="#interpretable-models">#</a>
+</h2>
+<p>Some time series forecasting models are inherently interprtable and we aim to wrap up the model specific interpretation whereever available.</p>
+<ul>
+<li><strong>Statistical models</strong>
+<ul>
+<li>Exponential Smoothing</li>
+<li>Holt-Winter</li>
+<li>S/ARIMA/X</li>
+<li>Croston&rsquo;s models</li>
+<li>Theta</li>
+<li>Prohet</li>
+</ul>
+</li>
+<li><strong>machine learning models</strong>
+<ul>
+<li>Tree based algorithms like XGBoost, CatBoost</li>
+<li>Gradient Boosted Machines like LightGBM</li>
+<li>Gaussian Process Regression</li>
+</ul>
+</li>
+<li><strong>deep learning models</strong>
+<ul>
+<li>Recurrent Neural Networks (RNN)</li>
+<li>Temporal Convolutional Neural Networks (TCNN)</li>
+</ul>
+</li>
+</ul>
+<h2 id="taxonomy">
+  Taxonomy
+  <a class="anchor" href="#taxonomy">#</a>
+</h2>
+<p><img src="/img/xai-taxonomy.jpg" alt="foo" /></p>
+<p><em>Inspired from <a href="http://xai-tools.drwhy.ai/">here</a></em></p>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</a>, Christoph Molnar&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#types-of-time-series">Types of time series</a></li>
+    <li><a href="#domain-of-explanations">Domain of explanations</a></li>
+    <li><a href="#scope-of-explanations">Scope of explanations</a></li>
+    <li><a href="#type-of-explanations">Type of explanations</a></li>
+    <li><a href="#examples-from-supervised-learning">Examples from supervised learning</a></li>
+    <li><a href="#model-agnostic-explaninablity">Model-agnostic explaninablity</a></li>
+    <li><a href="#challenges">Challenges</a></li>
+    <li><a href="#interpretable-models">Interpretable models</a></li>
+    <li><a href="#taxonomy">Taxonomy</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

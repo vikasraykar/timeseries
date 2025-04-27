@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Forecast accuracy metrics
+  #
+
+A compilation of various metrics used to measure forecast accuracy
+gist
+
+code repo
+
+Let $y(t)$ be the actual observation for time period $t$ and let $f(t)$ be the forecast for the same time period. Let $n$ the length of the training dataset (number of historical observations), and $h$ the forecasting horizon.
+
+  Forecast errors
+  #
+
+Based on how we measure the forecast error $e(t)$ at a time point $t$ several metrics are defined. A forecast error is the difference between an observed value and its forecast.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/forecast/accuracy-metrics/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="Accuracy metrics">
+  <meta property="og:description" content="Forecast accuracy metrics # A compilation of various metrics used to measure forecast accuracy
+gist code repo Let $y(t)$ be the actual observation for time period $t$ and let $f(t)$ be the forecast for the same time period. Let $n$ the length of the training dataset (number of historical observations), and $h$ the forecasting horizon.
+Forecast errors # Based on how we measure the forecast error $e(t)$ at a time point $t$ several metrics are defined. A forecast error is the difference between an observed value and its forecast.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Accuracy metrics | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/forecast/accuracy-metrics/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.7020849b8530eeae3124878439759ab4bec67483d47178320ae631c0ce3b849d.js" integrity="sha256-cCCEm4Uw7q4xJIeEOXWatL7GdIPUcXgyCuYxwM47hJ0=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecast/accuracy-metrics/" class="active">Accuracy metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Accuracy metrics</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#forecast-errors">Forecast errors</a></li>
+    <li><a href="#tldr">TLDR</a></li>
+    <li><a href="#categorizing-metrics">Categorizing metrics</a></li>
+    <li><a href="#scale-dependent-metrics">Scale dependent metrics</a>
+      <ul>
+        <li><a href="#me">ME</a></li>
+        <li><a href="#mae">MAE</a></li>
+        <li><a href="#mdae">MdAE</a></li>
+        <li><a href="#gmae">GMAE</a></li>
+        <li><a href="#mse">MSE</a></li>
+        <li><a href="#rmse">RMSE</a></li>
+      </ul>
+    </li>
+    <li><a href="#percentage-error-metrics">Percentage error metrics</a>
+      <ul>
+        <li><a href="#mpe">MPE</a></li>
+        <li><a href="#mape">MAPE</a></li>
+        <li><a href="#mdape">MdAPE</a></li>
+        <li><a href="#smape">sMAPE</a></li>
+        <li><a href="#smdape">sMdAPE</a></li>
+        <li><a href="#mspe">MSPE</a></li>
+        <li><a href="#rmspe">RMSPE</a></li>
+        <li><a href="#maape">MAAPE</a></li>
+      </ul>
+    </li>
+    <li><a href="#relative-error-metrics">Relative error metrics</a>
+      <ul>
+        <li><a href="#mare">MARE</a></li>
+        <li><a href="#mdare">MdARE</a></li>
+        <li><a href="#gmare">GMARE</a></li>
+        <li><a href="#u-statistic">U-statistic</a></li>
+      </ul>
+    </li>
+    <li><a href="#scaled-error-metrics">Scaled error metrics</a>
+      <ul>
+        <li><a href="#madmean">MAD/Mean</a></li>
+        <li><a href="#wmape">wMAPE</a></li>
+        <li><a href="#mase">MASE</a></li>
+        <li><a href="#rmsse">RMSSE</a></li>
+        <li><a href="#msle">MSLE</a></li>
+      </ul>
+    </li>
+    <li><a href="#correlation-based-metrics">Correlation based metrics</a>
+      <ul>
+        <li><a href="#pcc">PCC</a></li>
+        <li><a href="#krcc">KRCC</a></li>
+        <li><a href="#ngini">NGini</a></li>
+      </ul>
+    </li>
+    <li><a href="#poisson-metrics">Poisson metrics</a>
+      <ul>
+        <li><a href="#pnll">PNLL</a></li>
+        <li><a href="#p-dev">P-DEV</a></li>
+        <li><a href="#chi2">CHI^2</a></li>
+        <li><a href="#d2">D^2</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-quantile-forecasts">Metrics for Quantile Forecasts</a>
+      <ul>
+        <li><a href="#pinball-loss">Pinball Loss</a></li>
+        <li><a href="#mspl">MSPL</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-prediction-intervals">Metrics for Prediction Intervals</a>
+      <ul>
+        <li><a href="#agmspl">AgMSPL</a></li>
+        <li><a href="#crps">CRPS</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-multiple-time-series">Metrics for multiple time series</a></li>
+    <li><a href="#metrics-for-hierarchical-forecasting">Metrics for hierarchical forecasting</a></li>
+    <li><a href="#metrics-for-new-products">Metrics for new products</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="forecast-accuracy-metrics">
+  Forecast accuracy metrics
+  <a class="anchor" href="#forecast-accuracy-metrics">#</a>
+</h1>
+<p><em>A compilation of various metrics used to measure forecast accuracy</em></p>
+<p><a  href="https://github.ibm.com/retail-supply-chain/forecasting/blob/master/gists/gist_univariate_metrics.py"   target="_blank" rel="noopener"  class="book-btn">gist</a>
+
+<a  href="https://github.ibm.com/retail-supply-chain/forecasting/tree/master/forecasting/metrics"   target="_blank" rel="noopener"  class="book-btn">code repo</a>
+</p>
+<p>Let $y(t)$ be the actual observation for time period $t$ and let $f(t)$ be the forecast for the same time period. Let $n$ the length of the training dataset (number of historical observations), and $h$ the forecasting horizon.</p>
+<h2 id="forecast-errors">
+  Forecast errors
+  <a class="anchor" href="#forecast-errors">#</a>
+</h2>
+<p>Based on how we measure the forecast error $e(t)$ at a time point $t$ several metrics are defined. A forecast error is the difference between an observed value and its forecast.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">acronym</th>
+          <th style="text-align: left">error type</th>
+          <th style="text-align: left">equation</th>
+          <th style="text-align: left">scale independent</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>*E</code></td>
+          <td style="text-align: left"><a href="#scale-dependent-metrics">error</a></td>
+          <td style="text-align: left">
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(e(t)=y(t)-f(t)\)
+</span>
+</td>
+          <td style="text-align: left"><code>no</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>*PE</code></td>
+          <td style="text-align: left"><a href="#percentage-error-metrics">percentage error</a></td>
+          <td style="text-align: left"><span>
+  \(pe(t)=\frac{y(t)-f(t)}{y(t)}\)
+</span>
+</td>
+          <td style="text-align: left"><code>yes</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>*RE</code></td>
+          <td style="text-align: left"><a href="#relative-error-metrics">relative error</a></td>
+          <td style="text-align: left"><span>
+  \(re(t)=\frac{y(t)-f(t)}{y(t)-f^*(t)}\)
+</span>
+</td>
+          <td style="text-align: left"><code>yes</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>*SE</code></td>
+          <td style="text-align: left"><a href="#scaled-error-metrics">scaled error</a></td>
+          <td style="text-align: left"><span>
+  \(se(t)=\frac{y(t)-f(t)}{s}\)
+</span>
+</td>
+          <td style="text-align: left"><code>yes</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>We are evaluating the accuracy over $h$ forecasting time steps. The final forecast accuracy metric is then an aggregation (via mean, median etc.) over over $h$ time steps.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">acronym</th>
+          <th style="text-align: left">aggregation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>M*</code></td>
+          <td style="text-align: left">Mean</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>MA*</code></td>
+          <td style="text-align: left">Mean Absolute</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>Md*</code></td>
+          <td style="text-align: left">Median</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>MdA*</code></td>
+          <td style="text-align: left">Median Absolute</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>GM*</code></td>
+          <td style="text-align: left">Geometric Mean</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>GMA*</code></td>
+          <td style="text-align: left">Geometric Mean Absolute</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>MS*</code></td>
+          <td style="text-align: left">Mean Squared</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>RMS*</code></td>
+          <td style="text-align: left">Root Mean Squared</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>{M|Md|GM}{-|A|S}{E|PE|RE|SE}</code></p>
+<h2 id="tldr">
+  TLDR
+  <a class="anchor" href="#tldr">#</a>
+</h2>
+<p>While there are several metrics we recommend the following 6 metrics to be definitely included in a forecasting toolkit.</p>
+<table>
+  <thead>
+      <tr>
+          <th>acronym</th>
+          <th>name</th>
+          <th>comments</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="#mae"><code>MAE</code></a></td>
+          <td>Mean Absolute Error</td>
+          <td>For assessing accuracy on a a single time series use MAE because it is easiest to interpret. However, it cannot be compared across series because it is scale dependent.</td>
+      </tr>
+      <tr>
+          <td><a href="#rmse"><code>RMSE</code></a></td>
+          <td>Root Mean Square Error</td>
+          <td>A forecast method that minimises the MAE will lead to forecasts of the median, while minimising the RMSE will lead to forecasts of the mean. Hence RMSE is also widely used, despite being more difficult to interpret.</td>
+      </tr>
+      <tr>
+          <td><a href="#mae"><code>MAPE</code></a></td>
+          <td>Mean Absolute Percentage Error</td>
+          <td>MAPE has the advantage of being scale independent and hence can be used to compare forecast performance between different time series. However MAPE has the disadvantage of being infinite or undefined if there are zero values in the time series, as is frequent for intermittent demand data.</td>
+      </tr>
+      <tr>
+          <td><a href="#mase"><code>MASE</code></a></td>
+          <td>Mean Absolute Scaled Error</td>
+          <td>MASE is a scale free error metric and can be used to compare forecast methods on a single time series and also to compare forecast accuracy between series. It is also well suited for intermittent demand time series since is never gives infinite or undefined values.</td>
+      </tr>
+      <tr>
+          <td><a href="#wmape"><code>wMAPE</code></a></td>
+          <td>(volume) weighted Mean Absolute Percentage Error</td>
+          <td>The is MAPE which is weighted by the volume.</td>
+      </tr>
+      <tr>
+          <td><a href="#mspl"><code>MSPL</code></a></td>
+          <td>Mean Scaled Pinball Loss</td>
+          <td>The metric to use for quantile forecasts.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="categorizing-metrics">
+  Categorizing metrics
+  <a class="anchor" href="#categorizing-metrics">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">category</th>
+          <th style="text-align: left">description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>Accuracy</code></td>
+          <td style="text-align: left">How close are the forecasts to the true value?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>Bias</code></td>
+          <td style="text-align: left">Is there a systematic under- or over-forecasting?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>Error Variance</code></td>
+          <td style="text-align: left">The spread of the point forecast error around the mean.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>Accuracy Risk</code></td>
+          <td style="text-align: left">The variability in the accuracy metric over multiple forecasts.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>Stability</code></td>
+          <td style="text-align: left">The degree to twhich forecasts remain unchanged subject to minor variations in the underlying data.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="scale-dependent-metrics">
+  Scale dependent metrics
+  <a class="anchor" href="#scale-dependent-metrics">#</a>
+</h2>
+<p>Let $e(t)$ be the <em>one-step forecast error</em>, which is the difference between the observation $y(t)$ and the forecast made using all observations up to but not including $y(t)$.</p>
+<span>
+  \(
+e(t)=y(t)-f(t)
+\)
+</span>
+
+<p>By <strong>scale dependent</strong> we mean that the value of the metric depends on the scale of the data.</p>
+<h3 id="me">
+  ME
+  <a class="anchor" href="#me">#</a>
+</h3>
+<p><em>Mean Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-ME" id="tabs-ME-0" checked="checked" />
+<label for="tabs-ME-0">ME</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{ME}=\text{mean}\left(e(t)\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-ME" id="tabs-ME-1"  />
+<label for="tabs-ME-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- ME is likely to be small since positive and negative errors tend to offset one another.
+- ME will tell you if there is a systematic under- or over-forecasting, called the **forecast bias**.
+- ME does not give much indication as the the size of the typical errors.
+</div>
+
+
+</div>
+
+<h3 id="mae">
+  MAE
+  <a class="anchor" href="#mae">#</a>
+</h3>
+<p><em>Mean Absolute Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MAE" id="tabs-MAE-0" checked="checked" />
+<label for="tabs-MAE-0">MAE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MAE}=\text{mean}\left(|e(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAE" id="tabs-MAE-1"  />
+<label for="tabs-MAE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MAE has the advantage of being more interpretable and is easier to explain to users.
+- MAE is also sometimes referred to as MAD (Mean Absolute Deviation).
+- A forecast method that minimises the MAE will lead to forecasts of the median, while minimising the RMSE will lead to forecasts of the mean.
+</div>
+
+
+</div>
+
+<h3 id="mdae">
+  MdAE
+  <a class="anchor" href="#mdae">#</a>
+</h3>
+<p><em>Median Absolute Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MdAE" id="tabs-MdAE-0" checked="checked" />
+<label for="tabs-MdAE-0">MdAE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MdAE}=\text{median}\left(|e(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MdAE" id="tabs-MdAE-1"  />
+<label for="tabs-MdAE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MdAE has the advantage of being more interpretable and is easier to explain to users.
+</div>
+
+
+</div>
+
+<h3 id="gmae">
+  GMAE
+  <a class="anchor" href="#gmae">#</a>
+</h3>
+<p><em>Geometric Mean Absolute Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-GMAE" id="tabs-GMAE-0" checked="checked" />
+<label for="tabs-GMAE-0">GMAE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{GMAE}=\text{gmean}\left(|e(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-GMAE" id="tabs-GMAE-1"  />
+<label for="tabs-GMAE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- GMAE has the flaw of being equal to zero when any of the error terms are zero.
+- GMAE is same as GRMSE because the square root and the square cancel each other in a geometric mean.
+</div>
+
+
+</div>
+
+<h3 id="mse">
+  MSE
+  <a class="anchor" href="#mse">#</a>
+</h3>
+<p><em>Mean Square Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MSE" id="tabs-MSE-0" checked="checked" />
+<label for="tabs-MSE-0">MSE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MSE}=\text{mean}\left(e(t)^2\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSE" id="tabs-MSE-1"  />
+<label for="tabs-MSE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MSE has the advantage of being easier to handle mathematically and is commonly used in loss functions for optimization.
+- MSE tends to penalize large errors over smaller ones.
+</div>
+
+
+</div>
+
+<h3 id="rmse">
+  RMSE
+  <a class="anchor" href="#rmse">#</a>
+</h3>
+<p><em>Root Mean Square Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-RMSE" id="tabs-RMSE-0" checked="checked" />
+<label for="tabs-RMSE-0">RMSE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{RMSE}=\sqrt{\text{mean}\left(e(t)^2\right)}
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-RMSE" id="tabs-RMSE-1"  />
+<label for="tabs-RMSE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- RMSE has the advantage of being easier to handle mathematically and is commonly used in loss functions for optimization.
+- RMSE tends to penalize large errors over smaller ones.
+- A forecast method that minimises the MAE will lead to forecasts of the median, while minimising the RMSE will lead to forecasts of the mean.
+</div>
+
+
+</div>
+
+<h2 id="percentage-error-metrics">
+  Percentage error metrics
+  <a class="anchor" href="#percentage-error-metrics">#</a>
+</h2>
+<p>For scale dependent metrics that the value of the metric depends on the scale of the data. Therefore, they do not facilitate comparison across <em>different time series</em> and for <em>different time intervals</em>.</p>
+<p>First we define a relative or percentage error as</p>
+<span>
+  \(
+pe(t)=\frac{y(t)-f(t)}{y(t)}
+\)
+</span>
+
+<p>Percentage errors have the advantage of being <strong>scale independent</strong> and hence useful to compare performance between different time series.</p>
+<blockquote class="book-hint warning">
+  
+When the time series values are very close to zero (especially for intermittent demand data), the relative or percentage error is meaningless and is actually not defined when the value is zero.
+
+</blockquote>
+
+<h3 id="mpe">
+  MPE
+  <a class="anchor" href="#mpe">#</a>
+</h3>
+<p><em>Mean Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MPE" id="tabs-MPE-0" checked="checked" />
+<label for="tabs-MPE-0">MPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MPE}=\text{mean}\left(pe(t)\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MPE" id="tabs-MPE-1"  />
+<label for="tabs-MPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MPE is likely to be small since positive and negative errors tend to offset one another.
+- MPE will tell you if there is a systematic under- or over-forecasting, called the **forecast bias**.
+- MPE does not give much indication as the the size of the typical errors.
+</div>
+
+
+</div>
+
+<h3 id="mape">
+  MAPE
+  <a class="anchor" href="#mape">#</a>
+</h3>
+<p><em>Mean Absolute Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MAPE" id="tabs-MAPE-0" checked="checked" />
+<label for="tabs-MAPE-0">MAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MAPE}=\text{mean}\left(|pe(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAPE" id="tabs-MAPE-1"  />
+<label for="tabs-MAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MAPE puts heavier penalty on positive errors than on negative errors.
+- This observation has led to the use of symmetric MAPE or [sMAPE](#smape).
+</div>
+
+
+</div>
+
+<h3 id="mdape">
+  MdAPE
+  <a class="anchor" href="#mdape">#</a>
+</h3>
+<p><em>Median Absolute Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MdAPE" id="tabs-MdAPE-0" checked="checked" />
+<label for="tabs-MdAPE-0">MdAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MdAPE}=\text{median}\left(|pe(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MdAPE" id="tabs-MdAPE-1"  />
+<label for="tabs-MdAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="smape">
+  sMAPE
+  <a class="anchor" href="#smape">#</a>
+</h3>
+<p><em>Symmetric Mean Absolute Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-sMAPE" id="tabs-sMAPE-0" checked="checked" />
+<label for="tabs-sMAPE-0">sMAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{sMAPE}=\text{mean}\left(2\cdot\left|\frac{y(t)-f(t)}{y(t)+f(t)}\right|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-sMAPE" id="tabs-sMAPE-1"  />
+<label for="tabs-sMAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MAPE puts heavier penalty on positive errors than on negative errors.
+- This observation has led to the use of symmetric MAPE or sMAPE.
+- sMAPE which was used in the M3 forecasting competition.
+</div>
+
+
+</div>
+
+<h3 id="smdape">
+  sMdAPE
+  <a class="anchor" href="#smdape">#</a>
+</h3>
+<p><em>Symmetric Median Absolute Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-sMdAPE" id="tabs-sMdAPE-0" checked="checked" />
+<label for="tabs-sMdAPE-0">sMdAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{sMdAPE}=\text{median}\left(2\cdot\left|\frac{y(t)-f(t)}{y(t)+f(t)}\right|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-sMdAPE" id="tabs-sMdAPE-1"  />
+<label for="tabs-sMdAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="mspe">
+  MSPE
+  <a class="anchor" href="#mspe">#</a>
+</h3>
+<p><em>Mean Square Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MSPE" id="tabs-MSPE-0" checked="checked" />
+<label for="tabs-MSPE-0">MSPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MSE}=\text{mean}\left(pe(t)^2\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSPE" id="tabs-MSPE-1"  />
+<label for="tabs-MSPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="rmspe">
+  RMSPE
+  <a class="anchor" href="#rmspe">#</a>
+</h3>
+<p><em>Root Mean Square Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-RMSPE" id="tabs-RMSPE-0" checked="checked" />
+<label for="tabs-RMSPE-0">RMSPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MSE}=\sqrt{\text{mean}\left(pe(t)^2\right)}
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-RMSPE" id="tabs-RMSPE-1"  />
+<label for="tabs-RMSPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="maape">
+  MAAPE
+  <a class="anchor" href="#maape">#</a>
+</h3>
+<p><em>Mean Absolute Arctangent Percent Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MAAPE" id="tabs-MAAPE-0" checked="checked" />
+<label for="tabs-MAAPE-0">MAAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MAAPE}= \text{mean} \left(\text{arctan}\left(|pe(t)|\right)\right) = \text{mean} \left(\text{tan}^{-1}\left(|pe(t)|\right)\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAAPE" id="tabs-MAAPE-1"  />
+<label for="tabs-MAAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MAPE produces infinite or undefined values  when the  actual values are zero or close to zero, which is a common with intermittent data in retail. While other alternate measures have been proposed to deal with this disadvantage of MAPE, it still remains the preferred method of business forecasters following its intuitive interpretation as absolute percentage error. Mean Absolute Arctangent Percent Error is an alternative measure that has the same interpretation as an  absolute percentage error (APE) but can overcome MAPE’s disadvantage of generating infinite values.
+- **Boundedness** MAAPE is bounded and it varies from 0 to $\pi/2$. MAAPE does not go to infinity even with close-to-zero actual values, which is a significant advantage of 
+MAAPE  over MAPE.
+- <img src="/img/arctan.png"/>
+- **Robustness** Absolute Arctangent Percent Error given by $AAPE = \text{arctan}\left(|pe(t)|\right)$ converges to $\pi/2$ for large forecast errors,  thus limits the influence of outliers, which often distort the calculation of the overall forecast accuracy. Therefore, MAAPE can be particularly useful if there are extremely large forecast errors as a result of mistaken or incorrect  measurements.
+- However, if the extremely large forecast errors are considered 
+as genuine variations that might have some important business implications, rather than being due to mistaken or incorrect measurements, 
+MAAPE would not be appropriate. 
+- MAAPE is also asymmetric but has a more balanced penalty between positive and negative errors than MAPE. 
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAAPE" id="tabs-MAAPE-2"  />
+<label for="tabs-MAAPE-2">references</label>
+<div class="book-tabs-content markdown-inner">
+Kim, Sungil, and Heeyoung Kim. [A new metric of absolute percentage error for intermittent demand forecasts](https://core.ac.uk/reader/82178886). International Journal of Forecasting 32.3 (2016): 669-679.
+</div>
+
+
+</div>
+
+<h2 id="relative-error-metrics">
+  Relative error metrics
+  <a class="anchor" href="#relative-error-metrics">#</a>
+</h2>
+<p>An alternative to percentage error for the calculation of scale-independent metrics involves dividing each error by the error obtained using a baseline forecasting algorithm (typically the naive baseline $f^*(t)=y(t-1)$).</p>
+<span>
+  \(
+re(t)=\frac{e(t)}{e^*(t)}=\frac{y(t)-f(t)}{y(t)-f^*(t)}
+\)
+</span>
+
+<h3 id="mare">
+  MARE
+  <a class="anchor" href="#mare">#</a>
+</h3>
+<p><em>Mean Absolute Relative Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MARE" id="tabs-MARE-0" checked="checked" />
+<label for="tabs-MARE-0">MARE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MARE}=\text{mean}\left(|re(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MARE" id="tabs-MARE-1"  />
+<label for="tabs-MARE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="mdare">
+  MdARE
+  <a class="anchor" href="#mdare">#</a>
+</h3>
+<p><em>Median Absolute Relative Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MdARE" id="tabs-MdARE-0" checked="checked" />
+<label for="tabs-MdARE-0">MdARE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MdARE}=\text{median}\left(|re(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MdARE" id="tabs-MdARE-1"  />
+<label for="tabs-MdARE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="gmare">
+  GMARE
+  <a class="anchor" href="#gmare">#</a>
+</h3>
+<p><em>Geometric Mean Absolute Relative Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-GMARE" id="tabs-GMARE-0" checked="checked" />
+<label for="tabs-GMARE-0">GMARE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{GMARE}=\text{gmean}\left(|re(t)|\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-GMARE" id="tabs-GMARE-1"  />
+<label for="tabs-GMARE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="u-statistic">
+  U-statistic
+  <a class="anchor" href="#u-statistic">#</a>
+</h3>
+<p><em>Theil&rsquo;s $U$-statistic</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-U-statistic" id="tabs-U-statistic-0" checked="checked" />
+<label for="tabs-U-statistic-0">U-statistic</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{U}= \sqrt{\frac{A}{B}},\text{where},
+\)
+</span>
+
+<span>
+  \(
+\quad\text{A}=\sum_{t=1}^{n-1}\left(\frac{y(t+1)-f(t+1)}{y(t)}\right)^2\quad\text{B}=\sum_{t=1}^{n-1}\left(\frac{y(t+1)-y(t)}{y(t)}\right)^2
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-U-statistic" id="tabs-U-statistic-1"  />
+<label for="tabs-U-statistic-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- Large errors given more weight then small errors and also provides a relative basis for comparison with naive (**NF1** forecast $f(t)=y(t-1)$) methods.
+- The numerator is similar to the MAPE and the denominator to the MAPE of the naive forecast method.
+- Smaller the better and should be less than 1.
+- $U=1$ The naive method is as good as the forecasting technique being evaluated.
+- $U<1$ The forecasting technique being evaluated is better than the naive method. The smaller the $U$-statistic, the better the forecasting method is relative to the naive method.
+- $U>1$ There is no point in using the forecasting method, since using a naive method will produce better results.
+</div>
+
+
+</div>
+
+<h2 id="scaled-error-metrics">
+  Scaled error metrics
+  <a class="anchor" href="#scaled-error-metrics">#</a>
+</h2>
+<p>This generally involves scaling the error term by a suitable scale parameter.</p>
+<span>
+  \(
+se(t)=\frac{e(t)}{s}=\frac{y(t)-f(t)}{s}
+\)
+</span>
+
+<h3 id="madmean">
+  MAD/Mean
+  <a class="anchor" href="#madmean">#</a>
+</h3>
+<p><em>MAD/Mean ratio</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MAD/Mean" id="tabs-MAD/Mean-0" checked="checked" />
+<label for="tabs-MAD/Mean-0">MAD/Mean</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MAD/Mean}=\text{mean}\left(|se(t)|\right),\text{where } s = \frac{1}{n}\sum_{i=1}^{n} y(t)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAD/Mean" id="tabs-MAD/Mean-1"  />
+<label for="tabs-MAD/Mean-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- The scale parameter $s$ is the *in-sample* mean of the time series.
+<span>
+  \(
+s = \frac{1}{n}\sum_{i=1}^{n} y(t)
+\)
+</span>
+
+- Assumes stationarity, that is, the mean is stable over time, which is generally not true for data which shows trend, seasonality, or other patterns.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MAD/Mean" id="tabs-MAD/Mean-2"  />
+<label for="tabs-MAD/Mean-2">references</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="wmape">
+  wMAPE
+  <a class="anchor" href="#wmape">#</a>
+</h3>
+<p><em>(volume) weighted Mean Absolute Percentage Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-wMAPE" id="tabs-wMAPE-0" checked="checked" />
+<label for="tabs-wMAPE-0">wMAPE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{wMAPE}=\text{mean}\left(|se(t)|\right),\text{where } s = \sum_{i=n+1}^{n+h} |y(t)|
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-wMAPE" id="tabs-wMAPE-1"  />
+<label for="tabs-wMAPE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- The scale parameter $s$ is the sum of the absolute value of the time series we are evaluation on (sometimes also called *volume*).
+<span>
+  \(
+s = \sum_{i=n+1}^{n+h} |y(t)|
+\)
+</span>
+
+-  So essentially wMAPE is the Sum of Absolute errors divided by the Sum of the Actuals. 
+- This is equivalent to weighing the percentage error $pe(t)$ by a scale term, hence the term wMAPE.
+<span>
+  \(
+\frac{y(t)}{s} \cdot pe(t) = \frac{y(t)}{s} \cdot \frac{y(t)-f(t)}{y(t)}
+\)
+</span>
+
+- MAPE is sentitive to very small changes in low volume data. However, wMAPE is less sensitive to it.
+- MAPE assumes that, absolute error on each item is equally important. Large error on a low-value item can unfairly skew the overall
+error. In contrast, wMAPE penalizes more for errors in high volume data as compared to low volume data. 
+- wMAPE do not have divide by zero error.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-wMAPE" id="tabs-wMAPE-2"  />
+<label for="tabs-wMAPE-2">references</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+</div>
+
+<h3 id="mase">
+  MASE
+  <a class="anchor" href="#mase">#</a>
+</h3>
+<p><em>Mean Absolute Scaled Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MASE" id="tabs-MASE-0" checked="checked" />
+<label for="tabs-MASE-0">MASE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MASE}=\text{mean}\left(|se(t)|\right),\text{where } s = \frac{1}{n-1}\sum_{i=2}^{n} |y(t)-y(t-1)|
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MASE" id="tabs-MASE-1"  />
+<label for="tabs-MASE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- MASE is independent of the scale of the data.
+- The scale parameter $s$ is  the *in-sample* MAE from the naive forecast method.
+<span>
+  \(
+s = \frac{1}{n-1}\sum_{i=1}^{n} |y(t)-y(t-1)|
+\)
+</span>
+
+- A scaled error is less than one if it arises from a better forecast than the average one-step, naive forecast computed in-sample.
+- The only scenario under which MASE would be infinite or undefined is when all historical observations are equal.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MASE" id="tabs-MASE-2"  />
+<label for="tabs-MASE-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- Rob J. Hyndman and Anne B. Koehler, [Another look at measures of forecast accuracy](https://github.ibm.com/retail-supply-chain/planning/files/582845/Another.look.at.measures.of.forecast.accuracy.pdf), International Journal of Forecasting, Volume 22, Issue 4, 2006.
+- Rob J Hyndman, [Another look at forecast-accuracy metrics for intermittent demand](https://github.ibm.com/retail-supply-chain/planning/files/582847/Metrics.for.intermitted.demand.pdf). Chapter 3.4, pages 204-211, in "Business Forecasting: Practical Problems and Solutions", John Wiley & Sons, 2015.
+</div>
+
+
+</div>
+
+<h3 id="rmsse">
+  RMSSE
+  <a class="anchor" href="#rmsse">#</a>
+</h3>
+<p><em>Root Mean Squared Scaled Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-RMSSE" id="tabs-RMSSE-0" checked="checked" />
+<label for="tabs-RMSSE-0">RMSSE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{RMSSE}=\sqrt{\text{mean}\left(se(t)^2\right)},\text{where } s = \frac{1}{n-1}\sum_{i=2}^{n} |y(t)-y(t-1)|
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-RMSSE" id="tabs-RMSSE-1"  />
+<label for="tabs-RMSSE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- This is the root mean squared variant of MASE.
+- This is suited for time series characterized by intermittency, involving spardic unit sales with lots of zeros.
+- Absolute errors used by MASE are optimized for the median and would assign lower scores to forecasting methods that derive the forecasts close to zero. RMSSE buils on squared errors, which are optimized for the mean.
+- The measure is scale independent, meaning that it can be effectively used to compare forecasts across series with different scales.
+- The measure penalizes positive and negative forecast errors, as well as large and small forecasts, equally, thus being symmetric.
+- It can be safely computed as it does not rely on divisions with values that could be equal or close to zero (e.g. as done in percentage errors when $y(t)=0$ or relative errors when the error of the benchmark used for scaling is zero).
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-RMSSE" id="tabs-RMSSE-2"  />
+<label for="tabs-RMSSE-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- [The M5 Competition](https://mofc.unic.ac.cy/m5-competition/)
+- The M5 series are characterized by intermittency, involving sporadic unit sales with lots of zeros. This means that absolute errors, which are optimized for the median, would assign lower scores (better performance) to forecasting methods that derive forecasts close to zero. However, the objective of M5 is to accurately forecast the average demand and for this reason, the accuracy measure used builds on squared errors, which are optimized for the mean.
+</div>
+
+
+</div>
+
+<h3 id="msle">
+  MSLE
+  <a class="anchor" href="#msle">#</a>
+</h3>
+<p><em>Mean Squared Log Error</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MSLE" id="tabs-MSLE-0" checked="checked" />
+<label for="tabs-MSLE-0">MSLE</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MSLE}= \text{mean} \left(\log(y(t)+1)- \log(f(t)+1)\right) ^2
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSLE" id="tabs-MSLE-1"  />
+<label for="tabs-MSLE-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- The introduction of the logarithm makes MSLE only care about the relative difference between the true and the predicted value. Thus making
+this scale independent.
+
+- Robustness: In the case of MSE, the presence of outliers can explode the error term to a very high value. 
+But, in the case of MLSE the outliers are drastically scaled down therefore nullifying their effect. 
+ 
+- Biased penalty: MSLE penalizes underestimates more than overestimates because of an asymmetry in the error curve. 
+- The reason ‘1’ is added to both $y(t)$ and $f(t)$ is for mathematical convenience since $\log(0)$ is not defined but both $y(t)$
+ or $f(t)$ can be 0. 
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSLE" id="tabs-MSLE-2"  />
+<label for="tabs-MSLE-2">references</label>
+<div class="book-tabs-content markdown-inner">
+Kim, Sungil, and Heeyoung Kim. [A new metric of absolute percentage error for intermittent demand forecasts](https://core.ac.uk/reader/82178886). International Journal of Forecasting 32.3 (2016): 669-679.
+</div>
+
+
+</div>
+
+<h2 id="correlation-based-metrics">
+  Correlation based metrics
+  <a class="anchor" href="#correlation-based-metrics">#</a>
+</h2>
+<h3 id="pcc">
+  PCC
+  <a class="anchor" href="#pcc">#</a>
+</h3>
+<p><em>Pearson correlation coefficient ($r$)</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-PCC" id="tabs-PCC-0" checked="checked" />
+<label for="tabs-PCC-0">PCC</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+r = \frac{\sum_{t = n+1}^{n+h} (y(t) - \text{mean} (y(t)))(f(t) - \text{mean} (f(t)))}{\sqrt{\sum_{t = n+1}^{n+h} (y(t) - \text{mean} (y(t)))^2}\sqrt{\sum_{t = n+1}^{n+h} (f(t) - \text{mean} (f(t)))^2}}
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-PCC" id="tabs-PCC-1"  />
+<label for="tabs-PCC-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- Pearson correlation measures how two continuous signals co-vary over time and indicate the linear relationship as a number between -1 (negatively correlated) to 0 (not correlated) to 1 (perfectly correlated).
+- Sensitive to outliers.
+- Based on the assumption of  homoscedasticity of the data (variance of your data is homogenous across the data range). 
+- It is a scale independent and offset independent metric.
+- Caution is necessary when using Pearson's correlation coefficient for model selection (see references).
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-PCC" id="tabs-PCC-2"  />
+<label for="tabs-PCC-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- Waldmann, Patrik. [On the use of the Pearson correlation coefficient for model evaluation in genome-wide prediction](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6781837/) Frontiers in Genetics 10 (2019): 899.
+- Armstrong, Richard A. [Should Pearson's correlation coefficient be avoided?.](https://onlinelibrary.wiley.com/doi/full/10.1111/opo.12636) Ophthalmic and Physiological Optics 39.5 (2019): 316-327. 
+</div>
+
+
+</div>
+
+<h3 id="krcc">
+  KRCC
+  <a class="anchor" href="#krcc">#</a>
+</h3>
+<p><em>Kendall rank correlation coefficient ($\tau $)</em></p>
+<p>A rank correlation coefficient measures the degree of similarity between two rankings, and can be used to assess the significance of the relation between them.</p>
+<p>For $t_i &lt; t_j$, two sequences $y(t)$ and $f(t)$ are said to be <em>concordant</em> if the ranks for both elements agree: that is, if both
+$f(t_i)&gt;f(t_j)$ and $y(t_i)&gt;y(t_j)$; or if both $f(t_i)&lt;f(t_j)$ and $y(t_i)&lt;y(t_j)$.</p>
+<p>They are said to be <em>discordant</em>, if $fx(t_i)&gt;f(t_j)$ and $y(t_i)&lt;y(t_j)$ or if $f(t_i) &lt; f(t_j)$ and $y(t_i)&gt;y(t_j) $.</p>
+<p>If $x(t_i)=x(t_j)$ and $y(t_i)=y(t_j) $, the pair is neither concordant nor discordant.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-KRCC" id="tabs-KRCC-0" checked="checked" />
+<label for="tabs-KRCC-0">KRCC</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\tau = \frac{(\text{number of concordant pairs}) - (\text{number of discordant pairs})}{ 
+ {n \choose 2} }
+ \)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-KRCC" id="tabs-KRCC-1"  />
+<label for="tabs-KRCC-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- The denominator ${n \choose 2}$ is the total number of pair combinations, so the coefficient must be in the range $−1 \leq \tau \leq 1$.
+- If the agreement between the two rankings is perfect (i.e., the two rankings are the same) the coefficient has value 1.
+- If the disagreement between the two rankings is perfect (i.e., one ranking is the reverse of the other) the coefficient has value −1.
+- If $X$ and $Y$ are independent, then we would expect the coefficient to be approximately zero.
+- An explicit expression for Kendall's rank coefficient is $\tau= \frac{2}{n(n-1)}\sum_{i<j} \text{sign}(x_i-x_j)\text{sign}(y_i-y_j)$.
+</div>
+
+
+</div>
+
+<h3 id="ngini">
+  NGini
+  <a class="anchor" href="#ngini">#</a>
+</h3>
+<p><em>Normalized Gini Coefficient</em></p>
+<p>Measures how  far away the true  values sorted by predictions are from  a random  sorting, in terms  of number  of swaps.
+If $y(t)$ represents &ldquo;True Values&rdquo; and $f(t)$ represents the corresponding predictions. Now we let $y_f(t)$ represent &ldquo;Sorted True&rdquo; values,
+where $y(t)$ is sorted based of values of $f(t)$.</p>
+<p>Let $\text{swaps}_{\text{sorted}}$ represent the  number of swaps of adjacent digits
+(like in bubble sort) it would take to get from the &ldquo;Sorted True&rdquo;
+state to the &ldquo;True Values&rdquo; state.</p>
+<p>And $\text{swaps}_{\text{random}}$ represents the number of swaps it would take on average to get from a random state to the &ldquo;True Values&rdquo; state.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-NGC" id="tabs-NGC-0" checked="checked" />
+<label for="tabs-NGC-0">NGC</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{NGini} = \frac{(\text{swaps}_{\text{random}}) - (\text{swaps}_{\text{sorted}})}{ 
+ \text{swaps}_{\text{random}} }
+ \)
+</span>
+
+</div>
+
+
+</div>
+
+<h2 id="poisson-metrics">
+  Poisson metrics
+  <a class="anchor" href="#poisson-metrics">#</a>
+</h2>
+<p>These are mainly suitable for sparse intermiited sales data or count data in general and are essentailly based on the Poisson goodness-of-fit metrics.</p>
+<h3 id="pnll">
+  PNLL
+  <a class="anchor" href="#pnll">#</a>
+</h3>
+<p><em>Poisson Negative Log Likelihood</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-PNLL" id="tabs-PNLL-0" checked="checked" />
+<label for="tabs-PNLL-0">PNLL</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{PNLL} = \text{mean}(f(t)-y(t) \cdot\log f(t))
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-PNLL" id="tabs-PNLL-1"  />
+<label for="tabs-PNLL-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-PNLL" id="tabs-PNLL-2"  />
+<label for="tabs-PNLL-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://ibm.ent.box.com/file/686833894993
+- https://data.princeton.edu/wws509/notes/c4.pdf
+- https://github.ibm.com/srom/forecasting/blob/master/fc_app_pak/metrics/metrics.py
+</div>
+
+
+</div>
+
+<h3 id="p-dev">
+  P-DEV
+  <a class="anchor" href="#p-dev">#</a>
+</h3>
+<p><em>Poisson Deviance</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-P-DEV" id="tabs-P-DEV-0" checked="checked" />
+<label for="tabs-P-DEV-0">P-DEV</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+D = 2 \cdot \text{mean} \left(y(t)\cdot \log\left(\frac{y(t)}{f(t)}\right)- \left(y(t) - f(t)\right)\right)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-P-DEV" id="tabs-P-DEV-1"  />
+<label for="tabs-P-DEV-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- A measure of discrepancy between observed and fitted values is the deviance.
+- The deviance indicates the extent to which the likelihood of the saturated model exceeds the likelihood of the proposed model. 
+- If the proposed model has a good fit, the deviance will be small. If the proposed model has a bad fit, the deviance will be high.
+
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-P-DEV" id="tabs-P-DEV-2"  />
+<label for="tabs-P-DEV-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://ibm.ent.box.com/file/686833894993
+- https://data.princeton.edu/wws509/notes/c4.pdf
+- https://github.ibm.com/srom/forecasting/blob/master/fc_app_pak/metrics/metrics.py
+</div>
+
+
+</div>
+
+<h3 id="chi2">
+  CHI^2
+  <a class="anchor" href="#chi2">#</a>
+</h3>
+<p><em>Pearson’s chi-squared statistic</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-CHI^2" id="tabs-CHI^2-0" checked="checked" />
+<label for="tabs-CHI^2-0">CHI^2</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\chi^2 = \sum \frac{(y(t)-f(t))^2}{f(t)} 
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-CHI^2" id="tabs-CHI^2-1"  />
+<label for="tabs-CHI^2-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+The chi-squared statistic can be used  to test the hypothesis that observed data follow a particular
+distribution (Poisson).
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-CHI^2" id="tabs-CHI^2-2"  />
+<label for="tabs-CHI^2-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://ibm.ent.box.com/file/686833894993
+- https://data.princeton.edu/wws509/notes/c4.pdf
+- https://github.ibm.com/srom/forecasting/blob/master/fc_app_pak/metrics/metrics.py
+</div>
+
+
+</div>
+
+<h3 id="d2">
+  D^2
+  <a class="anchor" href="#d2">#</a>
+</h3>
+<p><em>Percent of deviance explained</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-D^2" id="tabs-D^2-0" checked="checked" />
+<label for="tabs-D^2-0">D^2</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+D^2 = \frac{\text{Null deviance}- \text{Residual deviance}}{\text{Null deviance}}
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-D^2" id="tabs-D^2-1"  />
+<label for="tabs-D^2-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+In the defintion, the null deviance is the deviance of the model with the intercept only, 
+and the residual deviance is the deviance that remains unexplained by the model after all final variables have been included.
+
+- Null deviance refers to the null model (i.e. an intercept-only model).  A low null deviance implies that the data can be 
+modeled well merely using the intercept. If the null deviance is low, you should consider using few features for modeling the data.
+- For our purposes null deviance can be defined using the mean of observations and null deviance can be defined as
+<span>
+  \(
+D_{0} = 2 \cdot \text{mean} \left(y(t)\cdot \log\left(\frac{y(t)}{\text{mean}(y(t))}\right)- \left(y(t) - \text{mean}(y(t))\right)\right)
+\)
+</span>
+
+
+- Residual deviance refers to the trained model and a low residual deviance implies that the model you have trained is appropriate.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-D^2" id="tabs-D^2-2"  />
+<label for="tabs-D^2-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://ibm.ent.box.com/file/686833894993
+- https://data.princeton.edu/wws509/notes/c4.pdf
+- https://github.ibm.com/srom/forecasting/blob/master/fc_app_pak/metrics/metrics.py
+</div>
+
+
+</div>
+
+<h2 id="metrics-for-quantile-forecasts">
+  Metrics for Quantile Forecasts
+  <a class="anchor" href="#metrics-for-quantile-forecasts">#</a>
+</h2>
+<p>Point forecast $f(t)$ and the observed/real value $y(t)$  at time $t$ can be expressed as
+<span>
+  \(
+y(t) = f(t) + \epsilon_t
+\)
+</span>
+
+where $\epsilon_t$ is the corresponding error. The most common extension from point to probabilistic forecasts is
+to construct prediction intervals. A number of methods can be
+used for this purpose, the most popular take into account both the
+point forecast and the corresponding error: the center of the prediction interval
+at the $(1-\alpha)$  confidence level is set equal to $f(t)$ and its bounds are defined by
+the $\alpha/2$ and $(1-\alpha/2)$ quantiles of the cumulative distribution function (CDF) of
+$\epsilon_t$ as  $[f_L(t),f_U(t)]$.</p>
+<p>Another popular alternative  to this approach is to find the distribution of the point forecast $f(t)$ itself, as $F_t$, where
+$F_t$ is random variable with  an explicit density distribution, that is</p>
+<span>
+  \(
+F_{n+h}(x) = P (f(n+h) \leq x \,\,|\,\, \{y(t)\}_{t=1, \dots, n})
+\)
+</span>
+
+<p>From a practical perspective, a probabilistic forecast $F_{n+h}$ is usually represented as a histogram
+where each bin represents a range of future demand, and where the bin height represents the estimated probability that
+future demand will fall within the specific range associated to a bucket.</p>
+<p>When evaluating a probabilistic forecast, the main challenge is that
+we never observe the true distribution of the underlying process. In
+other words, we cannot compare the predictive distribution, $F_{t}$, or the
+prediction interval, $[f_L(t),f_U(t)]$, with the actual distribution of the $y(t)$, but only with observed past values $y(t)$, $t&lt; n$.</p>
+<p>Scoring rules provide summary measures for the evaluation of probabilistic forecasts, by assigning a numerical score,
+$S(F_{t}, y(t))$, based on the predictive distribution, $F_{t}$ and on the actual
+observed value $y(t)$. A scoring rule is called proper if given the true distribution of $y(t)$ as $Y_t$, then
+<span>
+  \(
+S(F_{t}, Y_t) \leq S(F_{t}, y(t))
+\)
+</span>
+
+Now we present two proper scoring rules: Pinball loss and Continuous Ranked Probability Score</p>
+<h3 id="pinball-loss">
+  Pinball Loss
+  <a class="anchor" href="#pinball-loss">#</a>
+</h3>
+<p>In general $y(t)$ is a random variable with it own distribution and what is typically predicted as the <strong>point forecast</strong>, $f(t)$, is the <strong>mean</strong> $\mathbb{E}[y(t)]$ of this distribution. A <strong>quantile forecast</strong> $f_p(t)$ is an estimation of the $p^{th}$ quantile of the distribution. The $p^{th}$ quantile of $y(t)$ is defined as
+<span>
+  \(
+\mathbb{Q}_p[y(t)] = \left\{x : \text{Pr}[y(t) \leq x] = p \right\}
+\)
+</span>
+</p>
+<p>The <strong>pinball loss function</strong> is a metric used to assess the accuracy of a quantile forecast.
+<span>
+  \(
+pl(t,p) = \begin{cases}
+ \ p\left(y(t)-f_p(t)\right)\quad\text{if}\quad  f_p(t) \leq y(t)\\
+  (1-p)\left(f_p(t)-y(t)\right)\quad\text{if}\quad f_p(t) > y(t)
+\end{cases}
+\)
+</span>
+</p>
+<img src="/img/pinball-loss.jpg"/>
+*The pinball loss function has been named after its shape that looks like the trajectory of a ball on a [pinball](https://en.wikipedia.org/wiki/Pinball).*
+<ul>
+<li>The pinball function is always non-negative and farther the value of forecast from real value, larger the value of the loss function.</li>
+<li>The slope is used to reflect the desired imbalance in the quantile forecast.</li>
+<li>You want the truth $y(t)$ to be less than your prediction  100$p$% of the time. For example, your prediction for the 0.25 quantile should be such that the true value is less than your prediction 25% of the time. The loss function enforces this by penalizing cases when the truth is on the more unusual side of your prediction more heavily than when it is on the expected side.</li>
+<li>The metric further encourages you to predict as narrow a range of possibilities as possible by weighting the penalty by the absolute difference between the truth and your quantile.</li>
+<li>Stockout and inventory costs of the quantile.</li>
+</ul>
+<h3 id="mspl">
+  MSPL
+  <a class="anchor" href="#mspl">#</a>
+</h3>
+<p><em>Mean Scaled Pinball Loss</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-MSPL" id="tabs-MSPL-0" checked="checked" />
+<label for="tabs-MSPL-0">MSPL</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{MSPL}(p)=\text{mean}\left(\frac{pl(t,p)}{s}\right),\text{where } s = \frac{1}{n-1}\sum_{i=2}^{n} |y(t)-y(t-1)|
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSPL" id="tabs-MSPL-1"  />
+<label for="tabs-MSPL-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- Like MASE MSPL is independent of the scale of the data. The scale parameter $s$ is  the *in-sample* MAE from the naive forecast method.
+<span>
+  \(
+s = \frac{1}{n-1}\sum_{i=1}^{n} |y(t)-y(t-1)|
+\)
+</span>
+
+- MASE = 2 MSPL(0.5)
+- *Best quantile model has the lowest pinball loss*. The most important result
+associated with the pinball loss function is that the lower the pinball loss,
+the more accurate the quantile forecast.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-MSPL" id="tabs-MSPL-2"  />
+<label for="tabs-MSPL-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://www.lokad.com/pinball-loss-function-definition
+- https://www.kaggle.com/c/m5-forecasting-uncertainty/discussion/137098
+</div>
+
+
+</div>
+
+<h2 id="metrics-for-prediction-intervals">
+  Metrics for Prediction Intervals
+  <a class="anchor" href="#metrics-for-prediction-intervals">#</a>
+</h2>
+<p>Prediction intervals express the uncertainty in the forecasts. This is useful because it provides the user of the forecasts with <em>worst</em> and <em>best</em> case estimates and a sense of how depedenable the forecast it.</p>
+<p>While we would like to estimate the actual distribution based on training as a surrogate we typically estimate a 95% prediction interval $[f_L(t),f_U(t)]$ such that $\text{Pr}[f_L(t)
+\leq y(t) \leq f_U(t)]=0.95$.</p>
+<p>MSPL values can be aggregated over different values of $p$. For example, for a a 95% prediction interval $p$ can be set to is set to $p_1=0.025, p_2=0.5, p_3=0.975$. The the aggregate SPL can be determined as below to measure the accuracy of the <strong>prediction interval</strong>.</p>
+<h3 id="agmspl">
+  AgMSPL
+  <a class="anchor" href="#agmspl">#</a>
+</h3>
+<p><em>Aggregate Mean Scaled Pinball Loss</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-AgMSPL" id="tabs-AgMSPL-0" checked="checked" />
+<label for="tabs-AgMSPL-0">AgMSPL</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{AgMSPL}=\frac{1}{3} \sum_{i=1}^3 \text{MSPL}(p_i)
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-AgMSPL" id="tabs-AgMSPL-1"  />
+<label for="tabs-AgMSPL-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-AgMSPL" id="tabs-AgMSPL-2"  />
+<label for="tabs-AgMSPL-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- https://www.kaggle.com/c/m5-forecasting-uncertainty
+</div>
+
+
+</div>
+
+<h3 id="crps">
+  CRPS
+  <a class="anchor" href="#crps">#</a>
+</h3>
+<p><em>Continuous Ranked Probability Score</em></p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-CRPS" id="tabs-CRPS-0" checked="checked" />
+<label for="tabs-CRPS-0">CRPS</label>
+<div class="book-tabs-content markdown-inner">
+<span>
+  \(
+\text{CRPS}\left(F_t, y(t)\right)= \int_{-\infty}^{\infty} \left( F_t(x)- \unicode{x1D7D9}_{ (x-y(t))} \right) \text{d}x
+\quad \text{where } \unicode{x1D7D9} \text{ is the indicator function}.
+\)
+</span>
+
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-CRPS" id="tabs-CRPS-1"  />
+<label for="tabs-CRPS-1">notes</label>
+<div class="book-tabs-content markdown-inner">
+- The CRPS generalizes the MAE; in fact, it reduces to the MAE if the forecast is deterministic.
+
+- CRPS can be defined equivalently as follows:
+<span>
+  \(
+\text{CRPS}\left(F_t, y(t)\right)= \int_{0}^{1} pl(t,p) \text{d}p
+\)
+</span>
+
+Discretization of this integral, e.g., replacing the integral by a sum over quantiles
+$q = 0.01, \dots, 0.99$, enables us to avoid the complications with original formula.
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-CRPS" id="tabs-CRPS-2"  />
+<label for="tabs-CRPS-2">references</label>
+<div class="book-tabs-content markdown-inner">
+https://pypi.org/project/properscoring/
+</div>
+
+
+</div>
+
+<h2 id="metrics-for-multiple-time-series">
+  Metrics for multiple time series
+  <a class="anchor" href="#metrics-for-multiple-time-series">#</a>
+</h2>
+<p>When forecasting multiple time series an agggregate metric can be computed via weighted combinaton of the corresponding metric ($\text{metric}_j$) for each time series $y_j(t)$.
+<span>
+  \(
+\text{W-metric}= \frac{\sum_{j=1}^K w_j \text{metric}_j}{\sum_{j=1}^K w_j}
+\)
+</span>
+
+For example,
+<span>
+  \(
+\text{W-MASE}= \frac{\sum_{j=1}^K w_j \text{MASE}_j}{\sum_{j=1}^K w_j}
+\)
+</span>
+
+The weights $w_j$ represent a certain relative importance of the $j^{th}$ time series $y_j(t)$.</p>
+<ul>
+<li>The simplest weights are $w_j=1/K$ which gives a uniform weight to all the time series.</li>
+<li>For example the M5 competition used the sum of units sold in the last 28 observations multiplied by their respective price (<em>cumulative actual
+dollar sales</em>). It is an objective proxy of value of an unit for the
+company in monetary terms, hence it can be used as weight.</li>
+</ul>
+<h2 id="metrics-for-hierarchical-forecasting">
+  Metrics for hierarchical forecasting
+  <a class="anchor" href="#metrics-for-hierarchical-forecasting">#</a>
+</h2>
+<img src="/img/product_location_hierarchy.jpg" alt="product_location_hierarchy"/>
+<p>Node level metrics The forecast accuracy metric can be computed at any node in the specified hierarchy. However there are differnt ways to generate an accuracy metric at a node.</p>
+<ol>
+<li><strong>aggregate-metrics</strong> For any node compute the metric for all the children and then aggregate the metric via suitable weighted aggregation method as earlier.</li>
+<li><strong>aggregate-forecasts</strong> Forecast for all the children at a node, aggregate the forecasts and then evaluate the metric.</li>
+<li><strong>aggregate-data</strong> Aggregate the data fro all the children at a node,  forecast and then evaluate the metric.</li>
+</ol>
+<p>Aggregate across all nodes at a level</p>
+<p>Aggregate across all levels</p>
+<h2 id="metrics-for-new-products">
+  Metrics for new products
+  <a class="anchor" href="#metrics-for-new-products">#</a>
+</h2>
+<ul>
+<li>Cold start evaluation</li>
+<li>Forecast adjustments after $k$ time periods</li>
+</ul>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<p><a href="https://otexts.com/fpp2/accuracy.html">https://otexts.com/fpp2/accuracy.html</a></p>
+<p><a href="https://www.relexsolutions.com/resources/measuring-forecast-accuracy/">https://www.relexsolutions.com/resources/measuring-forecast-accuracy/</a></p>
+<p>Rob J. Hyndman and Anne B. Koehler, <a href="https://github.ibm.com/retail-supply-chain/planning/files/582845/Another.look.at.measures.of.forecast.accuracy.pdf">Another look at measures of forecast accuracy</a>, International Journal of Forecasting, Volume 22, Issue 4, 2006.</p>
+<p>Rob J Hyndman, <a href="https://github.ibm.com/retail-supply-chain/planning/files/582847/Metrics.for.intermitted.demand.pdf">Another look at forecast-accuracy metrics for intermittent demand</a>. Chapter 3.4, pages 204-211, in &ldquo;Business Forecasting: Practical Problems and Solutions&rdquo;, John Wiley &amp; Sons, 2015.</p>
+<p>Sungil Kim and Heeyoung Kim, <a href="https://github.ibm.com/retail-supply-chain/planning/files/582846/A.new.metric.of.absolute.percentage.error.for.intermittent.demand.forecasts.pdf">A new metric of absolute percentage error for intermittent demand forecasts</a>, International Journal of Forecasting, Volume 32, Issue 3, 2016.</p>
+<p>Makridakis, S., Spiliotis, E. and Assimakopoulos, V, The M4 Competition: 100,000 time series and 61 forecasting methods. International Journal of Forecasting, 36, 54–74, 2000.</p>
+<p>Spyros Makridakis and Michèle Hibon, <a href="https://github.ibm.com/retail-supply-chain/planning/files/582844/M3_competition_results_conclusions_implications.pdf">The M3-Competition: results, conclusions and implications</a>, International Journal of Forecasting, Volume 16, Issue 4, 2000.</p>
+<p>Fotios Petropoulos, Xun Wang and Stephen M. Disney. <a href="https://github.ibm.com/retail-supply-chain/planning/files/582842/The.inventory.performance.of.forecasting.methods-.Evidence.from.the.M3.competition.data.pdf">The inventory performance of forecasting methods: Evidence from the M3 competition data</a>,International Journal of Forecasting, Volume 35, Issue 1, 2019.</p>
+<p>Gneiting, Tilmann, Fadoua Balabdaoui, and Adrian E. Raftery. <a href="https://github.ibm.com/retail-supply-chain/planning/files/593835/Recent.advances.in.electricity.price.forecasting-.A.review.of.probabilistic.forecasting.pdf">Probabilistic forecasts, calibration and sharpness</a> Journal of the Royal Statistical Society: Series B (Statistical Methodology) 69.2 (2007): 243-268.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#forecast-errors">Forecast errors</a></li>
+    <li><a href="#tldr">TLDR</a></li>
+    <li><a href="#categorizing-metrics">Categorizing metrics</a></li>
+    <li><a href="#scale-dependent-metrics">Scale dependent metrics</a>
+      <ul>
+        <li><a href="#me">ME</a></li>
+        <li><a href="#mae">MAE</a></li>
+        <li><a href="#mdae">MdAE</a></li>
+        <li><a href="#gmae">GMAE</a></li>
+        <li><a href="#mse">MSE</a></li>
+        <li><a href="#rmse">RMSE</a></li>
+      </ul>
+    </li>
+    <li><a href="#percentage-error-metrics">Percentage error metrics</a>
+      <ul>
+        <li><a href="#mpe">MPE</a></li>
+        <li><a href="#mape">MAPE</a></li>
+        <li><a href="#mdape">MdAPE</a></li>
+        <li><a href="#smape">sMAPE</a></li>
+        <li><a href="#smdape">sMdAPE</a></li>
+        <li><a href="#mspe">MSPE</a></li>
+        <li><a href="#rmspe">RMSPE</a></li>
+        <li><a href="#maape">MAAPE</a></li>
+      </ul>
+    </li>
+    <li><a href="#relative-error-metrics">Relative error metrics</a>
+      <ul>
+        <li><a href="#mare">MARE</a></li>
+        <li><a href="#mdare">MdARE</a></li>
+        <li><a href="#gmare">GMARE</a></li>
+        <li><a href="#u-statistic">U-statistic</a></li>
+      </ul>
+    </li>
+    <li><a href="#scaled-error-metrics">Scaled error metrics</a>
+      <ul>
+        <li><a href="#madmean">MAD/Mean</a></li>
+        <li><a href="#wmape">wMAPE</a></li>
+        <li><a href="#mase">MASE</a></li>
+        <li><a href="#rmsse">RMSSE</a></li>
+        <li><a href="#msle">MSLE</a></li>
+      </ul>
+    </li>
+    <li><a href="#correlation-based-metrics">Correlation based metrics</a>
+      <ul>
+        <li><a href="#pcc">PCC</a></li>
+        <li><a href="#krcc">KRCC</a></li>
+        <li><a href="#ngini">NGini</a></li>
+      </ul>
+    </li>
+    <li><a href="#poisson-metrics">Poisson metrics</a>
+      <ul>
+        <li><a href="#pnll">PNLL</a></li>
+        <li><a href="#p-dev">P-DEV</a></li>
+        <li><a href="#chi2">CHI^2</a></li>
+        <li><a href="#d2">D^2</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-quantile-forecasts">Metrics for Quantile Forecasts</a>
+      <ul>
+        <li><a href="#pinball-loss">Pinball Loss</a></li>
+        <li><a href="#mspl">MSPL</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-prediction-intervals">Metrics for Prediction Intervals</a>
+      <ul>
+        <li><a href="#agmspl">AgMSPL</a></li>
+        <li><a href="#crps">CRPS</a></li>
+      </ul>
+    </li>
+    <li><a href="#metrics-for-multiple-time-series">Metrics for multiple time series</a></li>
+    <li><a href="#metrics-for-hierarchical-forecasting">Metrics for hierarchical forecasting</a></li>
+    <li><a href="#metrics-for-new-products">Metrics for new products</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Linear Regression
+  #
+
+Linear Regression is a single layer neural network for regression. The probability of 
+
+
+
+  \(y\)
+
+ for a given feature vector (
+  \(\mathbf{x}\in \mathbb{R}^d\)
+
+) is modelled as
+
+  \[
+\text{Pr}[y|\mathbf{x},\mathbf{w}] = \mathcal{N}(y|\mathbf{w}^T\mathbf{x},\sigma^2)
+\]
+
+
+where 
+  \(\mathbf{w}\in \mathbb{R}^d\)
+
+ are the weights/parameters of the model and 
+  \(\mathcal{N}\)
+
+ is the normal distribution with mean 
+  \(\mathbf{w}^T\mathbf{x}\)
+
+ and variance 
+  \(\sigma^2\)
+
+. The prediction is given by
+
+  \[
+\text{E}[y|\mathbf{x},\mathbf{w}] = \mathbf{w}^T\mathbf{x}
+\]
+
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/supervised/linear_regression/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Linear Regression">
+  <meta property="og:description" content="Linear Regression # Linear Regression is a single layer neural network for regression. The probability of \(y\) for a given feature vector ( \(\mathbf{x}\in \mathbb{R}^d\) ) is modelled as \[ \text{Pr}[y|\mathbf{x},\mathbf{w}] = \mathcal{N}(y|\mathbf{w}^T\mathbf{x},\sigma^2) \] where \(\mathbf{w}\in \mathbb{R}^d\) are the weights/parameters of the model and \(\mathcal{N}\) is the normal distribution with mean \(\mathbf{w}^T\mathbf{x}\) and variance \(\sigma^2\) . The prediction is given by \[ \text{E}[y|\mathbf{x},\mathbf{w}] = \mathbf{w}^T\mathbf{x} \]">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Linear Regression | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/supervised/linear_regression/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4cacd3980491d67e5f49ba6b4b58cd3873010a3c6c912cfe4c009ef436e9e73a.js" integrity="sha256-TKzTmASR1n5fSbprS1jNOHMBCjxskSz&#43;TACe9Dbp5zo=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/supervised/" class="">Supervised learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/supervised/linear_regression/" class="active">Linear Regression</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/activation_functions/" class="">Activation functions</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/alignment/" class="">Alignment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basics/" class="">Basics</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Linear Regression</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#linear-regression">Linear Regression</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="linear-regression">
+  Linear Regression
+  <a class="anchor" href="#linear-regression">#</a>
+</h2>
+<p>Linear Regression is a single layer neural network for regression. The probability of 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(y\)
+</span>
+ for a given feature vector (<span>
+  \(\mathbf{x}\in \mathbb{R}^d\)
+</span>
+) is modelled as
+<span>
+  \[
+\text{Pr}[y|\mathbf{x},\mathbf{w}] = \mathcal{N}(y|\mathbf{w}^T\mathbf{x},\sigma^2)
+\]
+</span>
+
+where <span>
+  \(\mathbf{w}\in \mathbb{R}^d\)
+</span>
+ are the weights/<strong>parameters</strong> of the model and <span>
+  \(\mathcal{N}\)
+</span>
+ is the <strong>normal</strong> distribution with mean <span>
+  \(\mathbf{w}^T\mathbf{x}\)
+</span>
+ and variance <span>
+  \(\sigma^2\)
+</span>
+. The prediction is given by
+<span>
+  \[
+\text{E}[y|\mathbf{x},\mathbf{w}] = \mathbf{w}^T\mathbf{x}
+\]
+</span>
+</p>
+<blockquote class="book-hint warning">
+<p>Without loss of generalization we ignore the bias term as it can be incorporated into the feature vector.</p>
+</blockquote>
+<p>Given a dataset <span>
+  \(\mathcal{D}=\{\mathbf{x}_i \in \mathbb{R}^d,\mathbf{y}_i \in \mathbb{R}\}_{i=1}^N\)
+</span>
+ containing <span>
+  \(n\)
+</span>
+ examples we need to estimate the parameter vector <span>
+  \(\mathbf{w}\)
+</span>
+ by maximizing the likelihood of data.</p>
+<blockquote>
+<p>In practice we minimize the <strong>negative log likelihood</strong>.</p></blockquote>
+<p>Let <span>
+  \( \mu_i = \mathbf{w}^T\mathbf{x}_i\)
+</span>
+ be the model prediction for each example in the training dataset. The negative log likelihood (NLL) is given by
+<span>
+  \[
+\begin{align}
+L(\mathbf{w}) &= - \sum_{i=1}^{N} \log \left[\text{Pr}[y_i|\mathbf{x}_i,\mathbf{w}]\right] \nonumber \\
+                       &= \frac{N}{2} \log(2\pi\sigma^2) + \frac{1}{2\sigma^2} \sum_{i=1}^{N} (y_i-\mu_i)^2 \nonumber \\
+
+\end{align}
+\]
+</span>
+
+This is equivalent to minimizing the <strong>Mean Squared Error</strong> (MSE) loss.
+<span>
+  \[
+\begin{align}
+L(\mathbf{w}) &= \frac{1}{N} \sum_{i=1}^{N} (y_i-\mu_i)^2 \nonumber \\
+\end{align}
+\]
+</span>
+
+We need to choose the model parameters that optimizes (minimizes) the loss function.
+<span>
+  \[
+\hat{\mathbf{w}} = \argmin_{\mathbf{w}} L(\mathbf{w})
+\]
+</span>
+</p>
+<a  href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss"   target="_blank" rel="noopener"  class="book-btn">torch.nn.MSELoss</a>
+
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#linear-regression">Linear Regression</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

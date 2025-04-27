@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Backpropagation
+  #
+
+
+Backprop, Error Backpropagation.
+Backpropagation (or backprop) is an efficient technique to compute the gradient of the loss function.
+It boils down to a local message passing scheme in which information is sent backwards through the network.
+
+  Forward propagation
+  #
+
+
+
+
+
+  
+
+
+
+
+
+stateDiagram-v2
+    direction LR
+    z1: $$z_1$$
+    z2: $$z_2$$
+    zi: $$z_i$$
+    zM: $$...$$
+    aj: $$a_j=\sum_i w_{ji} z_i$$
+    zj: $$z_j=h(a_j)$$
+    START1:::hidden --&gt; z1
+    START2:::hidden --&gt; z2
+    STARTi:::hidden --&gt; zi
+    STARTM:::hidden --&gt; zM
+    z1 --&gt; aj
+    z2 --&gt; aj
+    zi --&gt; aj:$$w_{ji}$$
+    zM --&gt; aj
+    aj --&gt; zj
+    zj --&gt; END:::hidden
+    note left of aj : Pre-activation
+    note left of zj : Activation
+    classDef hidden display: none;
+
+
+Let&rsquo;s consider a hidden unit in a general feed forward neural nework.
+
+  \[
+a_j=\sum_i w_{ji} z_i
+\]
+
+
+where 
+  \(z_i\)
+
+ is the activation of anoter unit or an input that sends an connection of unit 
+  \(j\)
+
+ and 
+  \(w_{ji}\)
+
+ is the weight associated with that connection. 
+  \(a_j\)
+
+ is known as pre-activation and is transformed by a non-linear activation fucntion to give the activation 
+  \(z_j\)
+
+ of unit 
+  \(j\)
+
+.
+
+  \[
+z_j=h(a_j)
+\]
+
+
+For any given data point in the traning set, we can pass the input and compute the activations of all the hidden and output units. This process is called forward propagation since it is the forward flow of information through the network.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/training/backpropagation/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Backpropagation">
+  <meta property="og:description" content="Backpropagation # Backprop, Error Backpropagation.
+Backpropagation (or backprop) is an efficient technique to compute the gradient of the loss function.
+It boils down to a local message passing scheme in which information is sent backwards through the network.
+Forward propagation # stateDiagram-v2 direction LR z1: $$z_1$$ z2: $$z_2$$ zi: $$z_i$$ zM: $$...$$ aj: $$a_j=\sum_i w_{ji} z_i$$ zj: $$z_j=h(a_j)$$ START1:::hidden --&gt; z1 START2:::hidden --&gt; z2 STARTi:::hidden --&gt; zi STARTM:::hidden --&gt; zM z1 --&gt; aj z2 --&gt; aj zi --&gt; aj:$$w_{ji}$$ zM --&gt; aj aj --&gt; zj zj --&gt; END:::hidden note left of aj : Pre-activation note left of zj : Activation classDef hidden display: none; Let’s consider a hidden unit in a general feed forward neural nework. \[ a_j=\sum_i w_{ji} z_i \] where \(z_i\) is the activation of anoter unit or an input that sends an connection of unit \(j\) and \(w_{ji}\) is the weight associated with that connection. \(a_j\) is known as pre-activation and is transformed by a non-linear activation fucntion to give the activation \(z_j\) of unit \(j\) . \[ z_j=h(a_j) \] For any given data point in the traning set, we can pass the input and compute the activations of all the hidden and output units. This process is called forward propagation since it is the forward flow of information through the network.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Backpropagation | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/training/backpropagation/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4cacd3980491d67e5f49ba6b4b58cd3873010a3c6c912cfe4c009ef436e9e73a.js" integrity="sha256-TKzTmASR1n5fSbprS1jNOHMBCjxskSz&#43;TACe9Dbp5zo=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/supervised/" class="">Supervised learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/supervised/linear_regression/" class="">Linear Regression</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="active">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/activation_functions/" class="">Activation functions</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/alignment/" class="">Alignment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basics/" class="">Basics</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Backpropagation</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#backpropagation">Backpropagation</a>
+      <ul>
+        <li><a href="#forward-propagation">Forward propagation</a></li>
+        <li><a href="#backward-propagation">Backward propagation</a></li>
+        <li><a href="#forward-propagation-1">Forward propagation</a></li>
+        <li><a href="#error-evaluation">Error evaluation</a></li>
+        <li><a href="#backward-propagation-1">Backward propagation</a></li>
+      </ul>
+    </li>
+    <li><a href="#automatic-differenciation">Automatic differenciation</a>
+      <ul>
+        <li><a href="#forward-mode-automatic-differentiation">Forward-mode automatic differentiation</a></li>
+        <li><a href="#reverse-mode-automatic-differentiation">Reverse-mode automatic differentiation</a></li>
+        <li><a href="#autograd-in-pytorch">Autograd in pytorch</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="backpropagation">
+  Backpropagation
+  <a class="anchor" href="#backpropagation">#</a>
+</h2>
+<blockquote>
+<p>Backprop, Error Backpropagation.</p></blockquote>
+<p>Backpropagation (or backprop) is an efficient technique to compute the gradient of the loss function.</p>
+<p>It boils down to a local message passing scheme in which information is sent backwards through the network.</p>
+<h3 id="forward-propagation">
+  Forward propagation
+  <a class="anchor" href="#forward-propagation">#</a>
+</h3>
+
+
+<script src="/mermaid.min.js"></script>
+
+  <script>mermaid.initialize({
+  "flowchart": {
+    "useMaxWidth":true
+  },
+  "theme": "default"
+}
+)</script>
+
+
+
+
+<pre class="mermaid">
+stateDiagram-v2
+    direction LR
+    z1: $$z_1$$
+    z2: $$z_2$$
+    zi: $$z_i$$
+    zM: $$...$$
+    aj: $$a_j=\sum_i w_{ji} z_i$$
+    zj: $$z_j=h(a_j)$$
+    START1:::hidden --> z1
+    START2:::hidden --> z2
+    STARTi:::hidden --> zi
+    STARTM:::hidden --> zM
+    z1 --> aj
+    z2 --> aj
+    zi --> aj:$$w_{ji}$$
+    zM --> aj
+    aj --> zj
+    zj --> END:::hidden
+    note left of aj : Pre-activation
+    note left of zj : Activation
+    classDef hidden display: none;
+</pre>
+
+<p>Let&rsquo;s consider a hidden unit in a general feed forward neural nework.
+<span>
+  \[
+a_j=\sum_i w_{ji} z_i
+\]
+</span>
+
+where <span>
+  \(z_i\)
+</span>
+ is the activation of anoter unit or an input that sends an connection of unit <span>
+  \(j\)
+</span>
+ and <span>
+  \(w_{ji}\)
+</span>
+ is the weight associated with that connection. <span>
+  \(a_j\)
+</span>
+ is known as <strong>pre-activation</strong> and is transformed by a non-linear activation fucntion to give the <strong>activation</strong> <span>
+  \(z_j\)
+</span>
+ of unit <span>
+  \(j\)
+</span>
+.
+<span>
+  \[
+z_j=h(a_j)
+\]
+</span>
+
+For any given data point in the traning set, we can pass the input and compute the activations of all the hidden and output units. This process is called <strong>forward propagation</strong> since it is the forward flow of information through the network.</p>
+<h3 id="backward-propagation">
+  Backward propagation
+  <a class="anchor" href="#backward-propagation">#</a>
+</h3>
+<p><span>
+  \[
+\frac{\partial L_n}{\partial w_{ji}} = \frac{\partial L_n}{\partial a_{j}} \frac{\partial a_j}{\partial w_{ji}} = \delta_j z_i
+\]
+</span>
+
+where <span>
+  \(\delta_j\)
+</span>
+ are referred to as <strong>errors</strong>
+<span>
+  \[
+\frac{\partial L_n}{\partial a_{j}} := \delta_j
+\]
+</span>
+
+and
+<span>
+  \[
+\frac{\partial a_j}{\partial w_{ji}} = z_i
+\]
+</span>
+
+So we now have
+<span>
+  \[
+\frac{\partial L_n}{\partial w_{ji}} = \delta_j z_i
+\]
+</span>
+
+The required derivative is simply obtained by multiplying the value of <span>
+  \(\delta\)
+</span>
+ for the unit at the output end of the weight by the value of <span>
+  \(z\)
+</span>
+ for the unit at the input end of the weight.</p>
+<p><span>
+  \(\delta\)
+</span>
+ for the output units are based on the losss function.</p>
+<p>To evaluate the <span>
+  \(\delta\)
+</span>
+ for the hidden units we again make use of the the chain rule for partial derivatives.
+<span>
+  \[
+\delta_j := \frac{\partial L_n}{\partial a_{j}} = \sum_{k} \frac{\partial L_n}{\partial a_{k}} \frac{\partial a_k}{\partial a_{j}}
+\]
+</span>
+
+where the sum runs over all the units k to which j sends connections.
+<span>
+  \[
+\delta_j = h^{'}(a_j)\sum_{k} w_{kj} \delta_k
+\]
+</span>
+
+This tells us that the value of <span>
+  \(\delta\)
+</span>
+ for a particular hidden unit can be obtained by propagating the <span>
+  \(\delta\)
+</span>
+ backward from uits higher up in the network.</p>
+
+
+<pre class="mermaid">
+stateDiagram-v2
+    direction LR
+    z1: $$z_1$$
+    z2: $$z_2$$
+    zi: $$z_i$$
+    zM: $$...$$
+    delta1: $$\delta_1$$
+    delta2: $$\delta_2$$
+    deltak: $$\delta_k$$
+    deltaM: $$...$$
+    aj: $$a_j$$
+    zj: $$z_j$$
+    START1:::hidden --> z1
+    START2:::hidden --> z2
+    STARTi:::hidden --> zi
+    STARTM:::hidden --> zM
+    z1 --> aj
+    z2 --> aj
+    zi --> aj:$$w_{ji}$$
+    zM --> aj
+    aj --> zj
+    zj --> delta1
+    zj --> delta2
+    zj --> deltak:$$w_{kj}$$
+    zj --> deltaM
+    delta1 --> zj
+    delta2 --> zj
+    deltak --> zj
+    deltaM --> zj
+    delta1 --> START11:::hidden
+    delta2 --> START22:::hidden
+    deltak --> STARTii:::hidden
+    deltaM --> STARTMM:::hidden
+    note left of aj : Pre-activation
+    note left of zj : Activation
+    note right of deltak : Errors
+    classDef hidden display: none;
+</pre>
+
+<div class="book-columns flex flex-wrap">
+<div class="flex-even markdown-inner" style="flex-grow: 1;">
+<h3 id="forward-propagation-1">
+  Forward propagation
+  <a class="anchor" href="#forward-propagation-1">#</a>
+</h3>
+<p>For all hidden and ouput units compute in <strong>forward order</strong></p>
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[
+a_j \leftarrow \sum_i w_{ji} z_i
+\]
+</span>
+<span>
+  \[
+z_j \leftarrow h(a_j)
+\]
+</span>
+  </div>
+<div class="flex-even markdown-inner" style="flex-grow: 1;">
+<h3 id="error-evaluation">
+  Error evaluation
+  <a class="anchor" href="#error-evaluation">#</a>
+</h3>
+<p>For all output units compute</p>
+<span>
+  \[
+\delta_k \leftarrow \frac{\partial L_n}{\partial a_k}
+\]
+</span>
+  </div>
+<div class="flex-even markdown-inner" style="flex-grow: 1;">
+<h3 id="backward-propagation-1">
+  Backward propagation
+  <a class="anchor" href="#backward-propagation-1">#</a>
+</h3>
+<p>For all hidden units compute in <strong>reverse order</strong></p>
+<span>
+  \[
+\delta_j \leftarrow h^{'}(a_j)\sum_{k} w_{kj} \delta_k
+\]
+</span>
+<span>
+  \[
+\frac{\partial L_n}{\partial w_{ji}} \leftarrow \delta_j z_i
+\]
+</span>
+  </div>
+</div>
+<h2 id="automatic-differenciation">
+  Automatic differenciation
+  <a class="anchor" href="#automatic-differenciation">#</a>
+</h2>
+<blockquote>
+<p>Algorithmic differentiation, autodiff, autograd</p></blockquote>
+<p>There are broadly 4 appoaches to compute derivatives.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Approach</th>
+          <th>Pros</th>
+          <th>Cons</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Manual</strong> derivation of backprop equations.</td>
+          <td>If done carefully can result in efficent code.</td>
+          <td>Manual process, prone to erros and not easy to iterate on models</td>
+      </tr>
+      <tr>
+          <td><strong>Numerical</strong> evaluation of gradients via finite differences.</td>
+          <td>Sometime sused to check for correctness of other methods.</td>
+          <td>Limited by computational accuracy. Scales poorly with the size of the network.</td>
+      </tr>
+      <tr>
+          <td><strong>Symbolic</strong> differenciation using packages like <code>sympy</code></td>
+          <td></td>
+          <td>Closed form needed. Resulting expression can be very long (<em>expression swell</em>).</td>
+      </tr>
+      <tr>
+          <td><strong>Automatic differentiation</strong></td>
+          <td>Most prefered.</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote class="book-hint warning">
+<p>Atılım Günes Baydin, Barak A. Pearlmutter, Alexey Andreyevich Radul, and Jeffrey Mark Siskind. 2017. <a href="https://dl.acm.org/doi/pdf/10.5555/3122009.3242010">Automatic differentiation in machine learning: a survey.</a> J. Mach. Learn. Res. 18, 1 (January 2017), 5595–5637.</p>
+</blockquote>
+<h3 id="forward-mode-automatic-differentiation">
+  Forward-mode automatic differentiation
+  <a class="anchor" href="#forward-mode-automatic-differentiation">#</a>
+</h3>
+<blockquote>
+<p>We augment each intermediate variable <span>
+  \(z_i\)
+</span>
+ (known as <strong>primal</strong> variable) with an additional variable representing the value of some derivative of that variable, which we denote as <span>
+  \(\dot{z}_i\)
+</span>
+, known as <strong>tangent</strong> variable. The tangent variables are generated automatically.</p></blockquote>
+<p>Consider the following function.
+<span>
+  \[
+f(x_1,x_2) = x_1x_2 + \exp(x_1x_2) - \sin(x_2)
+\]
+</span>
+
+When implemented in software the code consists of a sequence of operations than can be expressed as an <strong>evaluation trace</strong> of the underlying elementary operations. This trace can be visualized as a computation graph with respect to the following 7 primal variables.
+
+
+<pre class="mermaid">
+stateDiagram-v2
+    direction LR
+    x1: $$x_1$$
+    x2: $$x_2$$
+    v1: $$v_1 = x_1$$
+    v2: $$v_2 = x_2$$
+    v3: $$v_3 = v_1v_2$$
+    v4: $$v_4 = \sin(v_2)$$
+    v5: $$v_5 = \exp(v_3)$$
+    v6: $$v_6 = v_3 - v_4$$
+    v7: $$v_7 = v_5 + v_6$$
+    f: $$f = v_5 + v_6$$
+    x1 --> v1
+    x2 --> v2
+    v1 --> v3
+    v2 --> v4
+    v2 --> v3
+    v3 --> v5
+    v4 --> v6
+    v3 --> v6
+    v5 --> v7
+    v6 --> v7
+    v7 --> f
+</pre>
+
+We first write code to implement the evaluation of the primal variables.
+<span>
+  \[
+v_1 = x_1
+\]
+</span>
+
+<span>
+  \[
+v_2 = x_2
+\]
+</span>
+
+<span>
+  \[
+v_3 = v_1v_2
+\]
+</span>
+
+<span>
+  \[
+v_4 = \sin(v_2)
+\]
+</span>
+
+<span>
+  \[
+v_5 = \exp(v_3)
+\]
+</span>
+
+<span>
+  \[
+v_6 = v_3 - v_4
+\]
+</span>
+
+<span>
+  \[
+v7 = v_5 + v_6
+\]
+</span>
+
+Not say we wish to evaluate the derivative <span>
+  \(\partial f/\partial x_1\)
+</span>
+. First we define the tangent variables by
+<span>
+  \[\dot{v}_i = \frac{\partial v_i}{\partial x_1}\]
+</span>
+
+Expressions for evaluating these can be constructed automatically using the chain rule of calculus.
+<span>
+  \[
+\dot{v}_i = \frac{\partial v_i}{\partial x_1} = \sum_{j\in\text{parents}(i)} \frac{\partial v_i}{\partial v_j} \frac{\partial v_j}{\partial x_1} = \sum_{j\in\text{parents}(i)} \dot{v}_j \frac{\partial v_i}{\partial v_j}
+\]
+</span>
+
+where <span>
+  \(\text{parents}(i)\)
+</span>
+ denotes the set of <strong>parents</strong> of node i in the evaluation trace diagram.</p>
+<p>The associated euqations and correspoding code for evaluating the tangent variables are generated automatically.
+<span>
+  \[
+\dot{v}_1 = 1
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_2 = 0
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_3 = v_1\dot{v}_2+\dot{v}_1v_2
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_4 = \dot{v}_2\cos(v_2)
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_5 = \dot{v}_3\exp(v_3)
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_6 = \dot{v}_3 - \dot{v}_4
+\]
+</span>
+
+<span>
+  \[
+\dot{v}_7 = \dot{v}_5 + \dot{v}_6
+\]
+</span>
+</p>
+<p>To evaluate the derivative <span>
+  \(\frac{\partial f}{\partial x_1}\)
+</span>
+ we input specific values of <span>
+  \(x_1\)
+</span>
+ and <span>
+  \(x_2\)
+</span>
+ and the code then executes the primal and tangent equations, numerically evalating the tuples <span>
+  \((v_i,\dot{v}_i)\)
+</span>
+ in <strong>forward</strong> order untill we obtain the required derivative.</p>
+<blockquote class="book-hint danger">
+<p>The forward mode with slight modifications can handle multiple outputs in the same pass but the proces has to be repeated for every parameter that we need the derivative. Since we are often in the rgime of one output with millions of parameters this is not scalable for modern deep neural networks. We therefore turn to an alternative version based on the backwards flow of derivative data through the evaluation trace graph.</p>
+</blockquote>
+<h3 id="reverse-mode-automatic-differentiation">
+  Reverse-mode automatic differentiation
+  <a class="anchor" href="#reverse-mode-automatic-differentiation">#</a>
+</h3>
+<p>Reverse-mode automatic differentiation is a gernalization of the error backpropagation procedure we discussed earlier.</p>
+<p>As with forward mode, we augment each primal variable <span>
+  \(v_i\)
+</span>
+ with an additional variable called <strong>adjoint</strong> variable, denoted as <span>
+  \(\bar{v}_i\)
+</span>
+.
+<span>
+  \[\bar{v}_i = \frac{\partial f}{\partial v_i}\]
+</span>
+
+Expressions for evaluating these can be constructed automatically using the chain rule of calculus.
+<span>
+  \[
+\bar{v}_i = \frac{\partial f}{\partial v_i} = \sum_{j\in\text{children}(i)} \frac{\partial f}{\partial v_j} \frac{\partial v_j}{\partial v_i} = \sum_{j\in\text{children}(i)} \bar{v}_j \frac{\partial v_j}{\partial v_i}
+\]
+</span>
+
+where <span>
+  \(\text{children}(i)\)
+</span>
+ denotes the set of <strong>children</strong> of node i in the evaluation trace diagram.</p>
+<blockquote>
+<p>The successive evaluation of the adjoint variables represents a flow of information backwards through the graph. For multiple parameters a single backward pass is enough. Reverse mode is more memory intensive than forward mode.</p></blockquote>
+<p><span>
+  \[
+\bar{v}_7 = 1
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_6 = \bar{v}_7
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_5 = \bar{v}_7
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_4 = -\bar{v}_6
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_3 = \bar{v}_5v_5+\bar{v}_6
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_2 = \bar{v}_2v_1+\bar{v}_4\cos(v_2)
+\]
+</span>
+
+<span>
+  \[
+\bar{v}_1 = \bar{v}_3v_2
+\]
+</span>
+</p>
+<h3 id="autograd-in-pytorch">
+  Autograd in pytorch
+  <a class="anchor" href="#autograd-in-pytorch">#</a>
+</h3>
+<ul>
+<li><a href="https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html">A Gentle Introduction to <code>torch.autograd</code></a></li>
+<li><a href="https://pytorch.org/tutorials/beginner/introyt/autogradyt_tutorial.html">The Fundamentals of Autograd</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#backpropagation">Backpropagation</a>
+      <ul>
+        <li><a href="#forward-propagation">Forward propagation</a></li>
+        <li><a href="#backward-propagation">Backward propagation</a></li>
+        <li><a href="#forward-propagation-1">Forward propagation</a></li>
+        <li><a href="#error-evaluation">Error evaluation</a></li>
+        <li><a href="#backward-propagation-1">Backward propagation</a></li>
+      </ul>
+    </li>
+    <li><a href="#automatic-differenciation">Automatic differenciation</a>
+      <ul>
+        <li><a href="#forward-mode-automatic-differentiation">Forward-mode automatic differentiation</a></li>
+        <li><a href="#reverse-mode-automatic-differentiation">Reverse-mode automatic differentiation</a></li>
+        <li><a href="#autograd-in-pytorch">Autograd in pytorch</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

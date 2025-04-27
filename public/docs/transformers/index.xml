@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Transformers on Deep Learning</title>
+    <link>http://localhost:1313/docs/transformers/</link>
+    <description>Recent content in Transformers on Deep Learning</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="http://localhost:1313/docs/transformers/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Transformers</title>
+      <link>http://localhost:1313/docs/transformers/transformers101/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/docs/transformers/transformers101/</guid>
+      <description>&lt;h1 id=&#34;alignment&#34;&gt;&#xA;  Alignment&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#alignment&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://github.com/vikasraykar/wiki/wiki/Transformers-101&#34;&gt;https://github.com/vikasraykar/wiki/wiki/Transformers-101&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Alignment</title>
+      <link>http://localhost:1313/docs/transformers/alignment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/docs/transformers/alignment/</guid>
+      <description>&lt;h1 id=&#34;alignment&#34;&gt;&#xA;  Alignment&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#alignment&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;LLMs are typically trained for next-token prediction.&lt;/p&gt;&#xA;&lt;p&gt;Pre-trained LLMs may not be able to follow user instructions because they were not trained to do so.&lt;/p&gt;&#xA;&lt;p&gt;Pre-trained LLMs may generate harmful content or perpetuate  biases inherent in their training data.&lt;/p&gt;&#xA;&#xA;&#xA;&lt;script src=&#34;http://localhost:1313/mermaid.min.js&#34;&gt;&lt;/script&gt;&#xA;&#xA;  &lt;script&gt;mermaid.initialize({&#xA;  &#34;flowchart&#34;: {&#xA;    &#34;useMaxWidth&#34;:true&#xA;  },&#xA;  &#34;theme&#34;: &#34;default&#34;&#xA;}&#xA;)&lt;/script&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;pre class=&#34;mermaid&#34;&gt;&#xA;---&#xA;title: LLM training stages&#xA;---&#xA;flowchart LR&#xA;    subgraph Pre-training&#xA;    A[Pre-training]&#xA;    end&#xA;    subgraph Post-training&#xA;    B[&#34;Instruction Alignment (SFT)&#34;]&#xA;    C[&#34;Preference Alignment (RLHF)&#34;]&#xA;    end&#xA;    subgraph Inference&#xA;    D[Prompt engineering]&#xA;    end&#xA;    A--&gt;B&#xA;    B--&gt;C&#xA;    C--&gt;D&#xA;&lt;/pre&gt;&#xA;&#xA;&lt;h2 id=&#34;fine-tune-llms-with-labelled-data&#34;&gt;&#xA;  Fine tune LLMs with labelled data&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#fine-tune-llms-with-labelled-data&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;h3 id=&#34;supervised-fine-tuning-sft&#34;&gt;&#xA;  Supervised Fine Tuning (SFT)&#xA;  &lt;a class=&#34;anchor&#34; href=&#34;#supervised-fine-tuning-sft&#34;&gt;#&lt;/a&gt;&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Training data is task specific instructions paired with their expected outputs.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

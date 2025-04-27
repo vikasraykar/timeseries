@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Coding assignment
+  #
+
+
+
+
+
+  \(\)
+
+
+
+  Setup
+  #
+
+https://github.com/vikasraykar/deeplearning-dojo/
+git clone https://github.com/vikasraykar/deeplearning-dojo.git
+cd deeplearning-dojo
+
+python -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
+
+  Problem 1
+  #
+
+
+Linear Regression with numpy and batch gradient descent.
+In the first coding assigment you will be implementing a basic Linear Regression model from scratch using only numpy. You will be implementing a basic batch gradient descent optimizer.
+
+You can use only numpy and are not allowed to to use torch or any other python libraries.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/training/coding/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Coding">
+  <meta property="og:description" content="Coding assignment # \(\) Setup # https://github.com/vikasraykar/deeplearning-dojo/
+git clone https://github.com/vikasraykar/deeplearning-dojo.git cd deeplearning-dojo python -m venv .env source .env/bin/activate pip install -r requirements.txt Problem 1 # Linear Regression with numpy and batch gradient descent.
+In the first coding assigment you will be implementing a basic Linear Regression model from scratch using only numpy. You will be implementing a basic batch gradient descent optimizer.
+You can use only numpy and are not allowed to to use torch or any other python libraries.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Coding | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/training/coding/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4cacd3980491d67e5f49ba6b4b58cd3873010a3c6c912cfe4c009ef436e9e73a.js" integrity="sha256-TKzTmASR1n5fSbprS1jNOHMBCjxskSz&#43;TACe9Dbp5zo=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/supervised/" class="">Supervised learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/supervised/linear_regression/" class="">Linear Regression</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/activation_functions/" class="">Activation functions</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="active">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/alignment/" class="">Alignment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basics/" class="">Basics</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Coding</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#coding-assignment">Coding assignment</a>
+      <ul>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#problem-1">Problem 1</a></li>
+        <li><a href="#problem-2">Problem 2</a></li>
+        <li><a href="#problem-3">Problem 3</a></li>
+        <li><a href="#problem-4">Problem 4</a></li>
+        <li><a href="#bonus-problem">Bonus problem</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="coding-assignment">
+  Coding assignment
+  <a class="anchor" href="#coding-assignment">#</a>
+</h2>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(\)
+</span>
+
+<h3 id="setup">
+  Setup
+  <a class="anchor" href="#setup">#</a>
+</h3>
+<p><a href="https://github.com/vikasraykar/deeplearning-dojo/">https://github.com/vikasraykar/deeplearning-dojo/</a></p>
+<pre tabindex="0"><code>git clone https://github.com/vikasraykar/deeplearning-dojo.git
+cd deeplearning-dojo
+
+python -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
+</code></pre><h3 id="problem-1">
+  Problem 1
+  <a class="anchor" href="#problem-1">#</a>
+</h3>
+<blockquote>
+<p>Linear Regression with numpy and batch gradient descent.</p></blockquote>
+<p>In the first coding assigment you will be implementing a basic <strong>Linear Regression</strong> model from scratch using <strong>only <code>numpy</code></strong>. You will be implementing a basic batch gradient descent optimizer.</p>
+<blockquote class="book-hint danger">
+<p>You can use only <code>numpy</code> and are not allowed to to use <code>torch</code> or any other python libraries.</p>
+</blockquote>
+<ol>
+<li>Review the <a href="/deeplearning/docs/training/model/#linear-regression">linear regression model</a> and its loss function.</li>
+<li>Given a feature matrix <span>
+  \(\mathbf{X}\)
+</span>
+ as a <span>
+  \(N \times d\)
+</span>
+ <code>numpy.ndarray</code> write the prediction and the loss function using matrix notation and carefully check for dimensions.</li>
+<li>Accont for the bias by appending the feature matrix with a column of ones.</li>
+<li>Derive the expression for the gradient of the loss function.</li>
+<li>Implement a basic <a href="/deeplearning/docs/training/gradient_descent/#batch-gradient-descent">batch gradient descent optimizer</a> with a fixed learning rate first.</li>
+<li>Track the loss every few epochs and check the actual and estimated parameters.</li>
+<li>Check the MSE loss on the train and the test set.</li>
+<li>Implement a simple learning rate decay as follows <code>lr=lr/(1+decay_factor*epoch)</code>.</li>
+</ol>
+<blockquote>
+<p>A sample stub is provided in the repo as below. Your task is to implement the <code>predict</code> and the <code>fit</code> function.</p></blockquote>
+<a  href="https://github.com/vikasraykar/deeplearning-dojo/blob/main/stubs/LinearRegressionNumpy.py"   target="_blank" rel="noopener"  class="book-btn">LinearRegressionNumpy.py</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#d88200">&#34;&#34;&#34;Basic implementation of Linear Regression using only numpy.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">numpy</span> <span style="color:#00a8c8">as</span> <span style="color:#111">np</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">LinearRegression</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;&#34;&#34;Linear Regression.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#111">__init__</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">predict</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">,</span> <span style="color:#111">X</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">&#34;&#34;&#34;Predction.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            X (np.ndarray): Features matrix. (N,d)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            add_colum_vector_for_bias (bool, optional): Add a column vector of ones to model
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            the bias term. Defaults to True.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Returns:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            y (np.ndarray): Prediction vector. (N,)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">fit</span><span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">self</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">X_train</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">y_train</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate</span><span style="color:#111">:</span> <span style="color:#111">float</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e-3</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate_decay</span><span style="color:#111">:</span> <span style="color:#111">bool</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">True</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate_decay_factor</span><span style="color:#111">:</span> <span style="color:#111">float</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">num_epochs</span><span style="color:#111">:</span> <span style="color:#111">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">track_loss_num_epochs</span><span style="color:#111">:</span> <span style="color:#111">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">&#34;&#34;&#34;Training.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            X_train (np.ndarray): Features matrix. (N,d)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            y_train (np.ndarray): Target vector. (N,)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate (float, optional): Learning rate. Defaults to 0.001.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate_decay (bool, optional): If True does learning rate deacy. Defaults to True.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate_decay_factor (float, optional): The deacay factor (lr=lr/(1+decay_factor*epoch)). Defaults to 1.0.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            num_epochs (int, optional): Number of epochs. Defaults to 100.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            track_loss_num_epochs (int, optional): Compute loss on training set once in k epochs. Defaults to 100.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span></code></pre></div><h3 id="problem-2">
+  Problem 2
+  <a class="anchor" href="#problem-2">#</a>
+</h3>
+<blockquote>
+<p>Logistic Regression with numpy and batch gradient descent.</p></blockquote>
+<p>In the second coding assigment you will be implementing a basic <strong>Logisitc Regression</strong> model from scratch using <strong>only <code>numpy</code></strong>. You will be implementing a basic batch gradient descent optimizer.</p>
+<blockquote class="book-hint danger">
+<p>You can use only <code>numpy</code> and are not allowed to to use <code>torch</code> or any other python libraries.</p>
+</blockquote>
+<ol>
+<li>Review the <a href="/deeplearning/docs/training/model/#llogistic-regression">logistic regression model</a> and its loss function.</li>
+<li>Given a feature matrix <span>
+  \(\mathbf{X}\)
+</span>
+ as a <span>
+  \(N \times d\)
+</span>
+ <code>numpy.ndarray</code> write the prediction and the loss function using matrix notation and carefully check for dimensions.</li>
+<li>Accont for the bias by appending the feature matrix with a column of ones.</li>
+<li>Derive the expression for the gradient of the loss function. Modularize it so that it should look exactly like the derivative you got for linear regression.</li>
+<li>Implement a basic <a href="/deeplearning/docs/training/gradient_descent/#batch-gradient-descent">batch gradient descent optimizer</a> with a fixed learning rate first.</li>
+<li>Track the loss every few epochs and check the actual and estimated parameters.</li>
+<li>Check the accuracy on the train and the test set.</li>
+<li>Implement a simple learning rate decay as follows <code>lr=lr/(1+decay_factor*epoch)</code>.</li>
+</ol>
+<blockquote>
+<p>A sample stub is provided in the repo as below. Your task is to implement the <code>predict_proba</code>, <code>predict</code> and the <code>fit</code> function.</p></blockquote>
+<a  href="https://github.com/vikasraykar/deeplearning-dojo/blob/main/stubs/LogisticRegressionNumpy.py"   target="_blank" rel="noopener"  class="book-btn">LogisticRegressionNumpy.py</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#d88200">&#34;&#34;&#34;Basic implementation of Logistic Regression using numpy only.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">numpy</span> <span style="color:#00a8c8">as</span> <span style="color:#111">np</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">LogisticRegression</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;&#34;&#34;Logistic Regression&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#111">__init__</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">fit</span><span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">self</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">X_train</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">y_train</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate</span><span style="color:#111">:</span> <span style="color:#111">float</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e-3</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate_decay</span><span style="color:#111">:</span> <span style="color:#111">bool</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">True</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">learning_rate_decay_factor</span><span style="color:#111">:</span> <span style="color:#111">float</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">num_epochs</span><span style="color:#111">:</span> <span style="color:#111">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">track_loss_num_epochs</span><span style="color:#111">:</span> <span style="color:#111">int</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">&#34;&#34;&#34;Train.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            X_train (np.ndarray): Feature matrix. (N,d)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            y_train (np.ndarray): Target labels (0,1). (N,)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate (float, optional): The initial learning rate. Defaults to 1e-3.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate_decay (bool, optional): If True enables learning rate decay. Defaults to True.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            learning_rate_decay_factor (float, optional): The learning rate decay factor (1/(1+decay_factor*epoch)). Defaults to 1.0.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            num_epochs (int, optional): The number of epochs to train. Defaults to 100.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            track_loss_num_epochs (int, optional): Compute loss on training set once in k epochs. Defaults to 10.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">predict_proba</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">,</span> <span style="color:#111">X</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">&#34;&#34;&#34;Predict the probability of the positive class (Pr(y=1)).
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            X (np.ndarray): Feature matrix. (N,d)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Returns:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            y_pred_proba (np.ndarray): Predicted probabilities. (N,)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">predict</span><span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">self</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">X</span><span style="color:#111">:</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ndarray</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">threshold</span><span style="color:#111">:</span> <span style="color:#111">float</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">&#34;&#34;&#34;Predict the label(0,1).
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            X (np.ndarray): Feature matrix. (N,d)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            add_colum_vector_for_bias (bool, optional): Add a column vector of ones to model the bias term. Defaults to True.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            threshold (float, optional): The threshold on the probabilit. Defaults to 0.5.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        Returns:
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">            y (np.ndarray): Prediction vector. (N,)
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span></code></pre></div><h3 id="problem-3">
+  Problem 3
+  <a class="anchor" href="#problem-3">#</a>
+</h3>
+<blockquote>
+<p>Logistic Regression with torch and min-batch SGD.</p></blockquote>
+<ul>
+<li>Review <a href="https://pytorch.org/tutorials/beginner/basics/data_tutorial.html">Datasets &amp; DataLoaders</a> in pytorch.</li>
+<li>Experiment withe different optimizers covered in this lectures and plot the learning curve for different optimizers (SGD, SGD with momentum, AdaGrad, RMSProp, Adam), AdamW.</li>
+<li>Tune the learning rate for a optimizer.</li>
+</ul>
+<blockquote>
+<p>A sample stub is provided in the repo as below.</p></blockquote>
+<a  href="https://github.com/vikasraykar/deeplearning-dojo/blob/main/stubs/LogisticRegressionPytorch.py"   target="_blank" rel="noopener"  class="book-btn">LogisticRegressionPytorch.py</a>
+
+<h3 id="problem-4">
+  Problem 4
+  <a class="anchor" href="#problem-4">#</a>
+</h3>
+<blockquote>
+<p>Logistic Regression with torch and min-batch SGD on a publicly avaiable dataset.</p></blockquote>
+<p>Chosee one publicly avaiable large dataset and implement custom datsets and loaders and learn either a linear regression model.</p>
+<p><a href="https://www.kaggle.com/datasets/kanchana1990/real-estate-data-uae">Real Estate Data UAE</a></p>
+<h3 id="bonus-problem">
+  Bonus problem
+  <a class="anchor" href="#bonus-problem">#</a>
+</h3>
+<blockquote>
+<p>AdamW implementation</p></blockquote>
+<p>Implement the AdamW optimizer as a subclass of <code>torch.optim.Optimizer</code>.</p>
+<p>An Optimizer subclass much implemnt two methods.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torch</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">AdamW</span><span style="color:#111">(</span><span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">optim</span><span style="color:#f92672">.</span><span style="color:#111">Optimizer</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#111">__init__</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">,</span><span style="color:#111">params</span><span style="color:#111">,</span> <span style="color:#f92672">...</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">def</span> <span style="color:#75af00">step</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">pass</span>
+</span></span></code></pre></div><blockquote class="book-hint danger">
+<p>The PyTorch optimizer API has a few subtleties and study how some optimizers are written.</p>
+</blockquote>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#coding-assignment">Coding assignment</a>
+      <ul>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#problem-1">Problem 1</a></li>
+        <li><a href="#problem-2">Problem 2</a></li>
+        <li><a href="#problem-3">Problem 3</a></li>
+        <li><a href="#problem-4">Problem 4</a></li>
+        <li><a href="#bonus-problem">Bonus problem</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

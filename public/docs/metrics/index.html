@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Metrics
+  #
+
+
+  Evaluating feature based local explanations
+  #
+
+Let 
+
+
+
+  \(f\)
+
+ be a black box predictor that maps an input 
+  \(\mathbf{x} \in \mathbb{R}^d\)
+
+ to an output 
+  \(f(\mathbf{x}) \in \mathbb{R}\)
+
+.
+An explanation function 
+  \(g\)
+
+ takes in a predictor 
+  \(f\)
+
+ and an instances 
+  \(\mathbf{x}\)
+
+ and returns the feature importance scores 
+  \(g(f,\mathbf{x}) \in \mathbb{R}^d\)
+
+.
+Let 
+  \(\rho: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{&#43;}\)
+
+ be a distance metric over input instances.
+Let 
+  \(D: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{&#43;}\)
+
+ be a distance metric over explanations.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/metrics/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="Metrics">
+  <meta property="og:description" content="Metrics # Evaluating feature based local explanations # Let \(f\) be a black box predictor that maps an input \(\mathbf{x} \in \mathbb{R}^d\) to an output \(f(\mathbf{x}) \in \mathbb{R}\) .
+An explanation function \(g\) takes in a predictor \(f\) and an instances \(\mathbf{x}\) and returns the feature importance scores \(g(f,\mathbf{x}) \in \mathbb{R}^d\) .
+Let \(\rho: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{&#43;}\) be a distance metric over input instances.
+Let \(D: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{&#43;}\) be a distance metric over explanations.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Metrics | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/metrics/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4e8b6fd3018f73a98c035abd6cf687f8a632553bd6023134924477646d355071.js" integrity="sha256-Totv0wGPc6mMA1q9bPaH&#43;KYyVTvWAjE0kkR3ZG01UHE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="active">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/accuracy-metrics/" class="">Accuracy metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/prediction-interval/" class="">Prediction interval</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Metrics</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#evaluating-feature-based-local-explanations">Evaluating feature based local explanations</a>
+      <ul>
+        <li><a href="#faithfulness">Faithfulness</a></li>
+        <li><a href="#sensitivity">Sensitivity</a></li>
+        <li><a href="#complexity">Complexity</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="metrics">
+  Metrics
+  <a class="anchor" href="#metrics">#</a>
+</h1>
+<h2 id="evaluating-feature-based-local-explanations">
+  Evaluating feature based local explanations
+  <a class="anchor" href="#evaluating-feature-based-local-explanations">#</a>
+</h2>
+<p>Let 
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(f\)
+</span>
+ be a <strong>black box predictor</strong> that maps an input <span>
+  \(\mathbf{x} \in \mathbb{R}^d\)
+</span>
+ to an output <span>
+  \(f(\mathbf{x}) \in \mathbb{R}\)
+</span>
+.</p>
+<p>An <strong>explanation function</strong> <span>
+  \(g\)
+</span>
+ takes in a predictor <span>
+  \(f\)
+</span>
+ and an instances <span>
+  \(\mathbf{x}\)
+</span>
+ and returns the feature importance scores <span>
+  \(g(f,\mathbf{x}) \in \mathbb{R}^d\)
+</span>
+.</p>
+<p>Let <span>
+  \(\rho: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{+}\)
+</span>
+ be a <strong>distance metric</strong> over input instances.</p>
+<p>Let <span>
+  \(D: \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}^{+}\)
+</span>
+ be a <strong>distance metric</strong> over explanations.</p>
+<p>An <strong>evaluation metric</strong> <span>
+  \(\mu\)
+</span>
+ takes in as input a predictor <span>
+  \(f\)
+</span>
+,an explanation fucntion <span>
+  \(g\)
+</span>
+, and input <span>
+  \(\mathbf{x}\)
+</span>
+, and outputs a scalar <span>
+  \(\mu(f,g;\mathbf{x})\)
+</span>
+.</p>
+<p>We wil mainly focus on these threes evaluation metrics which can be evaluated without access to ground-truth explanations<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<h3 id="faithfulness">
+  Faithfulness
+  <a class="anchor" href="#faithfulness">#</a>
+</h3>
+<blockquote class="book-hint info">
+  
+(high) faithfulness,relevance,fidelity.
+
+</blockquote>
+
+<p>The feature importance scores from <span>
+  \(g\)
+</span>
+ should correspond to the importance features of <span>
+  \(\mathbf{x}\)
+</span>
+ for <span>
+  \(f\)
+</span>
+, such that, when we set a particular set of features <span>
+  \(\mathbf{x}_s\)
+</span>
+ to a baseline value <span>
+  \(\overline{\mathbf{x}}_s\)
+</span>
+, the change in predictor&rsquo;s output should be proportional (measured via correlation) to the sum of the attribution scores of features in <span>
+  \(\mathbf{x}_s\)
+</span>
+.</p>
+<p>For a subset of indices <span>
+  \(S \subset {1,2,...,d}\)
+</span>
+, let <span>
+  \(\mathbf{x}_s = ( \mathbf{x}_i,i \in S )\)
+</span>
+ a sub-vector of input features. For a given subset size <span>
+  \(|S|\)
+</span>
+, we define faithfullness as</p>
+<span>
+  \(
+\mu_{F}(f,g,|S|;\mathbf{x}) = \text{corr}_{S \in \binom {d}{|S|}}\left( \sum_{i \in S}g(f,\mathbf{x})_{i},f(\mathbf{x})-f(\mathbf{x}|\mathbf{x}_s=\overline{\mathbf{x}}_s)\right)
+\)
+</span>
+
+<p>The baseline can be the mean of the training data.</p>
+<h3 id="sensitivity">
+  Sensitivity
+  <a class="anchor" href="#sensitivity">#</a>
+</h3>
+<blockquote class="book-hint info">
+  
+(low) sensitivity, stability, reliability, explanation continuity.
+
+</blockquote>
+
+<p>If inputs are near each other and their model outputs are similar, then their explanations should be close to each other.</p>
+<p>Let <span>
+  \(\mathcal{N}_r(\mathbf{x})\)
+</span>
+ be a neighborhood of datapoints within a radius <span>
+  \(r\)
+</span>
+ of <span>
+  \(\mathbf{x}\)
+</span>
+.</p>
+<span>
+  \(
+\mathcal{N}_r(\mathbf{x}) = \left\{ \mathbf{z} \in \mathcal{D}_x | \rho(\mathbf{x},\mathbf{z}) \leq r, f(\mathbf{x}) = f(\mathbf{z}) \right\}
+\)
+</span>
+
+<p>Max Sensitivity</p>
+<span>
+  \(
+\mu_{M}(f,g,r;\mathbf{x}) = \max_{z\in\mathcal{N}_r(\mathbf{x})} D(g(f,\mathbf{x}),g(f,\mathbf{z}))
+\)
+</span>
+
+<p>Average Sensitivity</p>
+<span>
+  \(
+\mu_{A}(f,g,r;\mathbf{x}) = \int_{\mathcal{N}_r(\mathbf{x})} D(g(f,\mathbf{x}),g(f,\mathbf{z})) \mathbb{P}_{\mathbf{x}}(\mathbf{z}) d\mathbf{z}
+\)
+</span>
+
+<h3 id="complexity">
+  Complexity
+  <a class="anchor" href="#complexity">#</a>
+</h3>
+<blockquote class="book-hint info">
+  
+(low) complexity,information gain,sparsity.
+
+</blockquote>
+
+<p>A complex explantion is one that uses all the <span>
+  \(d\)
+</span>
+ features in its explanation. The simplest explanation would be concentrated on one feature.</p>
+<p>We define complexity as the entropy of the fractional contribution distribution.</p>
+<span>
+  \(
+\mu_{C}(f,g;\mathbf{x}) = \mathbb{E}_{i}\left[ -\ln(\mathbb{P}_{g})\right] = - \sum_{i=1}^{d} \mathbb{P}_{g}(i) \ln(\mathbb{P}_{g}(i))
+\)
+</span>
+
+<p>where <span>
+  \(\mathbb{P}_{g}\)
+</span>
+ is the fractional contribution distribution</p>
+<span>
+  \(
+\mathbb{P}_{g}(i) = \frac{|g(f,\mathbf{x})_i|}{\sum_{j=1}^{d}|g(f,\mathbf{x})_j|}.
+\)
+</span>
+
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.ijcai.org/Proceedings/2020/417">Evaluating and Aggregating Feature-based Model Explanations</a>, Bhatt, Umang and Weller, Adrian and Moura, José M. F., Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI-20), 2020.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#evaluating-feature-based-local-explanations">Evaluating feature based local explanations</a>
+      <ul>
+        <li><a href="#faithfulness">Faithfulness</a></li>
+        <li><a href="#sensitivity">Sensitivity</a></li>
+        <li><a href="#complexity">Complexity</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

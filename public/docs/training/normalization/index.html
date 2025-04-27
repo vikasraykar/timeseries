@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Batch normalization
+  #
+
+
+In batch normalization the mean and variance are computed across the mini-batch separately for each feature/hidden unit. For a mini-batch of size B
+
+
+
+
+  \[
+\mu_i = \frac{1}{B} \sum_{n=1}^{B} a_{ni}
+\]
+
+
+
+  \[
+\sigma_i^2 = \frac{1}{B} \sum_{n=1}^{B} (a_{ni}-\mu_i)^2
+\]
+
+
+We normalize the pre-activations as follows.
+
+  \[
+\hat{a}_{ni} = \frac{a_{ni}-\mu_i}{\sqrt{\sigma_i^2&#43;\delta}}
+\]
+
+
+
+  \[
+\tilde{a}_{ni} = \gamma_i \hat{a}_{ni} &#43; \beta_i
+\]
+
+
+PyTorch
+
+m = nn.BatchNorm1d(num_features)
+
+  Layer normalization
+  #
+
+
+In layer normalization the mean and variance are computed across the feature/hidden unit for each example seprately.
+
+  \[
+\mu_n = \frac{1}{M} \sum_{i=1}^{M} a_{ni}
+\]
+
+
+
+  \[
+\sigma_n^2 = \frac{1}{M} \sum_{i=1}^{M} (a_{ni}-\mu_i)^2
+\]
+
+
+We normalize the pre-activations as follows.
+
+  \[
+\hat{a}_{ni} = \frac{a_{ni}-\mu_n}{\sqrt{\sigma_n^2&#43;\delta}}
+\]
+
+
+
+  \[
+\tilde{a}_{ni} = \gamma_n \hat{a}_{ni} &#43; \beta_n
+\]
+
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/training/normalization/">
+  <meta property="og:site_name" content="Deep Learning">
+  <meta property="og:title" content="Normalization">
+  <meta property="og:description" content="Batch normalization # In batch normalization the mean and variance are computed across the mini-batch separately for each feature/hidden unit. For a mini-batch of size B \[ \mu_i = \frac{1}{B} \sum_{n=1}^{B} a_{ni} \] \[ \sigma_i^2 = \frac{1}{B} \sum_{n=1}^{B} (a_{ni}-\mu_i)^2 \] We normalize the pre-activations as follows. \[ \hat{a}_{ni} = \frac{a_{ni}-\mu_i}{\sqrt{\sigma_i^2&#43;\delta}} \] \[ \tilde{a}_{ni} = \gamma_i \hat{a}_{ni} &#43; \beta_i \] PyTorch m = nn.BatchNorm1d(num_features) Layer normalization # In layer normalization the mean and variance are computed across the feature/hidden unit for each example seprately. \[ \mu_n = \frac{1}{M} \sum_{i=1}^{M} a_{ni} \] \[ \sigma_n^2 = \frac{1}{M} \sum_{i=1}^{M} (a_{ni}-\mu_i)^2 \] We normalize the pre-activations as follows. \[ \hat{a}_{ni} = \frac{a_{ni}-\mu_n}{\sqrt{\sigma_n^2&#43;\delta}} \] \[ \tilde{a}_{ni} = \gamma_n \hat{a}_{ni} &#43; \beta_n \]">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Normalization | Deep Learning</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/training/normalization/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.4cacd3980491d67e5f49ba6b4b58cd3873010a3c6c912cfe4c009ef436e9e73a.js" integrity="sha256-TKzTmASR1n5fSbprS1jNOHMBCjxskSz&#43;TACe9Dbp5zo=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Deep Learning</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/supervised/" class="">Supervised learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/supervised/linear_regression/" class="">Linear Regression</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/training/" class="">Training deep neural networks</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/model/" class="">Models</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/gradient_descent/" class="">Gradient Descent</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/backpropagation/" class="">Backpropagation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/normalization/" class="active">Normalization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/regularization/" class="">Regularization</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/training_loop/" class="">Training loop</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/activation_functions/" class="">Activation functions</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/quiz/" class="">Quiz</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/training/coding/" class="">Coding</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/transformers/" class="">Transformers</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/transformers101/" class="">Transformers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/transformers/alignment/" class="">Alignment</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/docs/rl/" class="">Reinforcement Learning</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/rl/basics/" class="">Basics</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Normalization</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#batch-normalization">Batch normalization</a></li>
+    <li><a href="#layer-normalization">Layer normalization</a></li>
+    <li><a href="#collateral">Collateral</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="batch-normalization">
+  Batch normalization
+  <a class="anchor" href="#batch-normalization">#</a>
+</h2>
+<img src="https://vikasraykar.github.io/deeplearning/batch.jpeg" alt="Batch normalization" width="400"/>
+<p>In batch normalization the mean and variance are computed across the mini-batch separately for each feature/hidden unit. For a mini-batch of size B
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \[
+\mu_i = \frac{1}{B} \sum_{n=1}^{B} a_{ni}
+\]
+</span>
+
+<span>
+  \[
+\sigma_i^2 = \frac{1}{B} \sum_{n=1}^{B} (a_{ni}-\mu_i)^2
+\]
+</span>
+
+We normalize the pre-activations as follows.
+<span>
+  \[
+\hat{a}_{ni} = \frac{a_{ni}-\mu_i}{\sqrt{\sigma_i^2+\delta}}
+\]
+</span>
+
+<span>
+  \[
+\tilde{a}_{ni} = \gamma_i \hat{a}_{ni} + \beta_i
+\]
+</span>
+</p>
+<a  href="https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm1d.html#torch.nn.BatchNorm1d"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">nn</span><span style="color:#f92672">.</span><span style="color:#111">BatchNorm1d</span><span style="color:#111">(</span><span style="color:#111">num_features</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="layer-normalization">
+  Layer normalization
+  <a class="anchor" href="#layer-normalization">#</a>
+</h2>
+<img src="https://vikasraykar.github.io/deeplearning/layer.jpeg" alt="Layer normalization" width="300"/>
+<p>In layer normalization the mean and variance are computed across the feature/hidden unit for each example seprately.
+<span>
+  \[
+\mu_n = \frac{1}{M} \sum_{i=1}^{M} a_{ni}
+\]
+</span>
+
+<span>
+  \[
+\sigma_n^2 = \frac{1}{M} \sum_{i=1}^{M} (a_{ni}-\mu_i)^2
+\]
+</span>
+
+We normalize the pre-activations as follows.
+<span>
+  \[
+\hat{a}_{ni} = \frac{a_{ni}-\mu_n}{\sqrt{\sigma_n^2+\delta}}
+\]
+</span>
+
+<span>
+  \[
+\tilde{a}_{ni} = \gamma_n \hat{a}_{ni} + \beta_n
+\]
+</span>
+</p>
+<a  href="https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html#torch.nn.LayerNorm"   target="_blank" rel="noopener"  class="book-btn">PyTorch</a>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">layer_norm</span> <span style="color:#f92672">=</span> <span style="color:#111">nn</span><span style="color:#f92672">.</span><span style="color:#111">LayerNorm</span><span style="color:#111">(</span><span style="color:#111">enormalized_shape</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="collateral">
+  Collateral
+  <a class="anchor" href="#collateral">#</a>
+</h2>
+<p><a href="https://pytorch.org/docs/stable/nn.html#normalization-layers">https://pytorch.org/docs/stable/nn.html#normalization-layers</a></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#batch-normalization">Batch normalization</a></li>
+    <li><a href="#layer-normalization">Layer normalization</a></li>
+    <li><a href="#collateral">Collateral</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

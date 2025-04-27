@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Prophet
+  #
+
+https://facebook.github.io/prophet/
+code
+
+gist
+
+notebook
+
+Prophet is a time series forecasting algorithm based on an additive model where non-linear trends are fit with yearly, weekly, and daily seasonality. It works best with time series with strong seasonal effects and several seasons of historical data. Prophet is robust to missing data and shifts in the trend, and typically handles outliers well.
+
+
+
+
+sibyl
+
+```python
+from sibyl.univariate import Prophet
+forecaster = Prophet()
+```
+
+
+
+
+illustration
+
+
+
+
+
+
+references
+
+- Sean J. Taylor and Benjamin Letham, [Forecasting at scale](https://peerj.com/preprints/3190.pdf), The American Statistician 72(1):37-45, 2018.
+- https://github.com/facebook/prophet
+
+
+
+
+
+Prophet uses a decomposable time series model with three main
+model components: trend, seasonality, and holidays. They are combined additively as follows.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/forecast/prophet/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="Prophet">
+  <meta property="og:description" content="Prophet # https://facebook.github.io/prophet/
+code gist notebook Prophet is a time series forecasting algorithm based on an additive model where non-linear trends are fit with yearly, weekly, and daily seasonality. It works best with time series with strong seasonal effects and several seasons of historical data. Prophet is robust to missing data and shifts in the trend, and typically handles outliers well.
+sibyl ```python from sibyl.univariate import Prophet forecaster = Prophet() ``` illustration references - Sean J. Taylor and Benjamin Letham, [Forecasting at scale](https://peerj.com/preprints/3190.pdf), The American Statistician 72(1):37-45, 2018. - https://github.com/facebook/prophet Prophet uses a decomposable time series model with three main model components: trend, seasonality, and holidays. They are combined additively as follows.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>Prophet | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/forecast/prophet/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.cfb2ec39d9715d59d8d52fd1c87fd6b9fc0fe320a71ff50fc1b27d4561b5ec16.js" integrity="sha256-z7LsOdlxXVnY1S/RyH/WufwP4yCnH/UPwbJ9RWG17BY=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecast/prophet/" class="active">Prophet</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Prophet</h3>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#trend">Trend</a>
+      <ul>
+        <li><a href="#non-linear-saturating-growth">Non-linear saturating growth</a></li>
+        <li><a href="#linear-trends-with-change-points">Linear trends with change points</a></li>
+        <li><a href="#automatic-change-point-selection">Automatic change point selection</a></li>
+        <li><a href="#trend-forecast-uncertainty">Trend forecast uncertainty</a></li>
+      </ul>
+    </li>
+    <li><a href="#seasonality">Seasonality</a></li>
+    <li><a href="#holidays-and-events">Holidays and events</a></li>
+    <li><a href="#additional-regressors">Additional Regressors</a></li>
+    <li><a href="#uncertainty-intervals">Uncertainty intervals</a></li>
+    <li><a href="#outliers">Outliers</a></li>
+    <li><a href="#non-daily-data">Non daily data</a></li>
+    <li><a href="#tips-and-tricks">Tips and tricks</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="prophet">
+  Prophet
+  <a class="anchor" href="#prophet">#</a>
+</h1>
+<p><a href="https://facebook.github.io/prophet/">https://facebook.github.io/prophet/</a></p>
+<p><a  href="https://github.ibm.com/retail-supply-chain/sibyl/blob/master/sibyl/univariate/Prophet.py"   target="_blank" rel="noopener"  class="book-btn">code</a>
+
+<a  href="https://github.ibm.com/retail-supply-chain/sibyl/blob/master/gists/gist_univariate_forecasting_prophet.py"   target="_blank" rel="noopener"  class="book-btn">gist</a>
+
+<a  href="https://github.ibm.com/retail-supply-chain/sibyl/blob/master/notebooks/univariate_forecasting_prophet.ipynb"   target="_blank" rel="noopener"  class="book-btn">notebook</a>
+</p>
+<p>Prophet is a time series forecasting algorithm based on an additive model where non-linear trends are fit with yearly, weekly, and daily seasonality. It works best with time series with strong seasonal effects and several seasons of historical data. Prophet is robust to missing data and shifts in the trend, and typically handles outliers well.</p>
+<div class="book-tabs">
+
+
+<input type="radio" class="toggle" name="tabs-prophet" id="tabs-prophet-0" checked="checked" />
+<label for="tabs-prophet-0">sibyl</label>
+<div class="book-tabs-content markdown-inner">
+```python
+from sibyl.univariate import Prophet
+forecaster = Prophet()
+```
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-prophet" id="tabs-prophet-1"  />
+<label for="tabs-prophet-1">illustration</label>
+<div class="book-tabs-content markdown-inner">
+<img src="/img/prophet.jpg"/>
+</div>
+
+
+<input type="radio" class="toggle" name="tabs-prophet" id="tabs-prophet-2"  />
+<label for="tabs-prophet-2">references</label>
+<div class="book-tabs-content markdown-inner">
+- Sean J. Taylor and Benjamin Letham, [Forecasting at scale](https://peerj.com/preprints/3190.pdf), The American Statistician 72(1):37-45, 2018.
+- https://github.com/facebook/prophet
+</div>
+
+
+</div>
+
+<p>Prophet uses a decomposable time series model with three main
+model components: <strong>trend</strong>, <strong>seasonality</strong>, and <strong>holidays</strong>. They are combined additively as follows.</p>
+
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<script defer src="/katex/katex.min.js"></script>
+<script defer src="/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script><span>
+  \(
+y(t) = g(t) + s(t) + h(t) + \epsilon(t).
+\)
+</span>
+
+<ul>
+<li>$g(t)$ is the trend function which models non-periodic changes in the value of the time series,</li>
+<li>$s(t)$ represents periodic changes (e.g., weekly and yearly seasonality), and</li>
+<li>$h(t)$ represents the effects of holidays which occur on potentially irregular schedules over one or more days.</li>
+<li>The error term $\epsilon(t)$ represents any idiosyncratic changes which are not accommodated by the model. It is assumed that the $\epsilon(t)$ is normally distributed.</li>
+</ul>
+<p>While the paper<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> discusses only the additive model, but the Prophet python package<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> lets you model both the additive and multiplicative seasonality. The multiplicative seasonality formulation would be</p>
+<span>
+  \(
+y(t) = g(t) * s(t) * h(t) + \epsilon(t).
+\)
+</span>
+
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">(</span><span style="color:#111">seasonality_mode</span><span style="color:#f92672">=</span><span style="color:#d88200">&#39;additive&#39;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">(</span><span style="color:#111">seasonality_mode</span><span style="color:#f92672">=</span><span style="color:#d88200">&#39;multiplicative&#39;</span><span style="color:#111">)</span>
+</span></span></code></pre></div><blockquote class="book-hint warning">
+  
+Prophet models forecasting as a curve fitting problem and does not explicitly take into account the temporal dependencies between the data points.
+
+</blockquote>
+
+<h2 id="trend">
+  Trend
+  <a class="anchor" href="#trend">#</a>
+</h2>
+<p>Prophet has implemented two types of trend models.</p>
+<ul>
+<li>Non-linear saturating growth model</li>
+<li>Piecewise linear model</li>
+</ul>
+<h3 id="non-linear-saturating-growth">
+  Non-linear saturating growth
+  <a class="anchor" href="#non-linear-saturating-growth">#</a>
+</h3>
+<p>This is useful when the underlying trend model in non-linear and saturates at a carrying capacity. For example, the number of online users are saturated by the number of people with access to the internet. Such growth functions can be modelled using the logistic growth model.</p>
+<p><span>
+  \(
+g(t) = \frac {C}{1+ \exp(-k(t-m))},
+\)
+</span>
+
+where $g(t)$ is the growth/trend function, $C$ is the carrying capacity, $k$ is the growth rate, $m$ is the offset parameter and $t$ is the time.</p>
+<ol>
+<li>$C$ need not be constant. The number of users with access to the internet may grow with time. So $C$ gets replaced by $C(t)$. This is generally an input and can be derived through market insights etc, external reports on the population like world bank reports etc. You can also define a saturating minimum value.</li>
+<li>The growth rate $k$ can also change with time. For example, the launch of a new product or opening of a new store will have an impact on the growth rate $k$.</li>
+</ol>
+<p>Changes in the growth rate are handled by defining the change points. Only at the change points, the growth rate is allowed to change. Suppose there are $S$ change points at times $s_{j}$, $ j=1,&hellip;,S$. Define a vector of rate adjustments $\delta \in \mathbb{R}^{S}$ where $\delta_{j}$ is the change in the rate that occurs at time $s_{j}$. The rate at any time $t$ is then the sum of the base rate $k$ and all the adjustments up to time $t$, that is, $k+\sum_{j:t&gt;s_{j}}\delta_{j}$. Define a vector $a(t) \in {{ 0,1 } }^S \text{such that}$, $a_{j}(t)= 1$, $\text{if}\ t \geq s_{j} \text{ },  0 \text{ otherwise}$. Then the rate at any time $t$ is $k + a(t)\delta$</p>
+<p>When the rate is adjusted the offset parameter also needs to be adjusted so that the endpoints of the segments are connected. The correct adjustment at change point $j$ is,</p>
+<span>
+  \(
+\gamma_{j}= \left(s_j -m - \sum_{l < j} \gamma_l \right) \left(1-\frac{k+\sum_{l < j}\gamma_{l}}{k+\sum_{l\leq j}\gamma_{l}} \right).
+\)
+</span>
+
+<p>The piece logistic growth model is then</p>
+<span>
+  \(
+g(t) = \frac{C(t)}{1 + exp(-(k+a(t)^T\delta)) (t-(m + a(t)^T\gamma) )}.
+\)
+</span>
+
+<h3 id="linear-trends-with-change-points">
+  Linear trends with change points
+  <a class="anchor" href="#linear-trends-with-change-points">#</a>
+</h3>
+<p>For forecasting models that do not exhibit a saturating behaviour, a simple piece wise constant rate of growth is useful.</p>
+<span>
+  \(
+g(t) = (k+a(t)^T\delta)t + (m + a(t)^T\gamma).
+\)
+</span>
+
+<h3 id="automatic-change-point-selection">
+  Automatic change point selection
+  <a class="anchor" href="#automatic-change-point-selection">#</a>
+</h3>
+<p>The change points can be user inputs, but can also be selected automatically. By default, Prophet specifies 25 potential changepoints which are uniformly placed in the first 80% of the time series. In the automatic selection, we generally start with a large number of change points such as one per month for multi year data. Each change point rate adjustment $\delta_{j}$ has a prior of $\text{Laplace}(0, \tau)$. The Laplace prior produces sparse solutions. As $\tau$ approaches 0, the growth model becomes linear (or logistic with saturating growth) .</p>
+<p>The default value of $\tau$ is 0.05. Increasing the $\tau$ will make the trend more flexible allowing it to change more quickly and may lead to overfitting. Decreasing the $\tau$ will make the trend less flexible and can lead to underfitting.</p>
+<p>You can also manually specify a list of many candidate change points with the same sparse prior as before. Prophet in that will automatically do the change point selection from the candidate list.</p>
+<h3 id="trend-forecast-uncertainty">
+  Trend forecast uncertainty
+  <a class="anchor" href="#trend-forecast-uncertainty">#</a>
+</h3>
+<p>When the model is extrapolated to the future, the trend model will have a constant rate. To overcome this, Prophets simulates the future change points based on the training data. The generative model for the trend is that there are $S$ changepoints over a history of $T$ points, each of which has a rate change $\delta_{j} \sim \text{Laplace}(0, \tau)$. In a fully Bayesian setting, you can have a prior on $\tau$ on obtain its posterior. Otherwise, one case use the maximum likelihood estimate $\lambda = \frac{1}{S} |\delta_{j}|.$ The future change points are randomly sampled in a way that the frequency of the future change points matches that of the history, that is, $\forall j&gt; T$, $\delta_{j}=0$ with probability $\frac{T-S}{T}$ and $\delta_{j} \sim \text{Laplace}(0, \lambda)$ with probability $\frac{S}{T}$.</p>
+<h2 id="seasonality">
+  Seasonality
+  <a class="anchor" href="#seasonality">#</a>
+</h2>
+<p>Prophet let&rsquo;s you model multi-period seasonality in the data. For example, there could be a seasonality introduced due to 5 day work week and one could due to school vacations. It uses the Fourier Series to model periodicity as a function of time $t$. Periodicity is modelled using partial Fourier sum. Remember that any reasonably continous and periodic functions can be expressed as a sum of series of sine terms. So the problem boils to figuring the weights for each of the sine terms that sum up to seasonality.</p>
+<span>
+  \(
+s(t) = \sum_{n=1}^{N}(a_{n} \times \cos (\frac{2 \pi nt}{P}) + b_{n} \times \sin (\frac{2 \pi nt}{P}) ).
+\)
+</span>
+
+<p>There are a total $2N$ parameters in estimating seasonality with periodicity $P$ with $N$ fourier terms. Smaller $N$ makes it a low pass filter, whereas the higher value of $N$, let&rsquo;s you quickly adapt to the seasonality changes. Increasing the $N$ also make the model more susceptible to overfitting.</p>
+<p>There is prior on the weights of the fourier series $\beta \sim \text{Normal}( 0,\sigma^2)$.</p>
+<p>Prophet will by default fit weekly and yearly seasonalities, if the time series is more than two cycles long. It will also fit daily seasonality for a sub-daily time series. You can add other seasonalities (monthly, quarterly, hourly) using the <code>add_seasonality</code> method.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">(</span><span style="color:#111">weekly_seasonality</span><span style="color:#f92672">=</span><span style="color:#00a8c8">False</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">add_seasonality</span><span style="color:#111">(</span><span style="color:#111">name</span><span style="color:#f92672">=</span><span style="color:#d88200">&#39;monthly&#39;</span><span style="color:#111">,</span> <span style="color:#111">period</span><span style="color:#f92672">=</span><span style="color:#ae81ff">30.5</span><span style="color:#111">,</span> <span style="color:#111">fourier_order</span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="holidays-and-events">
+  Holidays and events
+  <a class="anchor" href="#holidays-and-events">#</a>
+</h2>
+<p>Holidays and events usually have a predictable shocks to any business, but they do not usually follow a periodic pattern. For example, Thanksgiving happens on the fourth Thursday of Nov or Superbowl occurs on a Sunday in Jan or Feb. Some holidays even follow a lunar calendar. Prophet takes a list of holidays (global and country specific) as an input to incorporate the effect of the holidays. Some events need not repeat in the future. However they should still be input at the time of training.</p>
+<p>Prophet also let&rsquo;s you create a window (defined by its lower limit and the upper limit) around each holiday/event where its affect can be observed. It assumes that the effect of each holiday is independent of each other.</p>
+<p>For example for a fashion retaier, the super saturdays can be input as a holiday.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">christmas</span> <span style="color:#f92672">=</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">DataFrame</span><span style="color:#111">({</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;holiday&#39;</span><span style="color:#111">:</span> <span style="color:#d88200">&#39;christimas&#39;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;ds&#39;</span><span style="color:#111">:</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">to_datetime</span><span style="color:#111">([</span><span style="color:#d88200">&#39;2017-12-25&#39;</span><span style="color:#111">,</span> <span style="color:#d88200">&#39;2018-12-25&#39;</span><span style="color:#111">]),</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;lower_window&#39;</span><span style="color:#111">:</span> <span style="color:#ae81ff">2</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;upper_window&#39;</span><span style="color:#111">:</span> <span style="color:#ae81ff">3</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">supersaturdays</span> <span style="color:#f92672">=</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">DataFrame</span><span style="color:#111">({</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;holiday&#39;</span><span style="color:#111">:</span> <span style="color:#d88200">&#39;ss&#39;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;ds&#39;</span><span style="color:#111">:</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">to_datetime</span><span style="color:#111">([</span><span style="color:#d88200">&#39;2017-06-03&#39;</span><span style="color:#111">,</span> <span style="color:#d88200">&#39;2017-06-24&#39;</span><span style="color:#111">,</span> <span style="color:#d88200">&#39;2018-06-02&#39;</span><span style="color:#111">]),</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;lower_window&#39;</span><span style="color:#111">:</span> <span style="color:#ae81ff">0</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#39;upper_window&#39;</span><span style="color:#111">:</span> <span style="color:#ae81ff">0</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">holidays</span> <span style="color:#f92672">=</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">concat</span><span style="color:#111">((</span><span style="color:#111">christmas</span><span style="color:#111">,</span> <span style="color:#111">supersaturdays</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">(</span><span style="color:#111">holidays</span><span style="color:#f92672">=</span><span style="color:#111">holidays</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="additional-regressors">
+  Additional Regressors
+  <a class="anchor" href="#additional-regressors">#</a>
+</h2>
+<p>Additional regressors can be added to the linear part of the model using the add_regressor method or function. A column with the regressor value will need to be present in both the fitting and prediction dataframes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#75af00">sale_time</span><span style="color:#111">(</span><span style="color:#111">ds</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">date</span> <span style="color:#f92672">=</span> <span style="color:#111">pd</span><span style="color:#f92672">.</span><span style="color:#111">to_datetime</span><span style="color:#111">(</span><span style="color:#111">ds</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">if</span> <span style="color:#111">(</span><span style="color:#111">date</span><span style="color:#f92672">.</span><span style="color:#111">month</span> <span style="color:#f92672">in</span> <span style="color:#111">[</span><span style="color:#ae81ff">6</span><span style="color:#111">,</span> <span style="color:#ae81ff">12</span><span style="color:#111">]):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">else</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">df</span><span style="color:#111">[</span><span style="color:#d88200">&#39;sale&#39;</span><span style="color:#111">]</span> <span style="color:#f92672">=</span> <span style="color:#111">df</span><span style="color:#111">[</span><span style="color:#d88200">&#39;ds&#39;</span><span style="color:#111">]</span><span style="color:#f92672">.</span><span style="color:#111">apply</span><span style="color:#111">(</span><span style="color:#111">sale_time</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">add_regressor</span><span style="color:#111">(</span><span style="color:#d88200">&#39;sale&#39;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">fit</span><span style="color:#111">(</span><span style="color:#111">df</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">future</span><span style="color:#111">[</span><span style="color:#d88200">&#39;sale&#39;</span><span style="color:#111">]</span> <span style="color:#f92672">=</span> <span style="color:#111">future</span><span style="color:#111">[</span><span style="color:#d88200">&#39;ds&#39;</span><span style="color:#111">]</span><span style="color:#f92672">.</span><span style="color:#111">apply</span><span style="color:#111">(</span><span style="color:#111">sale_time</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">forecast</span> <span style="color:#f92672">=</span> <span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">predict</span><span style="color:#111">(</span><span style="color:#111">future</span><span style="color:#111">)</span>
+</span></span></code></pre></div><p>You can add multiple additional regressors too.</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">m</span> <span style="color:#f92672">=</span> <span style="color:#111">Prophet</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">add_regressor</span><span style="color:#111">(</span><span style="color:#d88200">&#39;temp&#39;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">add_regressor</span><span style="color:#111">(</span><span style="color:#d88200">&#39;weathersit&#39;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">fit</span><span style="color:#111">(</span><span style="color:#111">d_df</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="uncertainty-intervals">
+  Uncertainty intervals
+  <a class="anchor" href="#uncertainty-intervals">#</a>
+</h2>
+<p>By default Prophet will only return uncertainty in the trend and observation noise.</p>
+<h2 id="outliers">
+  Outliers
+  <a class="anchor" href="#outliers">#</a>
+</h2>
+<p>Prophet is able to handle the outliers in the history, but only by fitting them with trend changes. The uncertainty model then expects future trend changes of similar magnitude.</p>
+<p>The best way to handle outliers is to remove them. Prophet has no problem with missing data. If you set their values to NA in the history but leave the dates in future, then Prophet will give you a prediction for their values.</p>
+<h2 id="non-daily-data">
+  Non daily data
+  <a class="anchor" href="#non-daily-data">#</a>
+</h2>
+<p>Prophet can also handle sub-daily data, monthly data and data with regular gaps (example observations are available only frmo 9 am to 6 pm).</p>
+<h2 id="tips-and-tricks">
+  Tips and tricks
+  <a class="anchor" href="#tips-and-tricks">#</a>
+</h2>
+<ul>
+<li>May be useful to predict log value.</li>
+<li>Check for data stationarity.</li>
+</ul>
+<h2 id="references">
+  References
+  <a class="anchor" href="#references">#</a>
+</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Sean J. Taylor and Benjamin Letham, <a href="https://peerj.com/preprints/3190.pdf">Forecasting at scale</a>, The American Statistician 72(1):37-45, 2018.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/facebook/prophet">https://github.com/facebook/prophet</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#trend">Trend</a>
+      <ul>
+        <li><a href="#non-linear-saturating-growth">Non-linear saturating growth</a></li>
+        <li><a href="#linear-trends-with-change-points">Linear trends with change points</a></li>
+        <li><a href="#automatic-change-point-selection">Automatic change point selection</a></li>
+        <li><a href="#trend-forecast-uncertainty">Trend forecast uncertainty</a></li>
+      </ul>
+    </li>
+    <li><a href="#seasonality">Seasonality</a></li>
+    <li><a href="#holidays-and-events">Holidays and events</a></li>
+    <li><a href="#additional-regressors">Additional Regressors</a></li>
+    <li><a href="#uncertainty-intervals">Uncertainty intervals</a></li>
+    <li><a href="#outliers">Outliers</a></li>
+    <li><a href="#non-daily-data">Non daily data</a></li>
+    <li><a href="#tips-and-tricks">Tips and tricks</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

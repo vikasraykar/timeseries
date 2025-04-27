@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Hierarchical multiple time series forecasting via Bayesian tensor factorization
+  #
+
+paper
+
+overleaf document
+
+
+  Abstract
+  #
+
+
+Time series imputation and forecasting is a central problem encountered in many domains. Classical time-series forecasting methods are univariate methods and typically forecast based on the historical values for one time-series. In this paper we are interested in imputation and forecasting for multiple loosely correlated hierarchical time series (for example, sales of multiple products at different stores). We model this as a tensor completion problem and specifically develop a Bayesian tensor factorization approach that explicitly models hierarchy across all dimensions of the tensor. We experimentally validate our results on standard datasets and as a consequence of incorporating hierarchy all all three dimensions we show that our approach yields state-of-the-art results compared to the existing approaches in the literature.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/forecast/forecasting-tensor-factorization/">
+  <meta property="og:site_name" content="Time Series">
+  <meta property="og:title" content="nips paper">
+  <meta property="og:description" content="Hierarchical multiple time series forecasting via Bayesian tensor factorization # paper overleaf document Abstract # Time series imputation and forecasting is a central problem encountered in many domains. Classical time-series forecasting methods are univariate methods and typically forecast based on the historical values for one time-series. In this paper we are interested in imputation and forecasting for multiple loosely correlated hierarchical time series (for example, sales of multiple products at different stores). We model this as a tensor completion problem and specifically develop a Bayesian tensor factorization approach that explicitly models hierarchy across all dimensions of the tensor. We experimentally validate our results on standard datasets and as a consequence of incorporating hierarchy all all three dimensions we show that our approach yields state-of-the-art results compared to the existing approaches in the literature.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+<title>nips paper | Time Series</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/forecast/forecasting-tensor-factorization/">
+<link rel="stylesheet" href="/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css" integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin="anonymous">
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.cfb2ec39d9715d59d8d52fd1c87fd6b9fc0fe320a71ff50fc1b27d4561b5ec16.js" integrity="sha256-z7LsOdlxXVnY1S/RyH/WufwP4yCnH/UPwbJ9RWG17BY=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Time Series</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/introduction/" class="">Explainability</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/metrics/" class="">Metrics</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecast/prediction-interval/" class="">Prediction interval</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecast/prophet/" class="">Prophet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecast/forecasting-tensor-factorization/" class="active">nips paper</a>
+  
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Forecasting</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/introduction/" class="">Introduction</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/timeshap/" class="">TimeSHAP</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/forecasting/features/" class="">Interpretable features</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>nips paper</h3>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="hierarchical-multiple-time-series-forecasting-via-bayesian-tensor-factorization">
+  Hierarchical multiple time series forecasting via Bayesian tensor factorization
+  <a class="anchor" href="#hierarchical-multiple-time-series-forecasting-via-bayesian-tensor-factorization">#</a>
+</h1>
+<p><a  href="https://ibm.ent.box.com/file/674776691990"   target="_blank" rel="noopener"  class="book-btn">paper</a>
+
+<a  href="https://www.overleaf.com/project/5e8d7b1e3025d100016f2aa3"   target="_blank" rel="noopener"  class="book-btn">overleaf document</a>
+</p>
+<h2 id="abstract">
+  Abstract
+  <a class="anchor" href="#abstract">#</a>
+</h2>
+<blockquote>
+<p>Time series imputation and forecasting is a central problem encountered in many domains. Classical time-series forecasting methods are univariate methods and typically forecast based on the historical values for one time-series. In this paper we are interested in imputation and forecasting for multiple loosely correlated hierarchical time series (for example, sales of multiple products at different stores). We model this as a tensor completion problem and specifically develop a Bayesian tensor factorization approach that explicitly models hierarchy across all dimensions of the tensor. We experimentally validate our results on standard datasets and as a consequence of incorporating hierarchy all all three dimensions we show that our approach yields state-of-the-art results compared to the existing approaches in the literature.</p></blockquote>
+<h2 id="introduction">
+  Introduction
+  <a class="anchor" href="#introduction">#</a>
+</h2>
+<p>Time series imputation and forecasting is a central problem encountered in many domains including retail, weather, finance and health sciences. Let $f:\mathbb{Z}\to\mathbb{R}^1$ represent a latent <strong>univariate time series</strong>for any discrete time index $t \in \mathbb{Z}$. We observe a sequence of historical <em>noisy</em> and potentially <em>missing</em> values $x(t)$ for $t \in [1,\dots,T]$ such that $\mathbb{E}[x(t)]=f(t)$. For example, in the retail domain $x(t)$ could represent the weekly sales of a product and $f(t)$ the true latent demand for the product. The task of <strong>time series imputation</strong> (interpolation) is to estimate $f(t)$ for all $t \in [1,\dots,T]$ and the task of <strong>time series forecasting</strong> (extrapolation) is to estimate $f(t)$ for all $t &gt; T$. Time series imputation is useful to interpolate missing values while forecasting is used to extrapolate into the future. Classical time-series forecasting methods (such as ARIMA, Holt-Winter, Theta method, fbprohet, Gaussian Process Regression etc.) are <em>univariate methods</em> and typically forecast based on the historical values for one time-series.</p>
+<p>In contrast in this paper we are interested in analyzing and forecasting for <strong>multiple loosely correlated hierarchical time series</strong>. For example, consider a retailer having a set of $n$ products $\mathcal{N} = \{1,2,&hellip;,n\}$ and $m$ stores $\mathcal{M} = \{1,2,&hellip;,m\}$. Let $x_{ij}(t)$ be the total weekly sales at week $t \in \mathbb{Z}$ for product $j \in \mathcal{N}$ at store $j \in \mathcal{M}$. Essentially we have a total of at-most $mn$ time series that we wish to analyze together.</p>
+<p>While for ease of exposition we mainly illustrate the ideas in the retail domain the same notion can extend to other domains. For example, in financial domain this could be weekly country-specific commodity-prices, daily electricity consumption for different appliances across different locations, weekly movie ratings for different users etc.</p>
+<p>While each time series in isolation can be modeled separately using classical univariate time series algorithms modeling all the time series together is needed for the following reasons.</p>
+<ul>
+<li><strong>Missing time series</strong> Univariate time series imputation allows us to deal with missing data at certain time points. However, when we are considering multiple time series it is quite common that a certain time series is completely missing. For example, a product may not have been carried at a particular store and hence we will not have any historical sales data for that product-store combination. However the retailer is still interested in forecasting the sales of that product for that store for the next season to identify missed opportunities and do a better planning. By modeling all the time series together helps us to forecast by relying on other similar products and stores where we have the historical data available.</li>
+<li><strong>Hierarchical time series</strong> The multiple time series are tied together by different levels of hierarchy. For instance the products could be grouped into product hierarchies such as $\text{department} \to \text{category} \to \text{product}$ and stores there could be grouped as $\text{country} \to \text{region} \to \text{store}$. Incorporating hierarchy into the models generally improves the accuracy of the models. In addition the time dimension also naturally defines a time hierarchy of the form $\text{month} \to \text{week} \to \text{day}$.</li>
+<li><strong>Intermittent time series</strong> Time series at the product-store level are typically characterized by intermittency/sparsity, involving sporadic unit sales with lots of zeros (for example, see Figure 1). In such scenarios univariate forecasting algorithms struggle in forecasting accurately. Analyzing multiple time series at different hierarchies allows us to  effectively rely on more accurate data at higher levels, as illustrated by the sales time series plots in Figure 1.</li>
+<li><strong>Scalability</strong> Modeling all time series jointly generally scales better computationally as opposed to fine tuning the hyper-parameters and fitting the model for each univariate time series separately.</li>
+</ul>
+<img src="/img/tensor.jpeg" alt="tensor"/>
+*Figure 1:  We model multiple loosely correlated hierarchical time series as a sparse $\text{product} \times \text{store} \times \text{time}$ tensor of dimension $m\times n \times T$ and formulate both imputation and forecasting as a tensor completion problem. A sample product hierarcy, store hierarchy and time hierarchy is shown.*
+<p>A set of previous approaches~\cite{ben2020hierarchical,athanasopoulos2020hierarchical} typically referred to as <strong>hierarchical time series forecasting</strong>, the forecasts are independently made at different levels of the hierarchy tree and then the predictions are revised/reconciled for all the nodes in the tree. Several different revising techniques are proposed in the literature including the bottom up, top down, middle out and the optimal combination approaches. However this approach is not able to handle completely missing time series.</p>
+<p>In this work we model all the time-series as a sparse $\text{product} \times \text{store} \times \text{time}$ tensor of dimension $m\times n \times T$ (see Figure 1) and formulate both imputation and forecasting as a <strong>tensor completion</strong> problem. This formulation allows us to effectively address the three issues pointed earlier. There have been some recent approaches which cast time series analysis as a matrix completion problem. The following are the novel contributions of this paper in light of these existing approaches.</p>
+<ul>
+<li><strong>Product x store x time hierarchy</strong> We propose a Bayesian probabilistic tensor factorization algorithm for hierarchical $\text{product} \times \text{store} \times \text{time}$ series forecasting. While some previous approaches~\cite{adams2010incorporating,menon2011response,park2013hierarchical,fazayeli2014uncertainty} for matrix factorization in the collaborative filtering literature provide flexibility to incorporate hierarchy for rows and columns (products and stores) as side information, in this paper we generalize and extend this notion of hierarchical aggregation for the time dimension also. This approach increases the density of observed data as we go up in the hierarchy thus reducing the effect of intermittency and missing values. Almost complete data at high levels of hierarchy, generate accurate and efficient factorizations at these levels, which can be further used as priors for lower levels. We sample our lower level matrix factors such that they depend on their previous time step and also previous level of hierarchy. This approach differentiates our work from the state-of-the-art methods like TRMF (Temporal Regularized Matrix Factorization) from \cite{yu2016temporal}, where temporal dependencies are learnt by tuning regularization parameters.</li>
+<li><strong>Dynamic embeddings</strong> Most existing approaches assume that the latent embeddings are static, that, they do not change with time. This may not be true in a realistic setting where demand generally changes over time.  We consider a more general dynamic scenario where the individual latent embeddings change over time and show that it improves accuracy significantly.</li>
+<li><strong>Better accuracy</strong> We experimentally validate our results on standard datasets and as a consequence of incorporating hierarchy all all three dimensions we show that our approach yields state-of-the-art results.</li>
+<li><strong>Product and store clustering</strong> We also demonstrate how these dynamic latent embeddings can be used for better product and store clustering, a common task for retailers for supply chain planning.</li>
+</ul>
+<img src="/img/timeseries_daily.jpeg" alt="timeseries_daily"/>
+*Figure 2: The lower left plot shows an intermittent time series representing daily sales for a product at a particular store. As we aggregate the time series across the product and store hierarchy the data becomes less intermittent.*
+<img src="/img/timeseries_weekly.jpeg" alt="timeseries_weekly"/>
+*Figure 3: The lower left plot shows an intermittent time series representing weekly sales for a product at a particular store. As we aggregate the time series across the product and store hierarchy the data becomes less intermittent.*
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
