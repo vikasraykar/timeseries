@@ -453,7 +453,7 @@ the time series.</p>
   \(H\)
 </span>
  time points in the future. Unlike supervised learing where the model is usually fit once in time series forecasting for many algorithms we will have to continously fit the model before forecasting as more recent data arrives.</p></blockquote>
-<p><img src="/img/timeshap_dataset.jpg" alt="dataset" /></p>
+<p><img src="../img/timeshap_dataset.jpg" alt="dataset" /></p>
 <h2 id="explainability-for-forecasting">
   Explainability for forecasting
   <a class="anchor" href="#explainability-for-forecasting">#</a>
@@ -569,7 +569,7 @@ While the original forecaster learns to predict <span>
   \(f(t+h)\)
 </span>
  made by the forecaster. Essentially we want to mimic the forecaster using a surrogate model. We choose the surrogate model that can be easily interpreted.</p>
-<p><img src="/img/timeshap_surrogate.jpg" alt="recursive" /></p>
+<p><img src="../img/timeshap_surrogate.jpg" alt="recursive" /></p>
 <h3 id="backtested-historical-forecasts">
   Backtested historical forecasts
   <a class="anchor" href="#backtested-historical-forecasts">#</a>
@@ -581,7 +581,7 @@ to the forecast horizon. The forecaster
 is trained on the train split and evaluated on the test split and all the test split
 predictions are concatenated to get the backtested historical forecasts for each
 step of the forecast horizon.</p>
-<p><img src="/img/timeshap_backtest.jpg" alt="backtest" /></p>
+<p><img src="../img/timeshap_backtest.jpg" alt="backtest" /></p>
 <blockquote class="book-hint warning">
   
 This is one of the most computationally expensive steps since for a time series of length <span>
@@ -946,7 +946,7 @@ A well-known drawback of the recursive method is its sensitivity to the estimati
 
 </blockquote>
 
-<p><img src="/img/timeshap_recursive.jpg" alt="recursive" /></p>
+<p><img src="../img/timeshap_recursive.jpg" alt="recursive" /></p>
 <h4 id="direct">
   Direct
   <a class="anchor" href="#direct">#</a>
@@ -1027,7 +1027,7 @@ Since the Direct strategy does not use any approximated values to compute the fo
 
 </blockquote>
 
-<p><img src="/img/timeshap_direct.jpg" alt="direct" /></p>
+<p><img src="../img/timeshap_direct.jpg" alt="direct" /></p>
 <h4 id="dirrec">
   DirRec
   <a class="anchor" href="#dirrec">#</a>
@@ -1141,13 +1141,13 @@ Note that the recurisve strategy has only one model, while the direct and the di
   <a class="anchor" href="#shap-feature-importance">#</a>
 </h3>
 <p>The importance score for each features based on the shap values. Specifically this is the mean absolute value of the shap values for each feature across the entire dataset. To get an overview of which features are most important for a model we can compute the SHAP values of every feature for every sample. We can then take the mean absolute value of the SHAP values for each feature to get a feature importance score for each feature.</p>
-<p><img src="/img/timeshap_global_shap_feature_importance.jpg" alt="timeshap_global_shap_feature_importance" /></p>
+<p><img src="../img/timeshap_global_shap_feature_importance.jpg" alt="timeshap_global_shap_feature_importance" /></p>
 <h3 id="feature-importance">
   Feature importance
   <a class="anchor" href="#feature-importance">#</a>
 </h3>
 <p>The relative contribution of each feature to the model. A higher value of this score when compared to another feature implies it is more important for generating a forecast. Feature importance provides a score that indicates how useful or valuable each feature was in the construction of the boosted decision trees within the model. The more an attribute is used to make key decisions with decision trees, the higher its <strong>relative importance</strong>. Feature importance is calculated for a single decision tree by the amount that each attribute split point improves the performance measure, weighted by the number of observations the node is responsible for. The feature importances are then averaged across all of the the decision trees within the model. The <strong>gain</strong> is the most relevant attribute to interpret the relative importance of each feature. The <strong>gain</strong> implies the relative contribution of the corresponding feature to the model calculated by taking each feature’s contribution for each tree in the model. A higher value of this metric when compared to another feature implies it is more important for generating a prediction.</p>
-<p><img src="/img/timeshap_global_feature_importance.jpg" alt="timeshap_global_feature_importance" /></p>
+<p><img src="../img/timeshap_global_feature_importance.jpg" alt="timeshap_global_feature_importance" /></p>
 <h3 id="partial-dependence-plot">
   Partial dependence plot
   <a class="anchor" href="#partial-dependence-plot">#</a>
@@ -1159,7 +1159,7 @@ The calculation for the partial dependence plots has a causal interpretation. On
 
 </blockquote>
 
-<p><img src="/img/timeshap_global_pdp.jpg" alt="timeshap_global_pdp" /></p>
+<p><img src="../img/timeshap_global_pdp.jpg" alt="timeshap_global_pdp" /></p>
 <blockquote class="book-hint warning">
   
 The assumption of independence is the biggest issue with PDP plots. It is assumed that the feature(s) for which the partial dependence is computed are not correlated with other features.
@@ -1171,7 +1171,7 @@ The assumption of independence is the biggest issue with PDP plots. It is assume
   <a class="anchor" href="#shap-dependence-plot">#</a>
 </h3>
 <p>The shap dependence plot (SDP) for each feature shows the mean shap value for a particular features across the entire dataset. This shows how the model depends on the given feature, and is like a richer extenstion of the classical partial dependence plots.</p>
-<p><img src="/img/timeshap_global_sdp.jpg" alt="timeshap_global_sdp" /></p>
+<p><img src="../img/timeshap_global_sdp.jpg" alt="timeshap_global_sdp" /></p>
 <h2 id="local-explanations">
   Local explanations
   <a class="anchor" href="#local-explanations">#</a>
@@ -1183,7 +1183,7 @@ The assumption of independence is the biggest issue with PDP plots. It is assume
 </h3>
 <p><a href="https://github.com/slundberg/shap">SHAP</a> (SHapley Additive exPlanations) is a unified approach to explain the output of any machine learning model. SHAP connects game theory with local explanations. While SHAP values can explain the output of any machine learning model, high-speed exact algorithms are available for tree ensemble methods</p>
 <p>The SHAP explanation shows features contributing to push the forecasted sales from the base value (the average sales) to the forecaster model output. Features pushing the forecast higher are shown in blue and those pushing the forecast lower are in red.</p>
-<p><img src="/img/timeshap_local_shap.jpg" alt="timeshap_local_shap" /></p>
+<p><img src="../img/timeshap_local_shap.jpg" alt="timeshap_local_shap" /></p>
 <blockquote>
 <p>This time instance (Mon Jul  1 00:00:00 2019) has a forecasted sales (5028.76), 2579.59 units higher than the average (2449.17) mainly because of the discount(t) (40.50) and sales(t-1) (4242.54) while sales(t-2*52) (4375.00) was trying to push it lower.</p></blockquote>
 <h3 id="local-partial-dependence-plot">
@@ -1191,13 +1191,13 @@ The assumption of independence is the biggest issue with PDP plots. It is assume
   <a class="anchor" href="#local-partial-dependence-plot">#</a>
 </h3>
 <p>The (local) PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.</p>
-<p><img src="/img/timeshap_local_pdp.jpg" alt="timeshap_local_pdp" /></p>
+<p><img src="../img/timeshap_local_pdp.jpg" alt="timeshap_local_pdp" /></p>
 <h3 id="local-shap-dependence-plot">
   Local SHAP dependence plot
   <a class="anchor" href="#local-shap-dependence-plot">#</a>
 </h3>
 <p>The (local) SDP for a given feature shows how the shap value varies as the feature value changes.</p>
-<p><img src="/img/timeshap_local_sdp.jpg" alt="timeshap_local_sdp" /></p>
+<p><img src="../img/timeshap_local_sdp.jpg" alt="timeshap_local_sdp" /></p>
 <h2 id="semi-local-explanations">
   Semi-local explanations
   <a class="anchor" href="#semi-local-explanations">#</a>
@@ -1208,19 +1208,19 @@ The assumption of independence is the biggest issue with PDP plots. It is assume
   <a class="anchor" href="#shap-feature-importance-1">#</a>
 </h3>
 <p>The importance score for each feature which is the corresponding shap value for that feature.</p>
-<p><img src="/img/timeshap_semilocal_shap.jpg" alt="timeshap_semilocal_shap" /></p>
+<p><img src="../img/timeshap_semilocal_shap.jpg" alt="timeshap_semilocal_shap" /></p>
 <h3 id="partial-dependence-plot-1">
   Partial dependence plot
   <a class="anchor" href="#partial-dependence-plot-1">#</a>
 </h3>
 <p>The PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.</p>
-<p><img src="/img/timeshap_semilocal_pdp.jpg" alt="timeshap_semilocal_pdp" /></p>
+<p><img src="../img/timeshap_semilocal_pdp.jpg" alt="timeshap_semilocal_pdp" /></p>
 <h3 id="shap-dependence-plot-1">
   SHAP dependence plot
   <a class="anchor" href="#shap-dependence-plot-1">#</a>
 </h3>
 <p>The SDP for a given feature shows how the shap value varies as the feature value changes.</p>
-<p><img src="/img/timeshap_semilocal_sdp.jpg" alt="timeshap_semilocal_sdp" /></p>
+<p><img src="../img/timeshap_semilocal_sdp.jpg" alt="timeshap_semilocal_sdp" /></p>
 <h2 id="explaining-prediction-intervals">
   Explaining prediction intervals
   <a class="anchor" href="#explaining-prediction-intervals">#</a>
@@ -1265,35 +1265,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-1"  />
 <label for="tabs-Naive-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_forecast.jpg" alt="timeshap_naive_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_naive_forecast.jpg" alt="timeshap_naive_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-2"  />
 <label for="tabs-Naive-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_global_shap.jpg" alt="timeshap_naive_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_naive_global_shap.jpg" alt="timeshap_naive_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-3"  />
 <label for="tabs-Naive-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_global_pdp.jpg" alt="timeshap_naive_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_naive_global_pdp.jpg" alt="timeshap_naive_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-4"  />
 <label for="tabs-Naive-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_local_shap.jpg" alt="timeshap_naive_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_naive_local_shap.jpg" alt="timeshap_naive_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Naive" id="tabs-Naive-5"  />
 <label for="tabs-Naive-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_naive_local_pdp.jpg" alt="timeshap_naive_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_naive_local_pdp.jpg" alt="timeshap_naive_local_pdp" /></p>
 </div>
 
 
@@ -1322,35 +1322,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-1"  />
 <label for="tabs-SeasonalNaive-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_forecast.jpg" alt="timeshap_seasonalnaive_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_seasonalnaive_forecast.jpg" alt="timeshap_seasonalnaive_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-2"  />
 <label for="tabs-SeasonalNaive-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_global_shap.jpg" alt="timeshap_seasonalnaive_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_seasonalnaive_global_shap.jpg" alt="timeshap_seasonalnaive_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-3"  />
 <label for="tabs-SeasonalNaive-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_global_pdp.jpg" alt="timeshap_seasonalnaive_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_seasonalnaive_global_pdp.jpg" alt="timeshap_seasonalnaive_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-4"  />
 <label for="tabs-SeasonalNaive-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_local_shap.jpg" alt="timeshap_seasonalnaive_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_seasonalnaive_local_shap.jpg" alt="timeshap_seasonalnaive_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SeasonalNaive" id="tabs-SeasonalNaive-5"  />
 <label for="tabs-SeasonalNaive-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_seasonalnaive_local_pdp.jpg" alt="timeshap_seasonalnaive_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_seasonalnaive_local_pdp.jpg" alt="timeshap_seasonalnaive_local_pdp" /></p>
 </div>
 
 
@@ -1387,35 +1387,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-1"  />
 <label for="tabs-MovingAverage-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_forecast.jpg" alt="timeshap_movingaverage_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_movingaverage_forecast.jpg" alt="timeshap_movingaverage_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-2"  />
 <label for="tabs-MovingAverage-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_global_shap.jpg" alt="timeshap_movingaverage_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_movingaverage_global_shap.jpg" alt="timeshap_movingaverage_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-3"  />
 <label for="tabs-MovingAverage-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_global_pdp.jpg" alt="timeshap_movingaverage_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_movingaverage_global_pdp.jpg" alt="timeshap_movingaverage_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-4"  />
 <label for="tabs-MovingAverage-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_local_shap.jpg" alt="timeshap_movingaverage_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_movingaverage_local_shap.jpg" alt="timeshap_movingaverage_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-MovingAverage" id="tabs-MovingAverage-5"  />
 <label for="tabs-MovingAverage-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_movingaverage_local_pdp.jpg" alt="timeshap_movingaverage_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_movingaverage_local_pdp.jpg" alt="timeshap_movingaverage_local_pdp" /></p>
 </div>
 
 
@@ -1443,35 +1443,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-1"  />
 <label for="tabs-SES-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_forecast.jpg" alt="timeshap_ses_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_ses_forecast.jpg" alt="timeshap_ses_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-2"  />
 <label for="tabs-SES-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_global_shap.jpg" alt="timeshap_ses_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_ses_global_shap.jpg" alt="timeshap_ses_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-3"  />
 <label for="tabs-SES-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_global_pdp.jpg" alt="timeshap_ses_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_ses_global_pdp.jpg" alt="timeshap_ses_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-4"  />
 <label for="tabs-SES-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_local_shap.jpg" alt="timeshap_ses_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_ses_local_shap.jpg" alt="timeshap_ses_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-SES" id="tabs-SES-5"  />
 <label for="tabs-SES-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_ses_local_pdp.jpg" alt="timeshap_ses_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_ses_local_pdp.jpg" alt="timeshap_ses_local_pdp" /></p>
 </div>
 
 
@@ -1499,35 +1499,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-1"  />
 <label for="tabs-Prophet-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_forecast.jpg" alt="timeshap_prophet_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_prophet_forecast.jpg" alt="timeshap_prophet_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-2"  />
 <label for="tabs-Prophet-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_global_shap.jpg" alt="timeshap_prophet_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_prophet_global_shap.jpg" alt="timeshap_prophet_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-3"  />
 <label for="tabs-Prophet-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_global_pdp.jpg" alt="timeshap_prophet_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_prophet_global_pdp.jpg" alt="timeshap_prophet_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-4"  />
 <label for="tabs-Prophet-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_local_shap.jpg" alt="timeshap_prophet_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_prophet_local_shap.jpg" alt="timeshap_prophet_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-Prophet" id="tabs-Prophet-5"  />
 <label for="tabs-Prophet-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_prophet_local_pdp.jpg" alt="timeshap_prophet_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_prophet_local_pdp.jpg" alt="timeshap_prophet_local_pdp" /></p>
 </div>
 
 
@@ -1555,35 +1555,35 @@ f(t+h|t) = y(t),\text{ for }h=1,2,...
 
 <input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-1"  />
 <label for="tabs-XGBoost-1">forecaster</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_forecast.jpg" alt="timeshap_naive_forecast" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_xgboost_forecast.jpg" alt="timeshap_naive_forecast" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-2"  />
 <label for="tabs-XGBoost-2">global - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_global_shap.jpg" alt="timeshap_xgboost_global_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_xgboost_global_shap.jpg" alt="timeshap_xgboost_global_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-3"  />
 <label for="tabs-XGBoost-3">global - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_global_pdp.jpg" alt="timeshap_xgboost_global_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_xgboost_global_pdp.jpg" alt="timeshap_xgboost_global_pdp" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-4"  />
 <label for="tabs-XGBoost-4">local - SHAP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_local_shap.jpg" alt="timeshap_xgboost_local_shap" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_xgboost_local_shap.jpg" alt="timeshap_xgboost_local_shap" /></p>
 </div>
 
 
 
 <input type="radio" class="toggle" name="tabs-XGBoost" id="tabs-XGBoost-5"  />
 <label for="tabs-XGBoost-5">local - PDP</label>
-<div class="book-tabs-content markdown-inner"><p><img src="/img/timeshap_xgboost_local_pdp.jpg" alt="timeshap_xgboost_local_pdp" /></p>
+<div class="book-tabs-content markdown-inner"><p><img src="../img/timeshap_xgboost_local_pdp.jpg" alt="timeshap_xgboost_local_pdp" /></p>
 </div>
 
 

@@ -47,7 +47,7 @@ The task of **time series forecasting** is to estimate {{< katex >}}f(t){{< /kat
 {{< /katex >}}
 > Using the language of supervised learning, {{< katex >}}y(1),...,y(T){{< /katex >}} is the training data of {{< katex >}}T{{< /katex >}} samples based on which we learn/train a forecaster model {{< katex >}}\hat{f}{{< /katex >}}. The trained model {{< katex >}}\hat{f}{{< /katex >}} is then used to predict/forecast on the test set of {{< katex >}}H{{< /katex >}} time points in the future. Unlike supervised learing where the model is usually fit once in time series forecasting for many algorithms we will have to continously fit the model before forecasting as more recent data arrives.
 
-![dataset](/img/timeshap_dataset.jpg)
+![dataset](../img/timeshap_dataset.jpg)
 
 ## Explainability for forecasting
 
@@ -103,7 +103,7 @@ g(t+h|t)=g(t+h|y(1),...,y(t))\:\text{for}\:h=1,...,H,
 {{< /katex >}}
 While the original forecaster learns to predict {{< katex >}}y(t+h){{< /katex >}} based on {{< katex >}}y(1),...,y(t){{< /katex >}} the surrogate model is trained to predict the forecasts {{< katex >}}f(t+h){{< /katex >}} made by the forecaster. Essentially we want to mimic the forecaster using a surrogate model. We choose the surrogate model that can be easily interpreted.
 
-![recursive](/img/timeshap_surrogate.jpg)
+![recursive](../img/timeshap_surrogate.jpg)
 
 ### Backtested historical forecasts
 
@@ -115,7 +115,7 @@ is trained on the train split and evaluated on the test split and all the test s
 predictions are concatenated to get the backtested historical forecasts for each
 step of the forecast horizon.
 
-![backtest](/img/timeshap_backtest.jpg)
+![backtest](../img/timeshap_backtest.jpg)
 
 {{< hint warning >}}
 This is one of the most computationally expensive steps since for a time series of length {{< katex >}}n{{< /katex >}} we will have to potentially invoke `fit` and `predict` roughly {{< katex >}}O(n){{< /katex >}} times to generate the backtested forecasts.
@@ -231,7 +231,7 @@ g(t+h|t)
 A well-known drawback of the recursive method is its sensitivity to the estimation error, since estimated values, instead of actual ones, are more and more used when we get further in the future forecasts.
 {{< /hint >}}
 
-![recursive](/img/timeshap_recursive.jpg)
+![recursive](../img/timeshap_recursive.jpg)
 
 #### Direct
 
@@ -261,7 +261,7 @@ g(t+h|t)
 Since the Direct strategy does not use any approximated values to compute the forecasts, it is not prone to any accumulation of errors. However since the models are learned independently no statistical dependencies between the predictions is considered. This strategy also demands a large computational time since the number of models to learn is equal to the size of the forecast horizon.
 {{< /hint >}}
 
-![direct](/img/timeshap_direct.jpg)
+![direct](../img/timeshap_direct.jpg)
 
 #### DirRec
 
@@ -322,13 +322,13 @@ Note that the recurisve strategy has only one model, while the direct and the di
 
 The importance score for each features based on the shap values. Specifically this is the mean absolute value of the shap values for each feature across the entire dataset. To get an overview of which features are most important for a model we can compute the SHAP values of every feature for every sample. We can then take the mean absolute value of the SHAP values for each feature to get a feature importance score for each feature.
 
-![timeshap_global_shap_feature_importance](/img/timeshap_global_shap_feature_importance.jpg)
+![timeshap_global_shap_feature_importance](../img/timeshap_global_shap_feature_importance.jpg)
 
 ### Feature importance
 
 The relative contribution of each feature to the model. A higher value of this score when compared to another feature implies it is more important for generating a forecast. Feature importance provides a score that indicates how useful or valuable each feature was in the construction of the boosted decision trees within the model. The more an attribute is used to make key decisions with decision trees, the higher its **relative importance**. Feature importance is calculated for a single decision tree by the amount that each attribute split point improves the performance measure, weighted by the number of observations the node is responsible for. The feature importances are then averaged across all of the the decision trees within the model. The **gain** is the most relevant attribute to interpret the relative importance of each feature. The **gain** implies the relative contribution of the corresponding feature to the model calculated by taking each feature’s contribution for each tree in the model. A higher value of this metric when compared to another feature implies it is more important for generating a prediction.
 
-![timeshap_global_feature_importance](/img/timeshap_global_feature_importance.jpg)
+![timeshap_global_feature_importance](../img/timeshap_global_feature_importance.jpg)
 
 ### Partial dependence plot
 
@@ -338,7 +338,7 @@ The [partial dependence plot](https://christophm.github.io/interpretable-ml-book
 The calculation for the partial dependence plots has a causal interpretation. One way to think about PDP is that it is an **intervention query**. We intervene on a feature and measure the changes in the predictions. In doing so, we analyze the causal relationship between the feature and the prediction.
 {{< /hint >}}
 
-![timeshap_global_pdp](/img/timeshap_global_pdp.jpg)
+![timeshap_global_pdp](../img/timeshap_global_pdp.jpg)
 
 {{< hint warning >}}
 The assumption of independence is the biggest issue with PDP plots. It is assumed that the feature(s) for which the partial dependence is computed are not correlated with other features.
@@ -348,7 +348,7 @@ The assumption of independence is the biggest issue with PDP plots. It is assume
 
 The shap dependence plot (SDP) for each feature shows the mean shap value for a particular features across the entire dataset. This shows how the model depends on the given feature, and is like a richer extenstion of the classical partial dependence plots.
 
-![timeshap_global_sdp](/img/timeshap_global_sdp.jpg)
+![timeshap_global_sdp](../img/timeshap_global_sdp.jpg)
 
 ## Local explanations
 
@@ -360,7 +360,7 @@ A **local explantion** explains the forecast made by a forecaster at a certain p
 
 The SHAP explanation shows features contributing to push the forecasted sales from the base value (the average sales) to the forecaster model output. Features pushing the forecast higher are shown in blue and those pushing the forecast lower are in red.
 
-![timeshap_local_shap](/img/timeshap_local_shap.jpg)
+![timeshap_local_shap](../img/timeshap_local_shap.jpg)
 
 > This time instance (Mon Jul  1 00:00:00 2019) has a forecasted sales (5028.76), 2579.59 units higher than the average (2449.17) mainly because of the discount(t) (40.50) and sales(t-1) (4242.54) while sales(t-2*52) (4375.00) was trying to push it lower.
 
@@ -368,13 +368,13 @@ The SHAP explanation shows features contributing to push the forecasted sales fr
 
 The (local) PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.
 
-![timeshap_local_pdp](/img/timeshap_local_pdp.jpg)
+![timeshap_local_pdp](../img/timeshap_local_pdp.jpg)
 
 ### Local SHAP dependence plot
 
 The (local) SDP for a given feature shows how the shap value varies as the feature value changes.
 
-![timeshap_local_sdp](/img/timeshap_local_sdp.jpg)
+![timeshap_local_sdp](../img/timeshap_local_sdp.jpg)
 
 ## Semi-local explanations
 
@@ -384,19 +384,19 @@ A **semi-local explanation** explains the overall forecast made by a forecaster 
 
 The importance score for each feature which is the corresponding shap value for that feature.
 
-![timeshap_semilocal_shap](/img/timeshap_semilocal_shap.jpg)
+![timeshap_semilocal_shap](../img/timeshap_semilocal_shap.jpg)
 
 ### Partial dependence plot
 
 The PDP for a given feature shows how the forecast (from the surrogate model) varies as the feature value changes.
 
-![timeshap_semilocal_pdp](/img/timeshap_semilocal_pdp.jpg)
+![timeshap_semilocal_pdp](../img/timeshap_semilocal_pdp.jpg)
 
 ### SHAP dependence plot
 
 The SDP for a given feature shows how the shap value varies as the feature value changes.
 
-![timeshap_semilocal_sdp](/img/timeshap_semilocal_sdp.jpg)
+![timeshap_semilocal_sdp](../img/timeshap_semilocal_sdp.jpg)
 
 ## Explaining prediction intervals
 
@@ -431,23 +431,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_naive_forecast](/img/timeshap_naive_forecast.jpg)
+![timeshap_naive_forecast](../img/timeshap_naive_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_naive_global_shap](/img/timeshap_naive_global_shap.jpg)
+![timeshap_naive_global_shap](../img/timeshap_naive_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_naive_global_pdp](/img/timeshap_naive_global_pdp.jpg)
+![timeshap_naive_global_pdp](../img/timeshap_naive_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_naive_local_shap](/img/timeshap_naive_local_shap.jpg)
+![timeshap_naive_local_shap](../img/timeshap_naive_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_naive_local_pdp](/img/timeshap_naive_local_pdp.jpg)
+![timeshap_naive_local_pdp](../img/timeshap_naive_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}
@@ -469,23 +469,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_seasonalnaive_forecast](/img/timeshap_seasonalnaive_forecast.jpg)
+![timeshap_seasonalnaive_forecast](../img/timeshap_seasonalnaive_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_seasonalnaive_global_shap](/img/timeshap_seasonalnaive_global_shap.jpg)
+![timeshap_seasonalnaive_global_shap](../img/timeshap_seasonalnaive_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_seasonalnaive_global_pdp](/img/timeshap_seasonalnaive_global_pdp.jpg)
+![timeshap_seasonalnaive_global_pdp](../img/timeshap_seasonalnaive_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_seasonalnaive_local_shap](/img/timeshap_seasonalnaive_local_shap.jpg)
+![timeshap_seasonalnaive_local_shap](../img/timeshap_seasonalnaive_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_seasonalnaive_local_pdp](/img/timeshap_seasonalnaive_local_pdp.jpg)
+![timeshap_seasonalnaive_local_pdp](../img/timeshap_seasonalnaive_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}
@@ -507,23 +507,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_movingaverage_forecast](/img/timeshap_movingaverage_forecast.jpg)
+![timeshap_movingaverage_forecast](../img/timeshap_movingaverage_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_movingaverage_global_shap](/img/timeshap_movingaverage_global_shap.jpg)
+![timeshap_movingaverage_global_shap](../img/timeshap_movingaverage_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_movingaverage_global_pdp](/img/timeshap_movingaverage_global_pdp.jpg)
+![timeshap_movingaverage_global_pdp](../img/timeshap_movingaverage_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_movingaverage_local_shap](/img/timeshap_movingaverage_local_shap.jpg)
+![timeshap_movingaverage_local_shap](../img/timeshap_movingaverage_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_movingaverage_local_pdp](/img/timeshap_movingaverage_local_pdp.jpg)
+![timeshap_movingaverage_local_pdp](../img/timeshap_movingaverage_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}
@@ -544,23 +544,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_ses_forecast](/img/timeshap_ses_forecast.jpg)
+![timeshap_ses_forecast](../img/timeshap_ses_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_ses_global_shap](/img/timeshap_ses_global_shap.jpg)
+![timeshap_ses_global_shap](../img/timeshap_ses_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_ses_global_pdp](/img/timeshap_ses_global_pdp.jpg)
+![timeshap_ses_global_pdp](../img/timeshap_ses_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_ses_local_shap](/img/timeshap_ses_local_shap.jpg)
+![timeshap_ses_local_shap](../img/timeshap_ses_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_ses_local_pdp](/img/timeshap_ses_local_pdp.jpg)
+![timeshap_ses_local_pdp](../img/timeshap_ses_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}
@@ -581,23 +581,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_prophet_forecast](/img/timeshap_prophet_forecast.jpg)
+![timeshap_prophet_forecast](../img/timeshap_prophet_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_prophet_global_shap](/img/timeshap_prophet_global_shap.jpg)
+![timeshap_prophet_global_shap](../img/timeshap_prophet_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_prophet_global_pdp](/img/timeshap_prophet_global_pdp.jpg)
+![timeshap_prophet_global_pdp](../img/timeshap_prophet_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_prophet_local_shap](/img/timeshap_prophet_local_shap.jpg)
+![timeshap_prophet_local_shap](../img/timeshap_prophet_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_prophet_local_pdp](/img/timeshap_prophet_local_pdp.jpg)
+![timeshap_prophet_local_pdp](../img/timeshap_prophet_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}
@@ -618,23 +618,23 @@ explainer = TimeSHAP(forecaster=forecaster)
 {{% /tab %}}
 
 {{% tab "forecaster" %}}
-![timeshap_naive_forecast](/img/timeshap_xgboost_forecast.jpg)
+![timeshap_naive_forecast](../img/timeshap_xgboost_forecast.jpg)
 {{% /tab %}}
 
 {{% tab "global - SHAP" %}}
-![timeshap_xgboost_global_shap](/img/timeshap_xgboost_global_shap.jpg)
+![timeshap_xgboost_global_shap](../img/timeshap_xgboost_global_shap.jpg)
 {{% /tab %}}
 
 {{% tab "global - PDP" %}}
-![timeshap_xgboost_global_pdp](/img/timeshap_xgboost_global_pdp.jpg)
+![timeshap_xgboost_global_pdp](../img/timeshap_xgboost_global_pdp.jpg)
 {{% /tab %}}
 
 {{% tab "local - SHAP" %}}
-![timeshap_xgboost_local_shap](/img/timeshap_xgboost_local_shap.jpg)
+![timeshap_xgboost_local_shap](../img/timeshap_xgboost_local_shap.jpg)
 {{% /tab %}}
 
 {{% tab "local - PDP" %}}
-![timeshap_xgboost_local_pdp](/img/timeshap_xgboost_local_pdp.jpg)
+![timeshap_xgboost_local_pdp](../img/timeshap_xgboost_local_pdp.jpg)
 {{% /tab %}}
 
 {{< /tabs >}}

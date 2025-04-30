@@ -88,7 +88,7 @@ Some time series forecasting models are inherently interprtable and we aim to wr
 
 ## Taxonomy
 
-![foo](/img/xai-taxonomy.jpg)
+![foo](../img/xai-taxonomy.jpg)
 
 *Inspired from [here](http://xai-tools.drwhy.ai/)*
 
